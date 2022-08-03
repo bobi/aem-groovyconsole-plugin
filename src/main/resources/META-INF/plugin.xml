@@ -1,18 +1,42 @@
-<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
-    <id>com.github.bobi.aemgroovyconsoleplugin</id>
-    <name>aem-groovyconsole-plugin</name>
-    <vendor>bobi</vendor>
+    <id>com.github.bobi.aemgroovyconsoleplugin.aem-groovyconsole-plugin</id>
+    <name>AEM Groovy Console</name>
+    <vendor url="https://github.com/bobi/aem-groovyconsole-plugin">Andrey Bardashevsky</vendor>
 
     <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.lang</depends>
+    <depends>com.intellij.java</depends>
+    <depends config-file="groovy-plugin-integration.xml">org.intellij.groovy</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <applicationService serviceImplementation="com.github.bobi.aemgroovyconsoleplugin.services.MyApplicationService"/>
-        <projectService serviceImplementation="com.github.bobi.aemgroovyconsoleplugin.services.MyProjectService"/>
+        <fileType name="AemConsole"
+                  extensions="aemconsole"
+                  language="Groovy"
+                  implementationClass="com.github.bobi.aemgroovyconsoleplugin.lang.AemConsoleLanguageFileType"
+                  fieldName="INSTANCE"
+        />
+
+        <projectConfigurable groupId="tools"
+                             instance="com.github.bobi.aemgroovyconsoleplugin.config.ui.AemServersConfigurable"/>
+
+        <projectService
+                serviceImplementation="com.github.bobi.aemgroovyconsoleplugin.services.http.GroovyConsoleHttpService"/>
+
+        <projectService
+                serviceImplementation="com.github.bobi.aemgroovyconsoleplugin.services.PersistentStateService"/>
+
+        <editorNotificationProvider implementation="com.github.bobi.aemgroovyconsoleplugin.console.EditorDecorator"/>
+
+        <java.elementFinder
+                implementation="com.github.bobi.aemgroovyconsoleplugin.dsl.AemScriptExtensionClassFinder"/>
+
+        <internalFileTemplate name="AemConsole Script"/>
     </extensions>
 
-    <applicationListeners>
-        <listener class="com.github.bobi.aemgroovyconsoleplugin.listeners.MyProjectManagerListener"
-                  topic="com.intellij.openapi.project.ProjectManagerListener"/>
-    </applicationListeners>
+    <actions>
+        <action id="AemConsole.NewScript" class="com.github.bobi.aemgroovyconsoleplugin.actions.NewAemConsoleScriptAction"
+                icon="JetgroovyIcons.Groovy.GroovyFile">
+            <add-to-group group-id="NewGroup" anchor="last"/>
+        </action>
+    </actions>
 </idea-plugin>
