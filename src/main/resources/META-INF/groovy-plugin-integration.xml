@@ -1,0 +1,16 @@
+<idea-plugin>
+    <extensions defaultExtensionNs="org.intellij.groovy">
+        <scriptTypeDetector
+                implementation="com.github.bobi.aemgroovyconsoleplugin.lang.AemConsoleScriptTypeDetector"/>
+
+        <gdslScriptProvider implementation="com.github.bobi.aemgroovyconsoleplugin.dsl.AemGDslProvider"/>
+
+        <importContributor implementation="com.github.bobi.aemgroovyconsoleplugin.dsl.AemImportContributor"/>
+        <importContributor implementation="com.github.bobi.aemgroovyconsoleplugin.dsl.AemBuildersImportContributor"/>
+
+        <membersContributor implementation="com.github.bobi.aemgroovyconsoleplugin.dsl.AemNodeBuilderContributor"/>
+        <membersContributor implementation="com.github.bobi.aemgroovyconsoleplugin.dsl.AemPageBuilderContributor"/>
+
+        <variableEnhancer implementation="com.github.bobi.aemgroovyconsoleplugin.dsl.ClosureParameterEnhancer"/>
+    </extensions>
+</idea-plugin>
