@@ -1,4 +1,4 @@
-package com.github.bobi.aemgroovyconsoleplugin.console
+package com.github.bobi.aemgroovyconsoleplugin.editor
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
@@ -14,7 +14,7 @@ object GroovyConsoleUserData {
 
     private val GROOVY_CONSOLE_CURRENT_SERVER_ID = Key.create<Long>("AEMGroovyConsoleCurrentServerId")
 
-    private fun VirtualFile.getCurrentAemServerId(): Long? = getUserData(GROOVY_CONSOLE_CURRENT_SERVER_ID)
+    fun VirtualFile.getCurrentAemServerId(): Long? = getUserData(GROOVY_CONSOLE_CURRENT_SERVER_ID)
 
     fun VirtualFile.setCurrentAemServerId(id: Long?) {
         putUserData(GROOVY_CONSOLE_CURRENT_SERVER_ID, id)

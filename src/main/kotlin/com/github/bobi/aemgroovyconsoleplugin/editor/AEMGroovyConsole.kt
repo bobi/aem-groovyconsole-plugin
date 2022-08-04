@@ -1,4 +1,4 @@
-package com.github.bobi.aemgroovyconsoleplugin.console
+package com.github.bobi.aemgroovyconsoleplugin.editor
 
 import com.intellij.execution.executors.DefaultRunExecutor
 import com.intellij.execution.filters.RegexpFilter
@@ -18,7 +18,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
-import com.github.bobi.aemgroovyconsoleplugin.console.GroovyConsoleUserData.getCurrentAemConfig
+import com.github.bobi.aemgroovyconsoleplugin.editor.GroovyConsoleUserData.getCurrentAemConfig
 import com.github.bobi.aemgroovyconsoleplugin.services.PersistentStateService
 import com.github.bobi.aemgroovyconsoleplugin.services.http.GroovyConsoleHttpService
 import com.github.bobi.aemgroovyconsoleplugin.services.model.AemServerConfig
