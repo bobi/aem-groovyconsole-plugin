@@ -1,17 +1,17 @@
-package com.github.bobi.aemgroovyconsoleplugin.actions
+package com.github.bobi.aemgroovyconsoleplugin.editor.actions
 
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.github.bobi.aemgroovyconsoleplugin.console.GroovyConsoleUserData.setCurrentAemServerId
+import com.github.bobi.aemgroovyconsoleplugin.editor.GroovyConsoleUserData.setCurrentAemServerId
 import com.github.bobi.aemgroovyconsoleplugin.services.model.AemServerConfig
 
 /**
  * User: Andrey Bardashevsky
  * Date/Time: 02.08.2022 13:32
  */
-class AemSelectServerAction(private val serverConfig: AemServerConfig) : AnAction() {
+class AemConsoleSelectServerAction(private val serverConfig: AemServerConfig) : AnAction() {
 
     init {
         templatePresentation.text = serverConfig.name

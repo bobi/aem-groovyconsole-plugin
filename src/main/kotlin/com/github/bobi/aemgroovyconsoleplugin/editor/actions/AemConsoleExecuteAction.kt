@@ -1,11 +1,12 @@
-package com.github.bobi.aemgroovyconsoleplugin.actions
+package com.github.bobi.aemgroovyconsoleplugin.editor.actions
 
+import com.github.bobi.aemgroovyconsoleplugin.editor.AEMGroovyConsole
+import com.github.bobi.aemgroovyconsoleplugin.editor.GroovyConsoleUserData.getCurrentAemServerId
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.github.bobi.aemgroovyconsoleplugin.console.AEMGroovyConsole
 
 class AemConsoleExecuteAction : AnAction(AllIcons.Actions.Execute) {
 
@@ -24,6 +25,18 @@ class AemConsoleExecuteAction : AnAction(AllIcons.Actions.Execute) {
             AEMGroovyConsole.getOrCreateConsole(project, virtualFile) {
                 it.execute()
             }
+        }
+    }
+
+    override fun update(e: AnActionEvent) {
+        val virtualFile = CommonDataKeys.VIRTUAL_FILE.getData(e.dataContext)
+
+        if (virtualFile != null) {
+            val serverId = virtualFile.getCurrentAemServerId()
+
+            e.presentation.isEnabled = serverId != null
+        } else {
+            e.presentation.isEnabled = false
         }
     }
 }
