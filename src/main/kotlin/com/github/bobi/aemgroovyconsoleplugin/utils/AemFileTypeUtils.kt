@@ -1,9 +1,9 @@
 package com.github.bobi.aemgroovyconsoleplugin.utils
 
+import com.github.bobi.aemgroovyconsoleplugin.lang.AemConsoleScriptType
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
-import com.github.bobi.aemgroovyconsoleplugin.lang.AemConsoleScriptType
-import org.jetbrains.plugins.groovy.lang.psi.GroovyFile
+import com.intellij.psi.PsiFile
 
 /**
  * User: Andrey Bardashevsky
@@ -17,10 +17,16 @@ object AemFileTypeUtils {
     }
 
     fun PsiElement.isAemFile(): Boolean {
-        return this.containingFile.virtualFile?.isAemFile() ?: return false
+        return this.containingFile.isAemFile()
     }
 
-    fun GroovyFile.isAemFile(): Boolean {
-        return this.originalFile.virtualFile?.isAemFile() ?: return false
+    fun PsiFile.isAemFile(): Boolean {
+        var virtualFile = this.virtualFile
+
+        if (virtualFile == null) {
+            virtualFile = this.viewProvider.virtualFile
+        }
+
+        return virtualFile.isAemFile()
     }
 }
