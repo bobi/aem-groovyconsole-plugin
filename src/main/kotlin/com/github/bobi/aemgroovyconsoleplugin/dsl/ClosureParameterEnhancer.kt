@@ -1,28 +1,29 @@
 package com.github.bobi.aemgroovyconsoleplugin.dsl
 
+import com.github.bobi.aemgroovyconsoleplugin.utils.AemFileTypeUtils.isAemFile
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiType
-import com.github.bobi.aemgroovyconsoleplugin.utils.AemFileTypeUtils.isAemFile
+import com.intellij.psi.util.PsiTypesUtil
 import org.jetbrains.plugins.groovy.lang.psi.api.GrFunctionalExpression
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.arguments.GrArgumentList
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethodCall
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrReferenceExpression
-import org.jetbrains.plugins.groovy.lang.psi.api.statements.params.GrParameter
-import org.jetbrains.plugins.groovy.lang.psi.impl.statements.expressions.TypesUtil
 import org.jetbrains.plugins.groovy.lang.psi.typeEnhancers.AbstractClosureParameterEnhancer
 import org.jetbrains.plugins.groovy.lang.psi.util.isCompileStatic
 
-/**
- * User: Andrey Bardashevsky
- * Date/Time: 01.08.2022 21:33
- */
+private const val CLASS_AEM_PAGE = "com.day.cq.wcm.api.Page"
+private const val CLASS_JCR_NODE = "javax.jcr.Node"
+private const val CLASS_BINARY = "javax.jcr.Binary"
+
+private const val METHOD_RECURSE = "recurse"
+private const val METHOD_WITH_BINARY = "withBinary"
+
 class ClosureParameterEnhancer : AbstractClosureParameterEnhancer() {
-    private val simpleTypes: Map<String, String> = mapOf(
-        Pair("withBinary", "javax.jcr.Binary")
-    )
 
     override fun getClosureParameterType(expression: GrFunctionalExpression, index: Int): PsiType? {
-        if (!expression.isAemFile()) return null
+        if (!expression.isAemFile()) {
+            return null
+        }
 
         if (isCompileStatic(expression)) {
             return null
@@ -34,32 +35,28 @@ class ClosureParameterEnhancer : AbstractClosureParameterEnhancer() {
             return null
         }
 
-        val methodName = findMethodName(parent)
-
         val invokedExpression = parent.invokedExpression as? GrReferenceExpression ?: return null
+
+        val methodName = invokedExpression.referenceName
 
         val qualifier = invokedExpression.qualifierExpression ?: return null
 
         qualifier.type ?: return null
 
-        val params: Array<GrParameter> = expression.allParameters
+        val psiClass = PsiTypesUtil.getPsiClass(qualifier.type) ?: return null
 
-        if (params.size == 1 && simpleTypes.containsKey(methodName)) {
-            val typeText = simpleTypes[methodName]
-            return if (typeText!!.indexOf('<') < 0) {
-                TypesUtil.createTypeByFQClassName(typeText, expression)
-            } else {
-                JavaPsiFacade.getElementFactory(expression.project).createTypeFromText(typeText, expression)
-            }
+        if (psiClass.qualifiedName == CLASS_BINARY && methodName == METHOD_WITH_BINARY) {
+            return JavaPsiFacade.getElementFactory(expression.project).createTypeFromText(psiClass.qualifiedName!!, expression)
+        }
+
+        if (psiClass.qualifiedName == CLASS_AEM_PAGE && methodName == METHOD_RECURSE) {
+            return JavaPsiFacade.getElementFactory(expression.project).createTypeFromText(psiClass.qualifiedName!!, expression)
+        }
+
+        if (psiClass.qualifiedName == CLASS_JCR_NODE && methodName == METHOD_RECURSE) {
+            return JavaPsiFacade.getElementFactory(expression.project).createTypeFromText(psiClass.qualifiedName!!, expression)
         }
 
         return null
-    }
-
-    private fun findMethodName(methodCall: GrMethodCall): String? {
-        val expression = methodCall.invokedExpression
-        return if (expression is GrReferenceExpression) {
-            expression.referenceName
-        } else null
     }
 }

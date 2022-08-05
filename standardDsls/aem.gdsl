@@ -1,29 +1,15 @@
 package standardDsls
 
 def aemContext(final props) {
-    final def contextProps = [:]
+    final def contextProps = props?.clone() ?: [:]
 
     contextProps['filetypes'] = ['aemconsole']
-    contextProps['scope'] = props['scope'] ?: scriptScope()
-
-
-    final def type = props['ctype']
-    if (type) {
-        contextProps['ctype'] = type
-    }
+    contextProps['scope'] = contextProps['scope'] ?: scriptScope()
 
     return context(contextProps)
 }
 
-def aemScriptContext(final props) {
-    final def contextProps = props?.clone() ?: [:]
-
-    contextProps['scope'] = scriptScope()
-
-    return aemContext(contextProps)
-}
-
-contributor([aemScriptContext()]) {
+contributor(aemContext()) {
     property name: 'log', type: 'org.slf4j.Logger'
     property name: 'session', type: 'javax.jcr.Session'
     property name: 'pageManager', type: 'com.day.cq.wcm.api.PageManager'
@@ -112,17 +98,21 @@ contributor([aemScriptContext()]) {
             doc: 'Create a Query instance from the QueryBuilder for the current JCR session'
 }
 
-contributor([aemScriptContext(ctype: 'javax.servlet.ServletRequest')]) {
+contributor(aemContext(ctype: 'javax.servlet.ServletRequest')) {
     method name: 'getAt',
             params: [parameterName: String.name],
             type: Object.name,
             doc: 'Subscript operator to get a request parameter value.  If the value is an array, a list will be returned'
 }
 
-contributor([aemScriptContext(ctype: 'com.day.cq.wcm.api.Page')]) {
+contributor(aemContext(ctype: 'com.day.cq.wcm.api.Page')) {
     method name: 'iterator',
-            type: 'java.util.Iterator<com.day.cq.wcm.api.Page>',
+            type: Iterator.name,
             doc: 'Allows usage of Groovy closure operators (<code>each</code>, <code>eachWithIndex</code>) to iterate over child pages of the current page'
+    method name: 'recurse',
+            params: [closure: Closure.name],
+            type: void,
+            doc: 'Recursively invoke this closure on each descendant page of the current page'
     method name: 'getNode',
             type: 'javax.jcr.Node',
             doc: 'Get the <code>jcr:content</code> node of the current page, returning null if it does not exist'
@@ -136,10 +126,22 @@ contributor([aemScriptContext(ctype: 'com.day.cq.wcm.api.Page')]) {
             doc: 'Set the named property value on the <code>jcr:content</code> node of the current page'
 }
 
-contributor([aemScriptContext(ctype: 'javax.jcr.Node')]) {
+contributor(aemContext(ctype: 'javax.jcr.Node')) {
     method name: 'iterator',
-            type: 'java.util.Iterator<com.day.cq.wcm.api.Page>',
+            type: Iterator.name,
             doc: 'Allows usage of Groovy closure operators (<code>each</code>, <code>eachWithIndex</code>) to iterate over child nodes of the current node'
+    method name: 'recurse',
+            params: [closure: Closure.name],
+            type: void,
+            doc: 'Recursively invoke this closure on each descendant node of the current node'
+    method name: 'recurse',
+            params: [primaryNodeTypeName: String.name, closure: Closure.name],
+            type: void,
+            doc: 'Recursively invoke this closure on each descendant node of the current node that matches the given node type'
+    method name: 'recurse',
+            params: [primaryNodeTypeNames: Collection.name, closure: Closure.name],
+            type: void,
+            doc: 'Recursively invoke this closure on each descendant node of the current node that matches any of the given node types'
     method name: 'get',
             params: [propertyName: String],
             type: Object.name,
@@ -166,7 +168,7 @@ contributor([aemScriptContext(ctype: 'javax.jcr.Node')]) {
             doc: 'Remove the child node with the given name, returning true if the node was removed'
 }
 
-contributor([aemScriptContext(ctype: 'javax.jcr.Binary')]) {
+contributor(aemContext(ctype: 'javax.jcr.Binary')) {
     method name: 'withBinary',
             params: [closure: Closure.name],
             type: Object.name,
