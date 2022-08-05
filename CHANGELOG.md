@@ -1,7 +1,10 @@
 <!-- Keep a Changelog guide -> https://keepachangelog.com -->
 
 # aem-groovyconsole-plugin Changelog
+
 ## [Unreleased]
+
+## [0.4.2]
 ### Added
 - Added support for recurse method in DSL
 
