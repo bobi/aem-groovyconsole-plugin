@@ -10,18 +10,6 @@ def aemContext(final Map props) {
 }
 
 contributor(aemContext()) {
-    variable name: 'log', type: 'org.slf4j.Logger'
-    variable name: 'session', type: 'javax.jcr.Session'
-    variable name: 'pageManager', type: 'com.day.cq.wcm.api.PageManager'
-    variable name: 'resourceResolver', type: 'org.apache.sling.api.resource.ResourceResolver'
-    variable name: 'queryBuilder', type: 'com.day.cq.search.QueryBuilder'
-    variable name: 'nodeBuilder', type: 'com.icfolson.aem.groovy.extension.builders.NodeBuilder'
-    variable name: 'pageBuilder', type: 'com.icfolson.aem.groovy.extension.builders.PageBuilder'
-    variable name: 'bundleContext', type: 'org.osgi.framework.BundleContext'
-    variable name: 'out', type: 'java.io.PrintStream'
-    variable name: 'slingRequest', type: 'org.apache.sling.api.SlingHttpServletRequest'
-    variable name: 'slingResponse', type: 'org.apache.sling.api.SlingHttpServletResponse'
-
     method name: 'getPage',
             params: [path: String.name],
             type: 'com.day.cq.wcm.api.Page',

@@ -3,6 +3,8 @@
 # aem-groovyconsole-plugin Changelog
 
 ## [Unreleased]
+### Changed
+- Updated script fields scope in editor
 
 ## [0.4.3]
 ### Added
