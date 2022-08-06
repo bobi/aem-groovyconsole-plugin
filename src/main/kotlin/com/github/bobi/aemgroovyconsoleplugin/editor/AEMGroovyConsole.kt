@@ -1,5 +1,9 @@
 package com.github.bobi.aemgroovyconsoleplugin.editor
 
+import com.github.bobi.aemgroovyconsoleplugin.editor.GroovyConsoleUserData.getCurrentAemConfig
+import com.github.bobi.aemgroovyconsoleplugin.services.PersistentStateService
+import com.github.bobi.aemgroovyconsoleplugin.services.http.GroovyConsoleHttpService
+import com.github.bobi.aemgroovyconsoleplugin.services.model.AemServerConfig
 import com.intellij.execution.executors.DefaultRunExecutor
 import com.intellij.execution.filters.RegexpFilter
 import com.intellij.execution.filters.RegexpFilter.FILE_PATH_MACROS
@@ -13,15 +17,12 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.application.runInEdt
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.progress.runBackgroundableTask
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
-import com.github.bobi.aemgroovyconsoleplugin.editor.GroovyConsoleUserData.getCurrentAemConfig
-import com.github.bobi.aemgroovyconsoleplugin.services.PersistentStateService
-import com.github.bobi.aemgroovyconsoleplugin.services.http.GroovyConsoleHttpService
-import com.github.bobi.aemgroovyconsoleplugin.services.model.AemServerConfig
 import java.awt.BorderLayout
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.swing.JPanel
@@ -70,6 +71,12 @@ class AEMGroovyConsole(
             runInEdt {
                 if (output.exceptionStackTrace.isBlank()) {
                     view.print(output.output, ConsoleViewContentType.NORMAL_OUTPUT)
+                    
+                    if (output.table != null) {
+                        ConsoleTableFormatter(output.table).print {
+                            view.print(it, ConsoleViewContentType.NORMAL_OUTPUT)
+                        }
+                    }
                 } else {
                     //This code relies on fact that AEM Groovy Console uses Script1.groovy as file name, so this code is highly dangerous
                     //In some obvious cases it could work incorrectly, but it provides user with better experience
@@ -87,6 +94,8 @@ class AEMGroovyConsole(
                 completeCallback()
             }
         } catch (th: Throwable) {
+            thisLogger().info(th)
+
             runInEdt {
                 view.print(th.localizedMessage, ConsoleViewContentType.ERROR_OUTPUT)
 
@@ -136,7 +145,7 @@ class AEMGroovyConsole(
                 consoleView,
                 null,
                 JPanel(BorderLayout()),
-                "${server.name}: ${contentFile.name}"
+                "[${contentFile.name}] - [${server.name}]"
             ).also { descr ->
                 descr.executionId = server.id
                 descr.reusePolicy = object : RunContentDescriptorReusePolicy() {

@@ -1,26 +1,26 @@
 package standardDsls
 
-def aemContext(final props) {
-    final def contextProps = props?.clone() ?: [:]
+def aemContext(final Map props) {
+    final Map contextProps = (props?.clone() as Map) ?: [:]
 
-    contextProps['filetypes'] = ['aemconsole']
-    contextProps['scope'] = contextProps['scope'] ?: scriptScope()
+    contextProps.filetypes = ['aemconsole']
+    contextProps.scope = contextProps.scope ?: scriptScope()
 
     return context(contextProps)
 }
 
 contributor(aemContext()) {
-    property name: 'log', type: 'org.slf4j.Logger'
-    property name: 'session', type: 'javax.jcr.Session'
-    property name: 'pageManager', type: 'com.day.cq.wcm.api.PageManager'
-    property name: 'resourceResolver', type: 'org.apache.sling.api.resource.ResourceResolver'
-    property name: 'queryBuilder', type: 'com.day.cq.search.QueryBuilder'
-    property name: 'nodeBuilder', type: 'com.icfolson.aem.groovy.extension.builders.NodeBuilder'
-    property name: 'pageBuilder', type: 'com.icfolson.aem.groovy.extension.builders.PageBuilder'
-    property name: 'bundleContext', type: 'org.osgi.framework.BundleContext'
-    property name: 'out', type: 'java.io.PrintStream'
-    property name: 'slingRequest', type: 'org.apache.sling.api.SlingHttpServletRequest'
-    property name: 'slingResponse', type: 'org.apache.sling.api.SlingHttpServletResponse'
+    variable name: 'log', type: 'org.slf4j.Logger'
+    variable name: 'session', type: 'javax.jcr.Session'
+    variable name: 'pageManager', type: 'com.day.cq.wcm.api.PageManager'
+    variable name: 'resourceResolver', type: 'org.apache.sling.api.resource.ResourceResolver'
+    variable name: 'queryBuilder', type: 'com.day.cq.search.QueryBuilder'
+    variable name: 'nodeBuilder', type: 'com.icfolson.aem.groovy.extension.builders.NodeBuilder'
+    variable name: 'pageBuilder', type: 'com.icfolson.aem.groovy.extension.builders.PageBuilder'
+    variable name: 'bundleContext', type: 'org.osgi.framework.BundleContext'
+    variable name: 'out', type: 'java.io.PrintStream'
+    variable name: 'slingRequest', type: 'org.apache.sling.api.SlingHttpServletRequest'
+    variable name: 'slingResponse', type: 'org.apache.sling.api.SlingHttpServletResponse'
 
     method name: 'getPage',
             params: [path: String.name],
@@ -37,24 +37,11 @@ contributor(aemContext()) {
             type: 'org.apache.sling.api.resource.Resource',
             doc: 'Get the Resource for the given path, or null if it does not exist'
 
-    method name: 'getModel',
-            params: [path: String.name, type: Class.name],
-            type: Object.name,
-            doc: 'Get an instance of a Sling Model class for the Resource at the given path'
-
-    method name: 'getService',
-            params: [type: Class.name],
-            type: Object.name,
-            doc: 'Get the OSGi service instance for the given type'
     method name: 'getService',
             params: [className: String.name],
             type: Object.name,
             doc: 'Get the OSGi service instance for the class name'
 
-    method name: 'getServices',
-            params: [serviceType: Class.name, filter: String.name],
-            type: List.name,
-            doc: 'Get OSGi services for the given type and filter expression'
     method name: 'getServices',
             params: [className: String.name, filter: String.name],
             type: List.name,
@@ -96,6 +83,12 @@ contributor(aemContext()) {
             params: [predicates: Map.name],
             type: 'javax.jcr.query.Query',
             doc: 'Create a Query instance from the QueryBuilder for the current JCR session'
+
+    method name: 'table',
+            params: [closure: Closure.name],
+            type: 'org.cid15.aem.groovy.console.table.Table',
+            containingClass: 'org.cid15.aem.groovy.console.table.Table',
+            doc: 'Build Table output. Note: to output the table script must returns it'
 }
 
 contributor(aemContext(ctype: 'javax.servlet.ServletRequest')) {
@@ -173,4 +166,14 @@ contributor(aemContext(ctype: 'javax.jcr.Binary')) {
             params: [closure: Closure.name],
             type: Object.name,
             doc: 'Execute the closure and automatically dispose of the binary\'s resources when the closure completes. The closure accepts a single argument with the current binary instance'
+}
+
+contributor(aemContext()) {
+    def tableCall = enclosingCall("table")
+    if (tableCall) {
+        def clazz = tableCall.bind()?.containingClass
+        if ('org.cid15.aem.groovy.console.table.Table' == clazz?.qualName) {
+            delegatesTo(clazz)
+        }
+    }
 }

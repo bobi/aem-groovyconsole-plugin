@@ -1,5 +1,9 @@
 package com.github.bobi.aemgroovyconsoleplugin.services.http
 
+import com.github.bobi.aemgroovyconsoleplugin.services.PasswordsService
+import com.github.bobi.aemgroovyconsoleplugin.services.http.model.GroovyConsoleOutput
+import com.github.bobi.aemgroovyconsoleplugin.services.http.model.GroovyConsoleTable
+import com.github.bobi.aemgroovyconsoleplugin.services.model.AemServerConfig
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.intellij.openapi.Disposable
@@ -21,10 +25,8 @@ import org.apache.http.impl.client.BasicAuthCache
 import org.apache.http.impl.client.BasicCredentialsProvider
 import org.apache.http.impl.client.CloseableHttpClient
 import org.apache.http.impl.client.HttpClientBuilder
-import com.github.bobi.aemgroovyconsoleplugin.services.PasswordsService
-import com.github.bobi.aemgroovyconsoleplugin.services.http.model.GroovyConsoleOutput
-import com.github.bobi.aemgroovyconsoleplugin.services.model.AemServerConfig
 import java.io.InputStreamReader
+import java.io.StringReader
 import java.net.URI
 import java.util.concurrent.TimeUnit
 
@@ -82,9 +84,24 @@ class GroovyConsoleHttpService : Disposable {
 
     private fun handleResponse(response: HttpResponse): GroovyConsoleOutput {
         if (HttpStatus.SC_OK == response.statusLine.statusCode) {
-            return InputStreamReader(response.entity.content).use {
-                return@use gson.fromJson(it, GroovyConsoleOutput::class.java)
+            val output = InputStreamReader(response.entity.content).use {
+                return@use gson.fromJson(it, Output::class.java)
             }
+
+            var outputTable: OutputTable? = null
+
+            if (!output.result.isNullOrBlank()) {
+                outputTable = StringReader(output.result).use {
+                    return@use gson.fromJson(it, OutputTable::class.java)
+                }
+            }
+
+            return GroovyConsoleOutput(
+                output = output.output,
+                runningTime = output.runningTime,
+                exceptionStackTrace = output.exceptionStackTrace,
+                table = outputTable?.table
+            )
         } else {
             throw HttpException("HTTP Error: ${response.statusLine}")
         }
@@ -114,4 +131,9 @@ class GroovyConsoleHttpService : Disposable {
             return project.getService(GroovyConsoleHttpService::class.java)
         }
     }
+
+    data class Output(val output: String, val runningTime: String, val exceptionStackTrace: String, val result: String?)
+
+    data class OutputTable(val table: GroovyConsoleTable)
+
 }
