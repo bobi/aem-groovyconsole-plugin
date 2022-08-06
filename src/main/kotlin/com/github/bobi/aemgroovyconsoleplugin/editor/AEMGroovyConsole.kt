@@ -145,7 +145,7 @@ class AEMGroovyConsole(
                 consoleView,
                 null,
                 JPanel(BorderLayout()),
-                "[${contentFile.name}] - [${server.name}]"
+                "[${server.name}] - [${contentFile.name}]"
             ).also { descr ->
                 descr.executionId = server.id
                 descr.reusePolicy = object : RunContentDescriptorReusePolicy() {
