@@ -10,17 +10,17 @@ def aemContext(final props) {
 }
 
 contributor(aemContext()) {
-    property name: 'log', type: 'org.slf4j.Logger'
-    property name: 'session', type: 'javax.jcr.Session'
-    property name: 'pageManager', type: 'com.day.cq.wcm.api.PageManager'
-    property name: 'resourceResolver', type: 'org.apache.sling.api.resource.ResourceResolver'
-    property name: 'queryBuilder', type: 'com.day.cq.search.QueryBuilder'
-    property name: 'nodeBuilder', type: 'com.icfolson.aem.groovy.extension.builders.NodeBuilder'
-    property name: 'pageBuilder', type: 'com.icfolson.aem.groovy.extension.builders.PageBuilder'
-    property name: 'bundleContext', type: 'org.osgi.framework.BundleContext'
-    property name: 'out', type: 'java.io.PrintStream'
-    property name: 'slingRequest', type: 'org.apache.sling.api.SlingHttpServletRequest'
-    property name: 'slingResponse', type: 'org.apache.sling.api.SlingHttpServletResponse'
+    variable name: 'log', type: 'org.slf4j.Logger'
+    variable name: 'session', type: 'javax.jcr.Session'
+    variable name: 'pageManager', type: 'com.day.cq.wcm.api.PageManager'
+    variable name: 'resourceResolver', type: 'org.apache.sling.api.resource.ResourceResolver'
+    variable name: 'queryBuilder', type: 'com.day.cq.search.QueryBuilder'
+    variable name: 'nodeBuilder', type: 'com.icfolson.aem.groovy.extension.builders.NodeBuilder'
+    variable name: 'pageBuilder', type: 'com.icfolson.aem.groovy.extension.builders.PageBuilder'
+    variable name: 'bundleContext', type: 'org.osgi.framework.BundleContext'
+    variable name: 'out', type: 'java.io.PrintStream'
+    variable name: 'slingRequest', type: 'org.apache.sling.api.SlingHttpServletRequest'
+    variable name: 'slingResponse', type: 'org.apache.sling.api.SlingHttpServletResponse'
 
     method name: 'getPage',
             params: [path: String.name],
@@ -37,24 +37,11 @@ contributor(aemContext()) {
             type: 'org.apache.sling.api.resource.Resource',
             doc: 'Get the Resource for the given path, or null if it does not exist'
 
-    method name: 'getModel',
-            params: [path: String.name, type: Class.name],
-            type: Object.name,
-            doc: 'Get an instance of a Sling Model class for the Resource at the given path'
-
-    method name: 'getService',
-            params: [type: Class.name],
-            type: Object.name,
-            doc: 'Get the OSGi service instance for the given type'
     method name: 'getService',
             params: [className: String.name],
             type: Object.name,
             doc: 'Get the OSGi service instance for the class name'
 
-    method name: 'getServices',
-            params: [serviceType: Class.name, filter: String.name],
-            type: List.name,
-            doc: 'Get OSGi services for the given type and filter expression'
     method name: 'getServices',
             params: [className: String.name, filter: String.name],
             type: List.name,

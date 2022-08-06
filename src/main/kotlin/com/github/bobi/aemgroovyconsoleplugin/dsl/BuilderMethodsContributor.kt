@@ -1,5 +1,6 @@
 package com.github.bobi.aemgroovyconsoleplugin.dsl
 
+import com.github.bobi.aemgroovyconsoleplugin.utils.AemFileTypeUtils.isAemFile
 import com.intellij.psi.CommonClassNames.JAVA_LANG_OBJECT
 import com.intellij.psi.CommonClassNames.JAVA_UTIL_MAP
 import com.intellij.psi.PsiClass
@@ -8,13 +9,12 @@ import com.intellij.psi.PsiType
 import com.intellij.psi.ResolveState
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.util.Processor
-import com.github.bobi.aemgroovyconsoleplugin.utils.AemFileTypeUtils.isAemFile
 import org.jetbrains.plugins.groovy.builder.setContainingClass
 import org.jetbrains.plugins.groovy.lang.psi.impl.synthetic.GrLightMethodBuilder
 import org.jetbrains.plugins.groovy.lang.psi.util.GroovyCommonClassNames.GROOVY_LANG_CLOSURE
 import org.jetbrains.plugins.groovy.lang.resolve.NonCodeMembersContributor
-import org.jetbrains.plugins.groovy.lang.resolve.ResolveUtil
 import org.jetbrains.plugins.groovy.lang.resolve.delegatesTo.DELEGATES_TO_TYPE_KEY
+import org.jetbrains.plugins.groovy.lang.resolve.getName
 import org.jetbrains.plugins.groovy.lang.resolve.shouldProcessDynamicMethods
 
 abstract class BuilderMethodsContributor : NonCodeMembersContributor() {
@@ -27,13 +27,11 @@ abstract class BuilderMethodsContributor : NonCodeMembersContributor() {
     ) {
         if (clazz == null) return
         if (!place.isAemFile()) return
-        val name = ResolveUtil.getNameHint(processor) ?: return
+        val name = processor.getName(state) ?: return
+
         if (!shouldProcessDynamicMethods(processor)) return
-        processDynamicMethods(clazz, name, place) { e: PsiElement? ->
-            processor.execute(
-                e!!, state
-            )
-        }
+
+        processDynamicMethods(clazz, name, place) { e: PsiElement? -> processor.execute(e!!, state) }
     }
 
     private fun processDynamicMethods(

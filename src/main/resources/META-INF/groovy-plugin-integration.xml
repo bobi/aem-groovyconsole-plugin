@@ -10,6 +10,7 @@
 
         <membersContributor implementation="com.github.bobi.aemgroovyconsoleplugin.dsl.AemNodeBuilderContributor"/>
         <membersContributor implementation="com.github.bobi.aemgroovyconsoleplugin.dsl.AemPageBuilderContributor"/>
+        <membersContributor implementation="com.github.bobi.aemgroovyconsoleplugin.dsl.GenericMethodsContributor"/>
 
         <variableEnhancer implementation="com.github.bobi.aemgroovyconsoleplugin.dsl.ClosureParameterEnhancer"/>
     </extensions>
