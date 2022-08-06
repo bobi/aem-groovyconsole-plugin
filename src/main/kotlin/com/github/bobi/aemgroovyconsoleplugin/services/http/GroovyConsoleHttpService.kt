@@ -7,7 +7,6 @@ import com.github.bobi.aemgroovyconsoleplugin.services.model.AemServerConfig
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import org.apache.http.HttpException
 import org.apache.http.HttpResponse
@@ -91,13 +90,9 @@ class GroovyConsoleHttpService : Disposable {
 
             var outputTable: OutputTable? = null
 
-            if (output.result != null) {
-                try {
-                    outputTable = StringReader(output.result).use {
-                        return@use gson.fromJson(it, OutputTable::class.java)
-                    }
-                } catch (t: Throwable) {
-                    thisLogger().error(t)
+            if (!output.result.isNullOrBlank()) {
+                outputTable = StringReader(output.result).use {
+                    return@use gson.fromJson(it, OutputTable::class.java)
                 }
             }
 

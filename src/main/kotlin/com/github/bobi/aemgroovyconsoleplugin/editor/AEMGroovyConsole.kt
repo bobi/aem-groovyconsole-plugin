@@ -17,6 +17,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.application.runInEdt
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.progress.runBackgroundableTask
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
@@ -93,6 +94,8 @@ class AEMGroovyConsole(
                 completeCallback()
             }
         } catch (th: Throwable) {
+            thisLogger().info(th)
+
             runInEdt {
                 view.print(th.localizedMessage, ConsoleViewContentType.ERROR_OUTPUT)
 
