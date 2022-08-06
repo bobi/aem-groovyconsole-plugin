@@ -1,5 +1,9 @@
 package com.github.bobi.aemgroovyconsoleplugin.editor
 
+import com.github.bobi.aemgroovyconsoleplugin.editor.GroovyConsoleUserData.getCurrentAemConfig
+import com.github.bobi.aemgroovyconsoleplugin.services.PersistentStateService
+import com.github.bobi.aemgroovyconsoleplugin.services.http.GroovyConsoleHttpService
+import com.github.bobi.aemgroovyconsoleplugin.services.model.AemServerConfig
 import com.intellij.execution.executors.DefaultRunExecutor
 import com.intellij.execution.filters.RegexpFilter
 import com.intellij.execution.filters.RegexpFilter.FILE_PATH_MACROS
@@ -18,10 +22,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
-import com.github.bobi.aemgroovyconsoleplugin.editor.GroovyConsoleUserData.getCurrentAemConfig
-import com.github.bobi.aemgroovyconsoleplugin.services.PersistentStateService
-import com.github.bobi.aemgroovyconsoleplugin.services.http.GroovyConsoleHttpService
-import com.github.bobi.aemgroovyconsoleplugin.services.model.AemServerConfig
 import java.awt.BorderLayout
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.swing.JPanel
@@ -136,7 +136,7 @@ class AEMGroovyConsole(
                 consoleView,
                 null,
                 JPanel(BorderLayout()),
-                "${server.name}: ${contentFile.name}"
+                "[${server.name}] - [${contentFile.name}]"
             ).also { descr ->
                 descr.executionId = server.id
                 descr.reusePolicy = object : RunContentDescriptorReusePolicy() {
