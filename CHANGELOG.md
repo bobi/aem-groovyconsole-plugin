@@ -3,15 +3,11 @@
 # aem-groovyconsole-plugin Changelog
 
 ## [Unreleased]
-### Changed
-- Updated script fields scope in editor
-
-## [0.4.3]
 ### Added
 - Added Table support in editor and console output
 
 ### Changed
-- Changed properties to variables in DSL
+- Changed properties to fields
 - Updated some DSL methods to return generic types instead of Object
 
 ## [0.4.2]
