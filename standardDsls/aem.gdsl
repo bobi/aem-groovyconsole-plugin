@@ -1,10 +1,10 @@
 package standardDsls
 
-def aemContext(final props) {
-    final def contextProps = props?.clone() ?: [:]
+def aemContext(final Map props) {
+    final Map contextProps = (props?.clone() as Map) ?: [:]
 
-    contextProps['filetypes'] = ['aemconsole']
-    contextProps['scope'] = contextProps['scope'] ?: scriptScope()
+    contextProps.filetypes = ['aemconsole']
+    contextProps.scope = contextProps.scope ?: scriptScope()
 
     return context(contextProps)
 }
@@ -83,6 +83,12 @@ contributor(aemContext()) {
             params: [predicates: Map.name],
             type: 'javax.jcr.query.Query',
             doc: 'Create a Query instance from the QueryBuilder for the current JCR session'
+
+    method name: 'table',
+            params: [closure: Closure.name],
+            type: 'org.cid15.aem.groovy.console.table.Table',
+            containingClass: 'org.cid15.aem.groovy.console.table.Table',
+            doc: 'Build Table output. Note: to output the table script must returns it'
 }
 
 contributor(aemContext(ctype: 'javax.servlet.ServletRequest')) {
@@ -160,4 +166,14 @@ contributor(aemContext(ctype: 'javax.jcr.Binary')) {
             params: [closure: Closure.name],
             type: Object.name,
             doc: 'Execute the closure and automatically dispose of the binary\'s resources when the closure completes. The closure accepts a single argument with the current binary instance'
+}
+
+contributor(aemContext()) {
+    def tableCall = enclosingCall("table")
+    if (tableCall) {
+        def clazz = tableCall.bind()?.containingClass
+        if ('org.cid15.aem.groovy.console.table.Table' == clazz?.qualName) {
+            delegatesTo(clazz)
+        }
+    }
 }

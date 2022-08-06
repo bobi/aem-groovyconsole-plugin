@@ -11,6 +11,7 @@ import com.intellij.psi.NonClasspathClassFinder
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.NonClasspathDirectoriesScope
+import org.cid15.aem.groovy.console.table.Table
 
 /**
  * User: Andrey Bardashevsky
@@ -19,12 +20,14 @@ import com.intellij.psi.search.NonClasspathDirectoriesScope
  */
 class AemScriptExtensionClassFinder(project: Project) : NonClasspathClassFinder(project) {
 
+    private val supportedPackages = classes.mapTo(HashSet<String>()) { it.`package`.name }
+
     override fun calcClassRoots(): List<VirtualFile> = roots
 
     override fun findClass(qualifiedName: String, scope: GlobalSearchScope): PsiClass? {
         val packageName = StringUtil.getPackageName(qualifiedName)
 
-        return if (NodeBuilder::class.java.`package`.name == packageName) {
+        return if (supportedPackages.contains(packageName)) {
             super.findClass(qualifiedName, scope.uniteWith(searchScope))
         } else {
             null
@@ -32,24 +35,28 @@ class AemScriptExtensionClassFinder(project: Project) : NonClasspathClassFinder(
     }
 
     companion object {
+        private val classes = listOf(NodeBuilder::class.java, Table::class.java)
+
         private val roots = buildClassesRoots()
 
         val searchScope = NonClasspathDirectoriesScope.compose(roots)
 
         private fun buildClassesRoots(): List<VirtualFile> {
-            val jarForClass = PathManager.getJarForClass(NodeBuilder::class.java)
+            return classes.mapNotNull { clazz ->
+                val jarForClass = PathManager.getJarForClass(clazz)
 
-            if (jarForClass != null) {
-                val virtualFile = VfsUtil.findFileByIoFile(jarForClass.toFile(), true)
-                if (virtualFile != null) {
-                    val classRoot = JarFileSystem.getInstance().getRootByLocal(virtualFile)
+                var classRoot: VirtualFile? = null
 
-                    if (classRoot != null) {
-                        return listOf(classRoot)
+                if (jarForClass != null) {
+                    val virtualFile = VfsUtil.findFileByIoFile(jarForClass.toFile(), true)
+
+                    if (virtualFile != null) {
+                        classRoot = JarFileSystem.getInstance().getRootByLocal(virtualFile)
                     }
                 }
+
+                return@mapNotNull classRoot
             }
-            return emptyList()
         }
     }
 }

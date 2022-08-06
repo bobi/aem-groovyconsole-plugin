@@ -1,4 +1,3 @@
-
 import org.jetbrains.changelog.markdownToHTML
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -41,6 +40,9 @@ qodana {
 
 dependencies {
     implementation("com.icfolson.aem.groovy.extension:aem-groovy-extension-bundle:7.0.0")
+    implementation("org.cid15.aem.groovy.console:aem-groovy-console-bundle:17.0.0") {
+        exclude(group = "org.osgi")
+    }
 }
 
 tasks {

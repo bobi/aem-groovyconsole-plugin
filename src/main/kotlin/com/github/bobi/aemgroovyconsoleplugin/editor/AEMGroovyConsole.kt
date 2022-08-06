@@ -70,6 +70,12 @@ class AEMGroovyConsole(
             runInEdt {
                 if (output.exceptionStackTrace.isBlank()) {
                     view.print(output.output, ConsoleViewContentType.NORMAL_OUTPUT)
+                    
+                    if (output.table != null) {
+                        ConsoleTableFormatter(output.table).print {
+                            view.print(it, ConsoleViewContentType.NORMAL_OUTPUT)
+                        }
+                    }
                 } else {
                     //This code relies on fact that AEM Groovy Console uses Script1.groovy as file name, so this code is highly dangerous
                     //In some obvious cases it could work incorrectly, but it provides user with better experience
