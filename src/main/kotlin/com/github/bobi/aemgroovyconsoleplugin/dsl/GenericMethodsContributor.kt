@@ -92,7 +92,6 @@ class GenericMethodsContributor : NonCodeMembersContributor() {
 
         method.originInfo = ORIGIN_INFO
         method.addModifier(PsiModifier.PUBLIC)
-        method.navigationElement = place
 
         if (!methodDescriptor.doc.isNullOrBlank()) {
             method.putUserData(NonCodeMembersHolder.DOCUMENTATION, methodDescriptor.doc)
