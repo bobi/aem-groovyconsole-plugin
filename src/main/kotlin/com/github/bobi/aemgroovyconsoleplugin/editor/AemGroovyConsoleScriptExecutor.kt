@@ -34,9 +34,9 @@ class AemGroovyConsoleScriptExecutor(
 
             doExecute(contentFile, config).whenComplete { output, error ->
                 if (error != null) {
-                    printError(error.localizedMessage)
+                    handleError(error.localizedMessage)
                 } else if (output != null) {
-                    printOutput(contentFile, output)
+                    handleOutput(contentFile, output)
                 }
 
                 executing.compareAndSet(true, false)
@@ -44,12 +44,16 @@ class AemGroovyConsoleScriptExecutor(
         }
     }
 
-    private fun printOutput(contentFile: VirtualFile, output: GroovyConsoleOutput) {
+    private fun handleOutput(contentFile: VirtualFile, output: GroovyConsoleOutput) {
         runInEdt {
             if (output.exceptionStackTrace.isBlank()) {
                 view.print(output.output, ConsoleViewContentType.NORMAL_OUTPUT)
 
                 if (output.table != null) {
+                    if (output.output.isNotBlank()) {
+                        view.print("\n", ConsoleViewContentType.NORMAL_OUTPUT)
+                    }
+
                     ConsoleTableFormatter(output.table).print {
                         view.print(it, ConsoleViewContentType.NORMAL_OUTPUT)
                     }
@@ -57,19 +61,16 @@ class AemGroovyConsoleScriptExecutor(
             } else {
                 //This code relies on fact that AEM Groovy Console uses Script1.groovy as file name, so this code is highly dangerous
                 //In some obvious cases it could work incorrectly, but it provides user with better experience
-                printError(
-                    output.exceptionStackTrace.replace(
-                        "Script1.groovy",
-                        contentFile.name
-                    )
-                )
+                handleError(output.exceptionStackTrace.replace("Script1.groovy", contentFile.name))
             }
 
-            view.print("\nExecution Time:${output.runningTime}", ConsoleViewContentType.LOG_WARNING_OUTPUT)
+            if (output.runningTime.isNotBlank()) {
+                view.print("\nExecution Time:${output.runningTime}", ConsoleViewContentType.LOG_WARNING_OUTPUT)
+            }
         }
     }
 
-    private fun printError(error: String) {
+    private fun handleError(error: String) {
         runInEdt {
             view.print(error, ConsoleViewContentType.ERROR_OUTPUT)
         }
