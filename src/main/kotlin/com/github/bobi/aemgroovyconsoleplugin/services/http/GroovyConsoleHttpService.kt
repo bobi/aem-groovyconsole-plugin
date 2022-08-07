@@ -7,6 +7,7 @@ import com.github.bobi.aemgroovyconsoleplugin.services.model.AemServerConfig
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import org.apache.http.HttpException
 import org.apache.http.HttpResponse
@@ -127,9 +128,7 @@ class GroovyConsoleHttpService : Disposable {
     companion object {
         private const val GROOVY_CONSOLE_PATH = "/bin/groovyconsole/post.json"
 
-        fun getInstance(project: Project): GroovyConsoleHttpService {
-            return project.getService(GroovyConsoleHttpService::class.java)
-        }
+        fun getInstance(project: Project): GroovyConsoleHttpService = project.service()
     }
 
     data class Output(val output: String, val runningTime: String, val exceptionStackTrace: String, val result: String?)

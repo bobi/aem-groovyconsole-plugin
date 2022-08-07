@@ -25,7 +25,10 @@
         <projectService
                 serviceImplementation="com.github.bobi.aemgroovyconsoleplugin.services.PersistentStateService"/>
 
-        <editorNotificationProvider implementation="com.github.bobi.aemgroovyconsoleplugin.editor.AemConsoleEditorDecorator"/>
+        <projectService serviceImplementation="com.github.bobi.aemgroovyconsoleplugin.editor.AemGroovyConsoleService"/>
+
+        <editorNotificationProvider
+                implementation="com.github.bobi.aemgroovyconsoleplugin.editor.AemConsoleEditorDecorator"/>
 
         <java.elementFinder
                 implementation="com.github.bobi.aemgroovyconsoleplugin.dsl.AemScriptExtensionClassFinder"/>
@@ -34,7 +37,8 @@
     </extensions>
 
     <actions>
-        <action id="AemConsole.NewScript" class="com.github.bobi.aemgroovyconsoleplugin.actions.NewAemConsoleScriptAction"
+        <action id="AemConsole.NewScript"
+                class="com.github.bobi.aemgroovyconsoleplugin.actions.NewAemConsoleScriptAction"
                 icon="JetgroovyIcons.Groovy.GroovyFile">
             <add-to-group group-id="NewGroup" anchor="last"/>
         </action>

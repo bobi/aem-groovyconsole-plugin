@@ -12,6 +12,7 @@ import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.actionSystem.ex.ComboBoxAction
 import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Key
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.JBUI.Fonts
 import java.awt.BorderLayout
@@ -115,6 +116,6 @@ class AemConsoleServerChooserAction(
     }
 
     companion object {
-        const val ADD_CONFIGURATION_MODE = "AddConfigurationMode"
+        val ADD_CONFIGURATION_MODE = Key.create<Boolean>("AddConfigurationMode")
     }
 }

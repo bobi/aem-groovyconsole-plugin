@@ -3,14 +3,13 @@
 # aem-groovyconsole-plugin Changelog
 
 ## [Unreleased]
-
-## [0.4.6]
 ### Added
 - Added Table support in editor and console output
 
 ### Changed
 - Changed properties to fields
 - Updated some DSL methods to return generic types instead of Object
+- Slight UI changes
 
 ## [0.4.2]
 ### Added
