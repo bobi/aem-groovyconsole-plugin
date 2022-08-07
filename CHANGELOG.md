@@ -3,6 +3,8 @@
 # aem-groovyconsole-plugin Changelog
 
 ## [Unreleased]
+
+## [0.4.8]
 ### Added
 - Added Table support in editor and console output
 
