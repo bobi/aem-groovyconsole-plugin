@@ -38,11 +38,15 @@ class ConsoleTableFormatter(private val table: GroovyConsoleTable) {
         postfix = String.format("-+%n")
     ) { "-".repeat(it) }
 
-    fun print(lineOutput: (line: String) -> Unit) {
-        lineOutput(horizontalSeparator)
-        lineOutput(String.format(formatString, *table.columns.toArray(emptyArray())))
-        lineOutput(horizontalSeparator)
-        table.rows.forEach { lineOutput(String.format(formatString, *it.toArray(emptyArray()))) }
-        lineOutput(horizontalSeparator)
+    fun print(lineConsumer: (line: String) -> Unit) {
+        lineConsumer(horizontalSeparator)
+        lineConsumer(String.format(formatString, *table.columns.toArray(emptyArray())))
+        lineConsumer(horizontalSeparator)
+
+        if (table.rows.isNotEmpty()) {
+            table.rows.forEach { lineConsumer(String.format(formatString, *it.toArray(emptyArray()))) }
+
+            lineConsumer(horizontalSeparator)
+        }
     }
 }
