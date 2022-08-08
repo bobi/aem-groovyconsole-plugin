@@ -9,7 +9,7 @@ import com.intellij.util.containers.toArray
  */
 class ConsoleTableFormatter(private val table: GroovyConsoleTable) {
 
-    private val columnLengths = IntArray(table.columns.size) { 0 }
+    private val columnLengths = IntArray(table.columns.size) { 1 }
         .also { arr ->
             table.columns.forEachIndexed { i, colValue ->
                 if (arr[i] < colValue.length) {
