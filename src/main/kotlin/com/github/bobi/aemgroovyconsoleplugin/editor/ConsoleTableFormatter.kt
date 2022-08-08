@@ -9,43 +9,44 @@ import com.intellij.util.containers.toArray
  */
 class ConsoleTableFormatter(private val table: GroovyConsoleTable) {
 
-    private fun calculateColumnLengths(): IntArray {
-        val columnLengths = IntArray(table.columns.size) { 0 }
-
-        table.columns.forEachIndexed {i, colValue ->
-            if (columnLengths[i] < colValue.length) {
-                columnLengths[i] = colValue.length
+    private val columnLengths = IntArray(table.columns.size) { 1 }
+        .also { arr ->
+            table.columns.forEachIndexed { i, colValue ->
+                if (arr[i] < colValue.length) {
+                    arr[i] = colValue.length
+                }
             }
-        }
 
-        table.rows.forEach { cols ->
-            cols.forEachIndexed { i, colValue ->
-                if (columnLengths[i] < colValue.length) {
-                    columnLengths[i] = colValue.length
+            table.rows.forEach { cols ->
+                cols.forEachIndexed { i, colValue ->
+                    if (arr[i] < colValue.length) {
+                        arr[i] = colValue.length
+                    }
                 }
             }
         }
 
-        return columnLengths
-    }
+    private val formatString = columnLengths.joinToString(
+        separator = " | ",
+        prefix = "| ",
+        postfix = " |%n"
+    ) { "%-${it}s" }
 
-    private fun buildFormatString(columnLengths: IntArray): String {
-        return columnLengths.map { "| %-${it}s " }.reduce { v1, v2 -> v1 + v2 } + "|%n"
-    }
+    private val horizontalSeparator = columnLengths.joinToString(
+        separator = "-+-",
+        prefix = "+-",
+        postfix = String.format("-+%n")
+    ) { "-".repeat(it) }
 
-    private fun buildHorizontalSeparator(columnLengths: IntArray): String {
-        return columnLengths.map { "+-${"-".repeat(it)}-" }.reduce { v1, v2 -> v1 + v2 } + String.format("+%n")
-    }
+    fun print(lineConsumer: (line: String) -> Unit) {
+        lineConsumer(horizontalSeparator)
+        lineConsumer(String.format(formatString, *table.columns.toArray(emptyArray())))
+        lineConsumer(horizontalSeparator)
 
-    fun print(lineOutput: (line: String) -> Unit) {
-        val columnLengths = calculateColumnLengths()
-        val formatString = buildFormatString(columnLengths)
-        val horizontalSeparator = buildHorizontalSeparator(columnLengths)
+        if (table.rows.isNotEmpty()) {
+            table.rows.forEach { lineConsumer(String.format(formatString, *it.toArray(emptyArray()))) }
 
-        lineOutput(horizontalSeparator)
-        lineOutput(String.format(formatString, *table.columns.toArray(emptyArray())))
-        lineOutput(horizontalSeparator)
-        table.rows.forEach { lineOutput(String.format(formatString, *it.toArray(emptyArray()))) }
-        lineOutput(horizontalSeparator)
+            lineConsumer(horizontalSeparator)
+        }
     }
 }
