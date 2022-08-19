@@ -3,6 +3,8 @@
 # aem-groovyconsole-plugin Changelog
 
 ## [Unreleased]
+### Changed
+- Script execution improvement
 
 ## [0.4.9]
 ### Changed

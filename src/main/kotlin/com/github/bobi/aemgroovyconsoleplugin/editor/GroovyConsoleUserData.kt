@@ -12,8 +12,6 @@ import com.intellij.openapi.vfs.VirtualFile
  */
 object GroovyConsoleUserData {
 
-    private val GROOVY_CONSOLES = Key.create<MutableMap<Long, AEMGroovyConsole>>("AEMGroovyConsoles")
-
     private val GROOVY_CONSOLE_CURRENT_SERVER_ID = Key.create<Long>("AEMGroovyConsoleCurrentServerId")
 
     fun VirtualFile.getCurrentAemServerId(): Long? = getUserData(GROOVY_CONSOLE_CURRENT_SERVER_ID)
@@ -28,23 +26,9 @@ object GroovyConsoleUserData {
         val serverId = getCurrentAemServerId()
 
         if (serverId != null) {
-            val stateService = PersistentStateService.getInstance(project)
-
-            return stateService.findById(serverId)
+            return PersistentStateService.getInstance(project).findById(serverId)
         }
 
         return null
-    }
-
-    internal fun VirtualFile.getConsole(serverId: Long): AEMGroovyConsole? {
-        return getUserData(GROOVY_CONSOLES)?.get(serverId)
-    }
-
-    internal fun VirtualFile.addConsole(serverId: Long, console: AEMGroovyConsole) {
-        putUserDataIfAbsent(GROOVY_CONSOLES, mutableMapOf())[serverId] = console
-    }
-
-    internal fun VirtualFile.removeConsole(serverId: Long): AEMGroovyConsole? {
-        return putUserDataIfAbsent(GROOVY_CONSOLES, mutableMapOf()).remove(serverId)
     }
 }
