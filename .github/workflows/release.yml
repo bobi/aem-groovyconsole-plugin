@@ -77,11 +77,11 @@ jobs:
           git config user.name "GitHub Action"
 
           git checkout -b $BRANCH
-          git commit -am "Changelog update - $VERSION [skip ci]"
+          git commit -am "Changelog update - $VERSION"
           git push --set-upstream origin $BRANCH
 
           gh pr create \
-            --title "Changelog update - \`$VERSION\`" \
+            --title "Changelog update - \`$VERSION\`" [skip ci]\
             --body "Current pull request contains patched \`CHANGELOG.md\` file for the \`$VERSION\` version." \
             --base main \
             --head $BRANCH

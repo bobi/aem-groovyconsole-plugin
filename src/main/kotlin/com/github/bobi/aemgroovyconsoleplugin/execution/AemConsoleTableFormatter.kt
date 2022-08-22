@@ -12,15 +12,15 @@ internal class AemConsoleTableFormatter(private val table: GroovyConsoleTable) {
     private val columnLengths = IntArray(table.columns.size) { 1 }
         .also { arr ->
             table.columns.forEachIndexed { i, colValue ->
-                if (arr[i] < colValue.length) {
-                    arr[i] = colValue.length
+                if (arr[i] < colValue.colOrNullLength()) {
+                    arr[i] = colValue.colOrNullLength()
                 }
             }
 
             table.rows.forEach { cols ->
                 cols.forEachIndexed { i, colValue ->
-                    if (arr[i] < colValue.length) {
-                        arr[i] = colValue.length
+                    if (arr[i] < colValue.colOrNullLength()) {
+                        arr[i] = colValue.colOrNullLength()
                     }
                 }
             }
@@ -37,6 +37,8 @@ internal class AemConsoleTableFormatter(private val table: GroovyConsoleTable) {
         prefix = "+-",
         postfix = String.format("-+%n")
     ) { "-".repeat(it) }
+
+    private fun CharSequence?.colOrNullLength() = this?.length ?: 4
 
     fun print(lineConsumer: (line: String) -> Unit) {
         lineConsumer(horizontalSeparator)
