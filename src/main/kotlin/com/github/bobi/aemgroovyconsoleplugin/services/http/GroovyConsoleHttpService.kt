@@ -8,6 +8,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.service
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import org.apache.http.HttpException
 import org.apache.http.HttpResponse
@@ -92,13 +93,21 @@ class GroovyConsoleHttpService : Disposable {
             var outputTable: OutputTable? = null
 
             if (!output.result.isNullOrBlank()) {
-                outputTable = StringReader(output.result).use {
-                    return@use gson.fromJson(it, OutputTable::class.java)
+                try {
+                    outputTable = StringReader(output.result).use {
+                        return@use gson.fromJson(it, OutputTable::class.java)
+                    }
+                } catch (e: Throwable) {
+                    thisLogger().info(e)
                 }
             }
 
             return GroovyConsoleOutput(
-                output = output.output,
+                output = if (output.output.isBlank() && outputTable == null && output.result != null) {
+                    output.result
+                } else {
+                    output.output
+                },
                 runningTime = output.runningTime,
                 exceptionStackTrace = output.exceptionStackTrace,
                 table = outputTable?.table
