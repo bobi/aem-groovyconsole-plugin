@@ -3,10 +3,9 @@
 # aem-groovyconsole-plugin Changelog
 
 ## [Unreleased]
-
-## [0.4.11]
 ### Changed
 - Console output improvement
+- Table output improvement
 
 ## [0.4.10]
 ### Changed
