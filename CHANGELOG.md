@@ -6,7 +6,6 @@
 ### Changed
 - Console output improvement
 - Table output improvement
-               
 
 ## [0.4.10]
 ### Changed
