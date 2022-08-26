@@ -1,7 +1,6 @@
-package com.github.bobi.aemgroovyconsoleplugin.editor
+package com.github.bobi.aemgroovyconsoleplugin.execution
 
 import com.github.bobi.aemgroovyconsoleplugin.editor.GroovyConsoleUserData.getCurrentAemConfig
-import com.github.bobi.aemgroovyconsoleplugin.execution.AemConsoleRunContentDescriptor
 import com.github.bobi.aemgroovyconsoleplugin.services.PersistentStateService
 import com.intellij.CommonBundle
 import com.intellij.execution.ExecutionBundle
@@ -28,17 +27,17 @@ import javax.swing.JPanel
  * User: Andrey Bardashevsky
  * Date/Time: 07.08.2022 18:33
  */
-class AemGroovyConsoleService(private val project: Project) {
+class AemGroovyConsoleScriptExecutor(private val project: Project) {
 
     fun execute(contentFile: VirtualFile) {
         val config = contentFile.getCurrentAemConfig(project) ?: return
 
         val oldDescriptor = findDescriptor(project, contentFile, config.id)
 
-        executeScript(oldDescriptor, contentFile, config.id)
+        doExecute(oldDescriptor, contentFile, config.id)
     }
 
-    private fun executeScript(
+    private fun doExecute(
         oldDescriptor: AemConsoleRunContentDescriptor?,
         contentFile: VirtualFile,
         serverId: Long
@@ -75,7 +74,7 @@ class AemGroovyConsoleService(private val project: Project) {
 
         private val documentManager = FileDocumentManager.getInstance()
 
-        fun getInstance(project: Project): AemGroovyConsoleService = project.service()
+        fun getInstance(project: Project): AemGroovyConsoleScriptExecutor = project.service()
 
         private fun getAllDescriptors(project: Project) =
             project.serviceIfCreated<RunContentManager>()?.allDescriptors ?: emptyList()
@@ -148,7 +147,7 @@ class AemGroovyConsoleService(private val project: Project) {
                 val descriptor = findDescriptor(project, component)
 
                 if (descriptor != null) {
-                    getInstance(project).executeScript(descriptor, descriptor.contentFile, descriptor.config.id)
+                    getInstance(project).doExecute(descriptor, descriptor.contentFile, descriptor.config.id)
                 }
             }
         }

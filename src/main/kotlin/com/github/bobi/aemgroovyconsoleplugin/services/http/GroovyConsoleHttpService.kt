@@ -55,7 +55,12 @@ class GroovyConsoleHttpService : Disposable {
             .build()
     }
 
-    fun execute(config: AemServerConfig, script: ByteArray): GroovyConsoleOutput {
+    fun execute(url: String, user: String, password: String, script: ByteArray) =
+        execute(createAemHttpConfig(url, user, password), script)
+
+    fun execute(config: AemServerConfig, script: ByteArray) = execute(createAemHttpConfig(config), script)
+
+    private fun execute(config: AemServerHttpConfig, script: ByteArray): GroovyConsoleOutput {
         val uri = URIBuilder().also {
             val configHostUri = URI.create(config.url)
 
@@ -73,7 +78,7 @@ class GroovyConsoleHttpService : Disposable {
                 cache.put(httpHost, BasicScheme())
             }
             context.credentialsProvider = BasicCredentialsProvider().also { credentialsProvider ->
-                credentialsProvider.setCredentials(AuthScope(httpHost), getCredentials(config))
+                credentialsProvider.setCredentials(AuthScope(httpHost), config.credentials)
             }
         }
 
@@ -113,21 +118,8 @@ class GroovyConsoleHttpService : Disposable {
                 table = outputTable?.table
             )
         } else {
-            throw HttpException("HTTP Error: ${response.statusLine}")
+            throw HttpException(response.statusLine.toString())
         }
-    }
-
-    private fun getCredentials(config: AemServerConfig): Credentials {
-        val credentials = PasswordsService.getCredentials(config.id)
-
-        val user = credentials?.userName.orEmpty()
-        val password = credentials?.getPasswordAsString().orEmpty()
-
-        if (user.isBlank() || password.isBlank()) {
-            throw IllegalArgumentException("Credentials is not found for server: ${config.id}")
-        }
-
-        return UsernamePasswordCredentials(user, password)
     }
 
     override fun dispose() {
@@ -138,10 +130,32 @@ class GroovyConsoleHttpService : Disposable {
         private const val GROOVY_CONSOLE_PATH = "/bin/groovyconsole/post.json"
 
         fun getInstance(project: Project): GroovyConsoleHttpService = project.service()
+
+        private fun getCredentials(config: AemServerConfig): Credentials {
+            val credentials = PasswordsService.getCredentials(config.id)
+
+            val user = credentials?.userName.orEmpty()
+            val password = credentials?.getPasswordAsString().orEmpty()
+
+            if (user.isBlank() || password.isBlank()) {
+                throw IllegalArgumentException("Credentials is not found for server: ${config.id}")
+            }
+
+            return UsernamePasswordCredentials(user, password)
+        }
+
+        private fun createAemHttpConfig(cfg: AemServerConfig): AemServerHttpConfig {
+            return AemServerHttpConfig(url = cfg.url, credentials = getCredentials(cfg))
+        }
+
+        private fun createAemHttpConfig(url: String, user: String, password: String): AemServerHttpConfig {
+            return AemServerHttpConfig(url = url, credentials = UsernamePasswordCredentials(user, password))
+        }
     }
 
-    data class Output(val output: String, val runningTime: String, val exceptionStackTrace: String, val result: String?)
+    private data class Output(val output: String, val runningTime: String, val exceptionStackTrace: String, val result: String?)
 
-    data class OutputTable(val table: GroovyConsoleTable)
+    private data class OutputTable(val table: GroovyConsoleTable)
 
+    private class AemServerHttpConfig(val url: String, val credentials: Credentials)
 }
