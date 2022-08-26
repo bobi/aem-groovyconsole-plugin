@@ -25,7 +25,7 @@
         <projectService
                 serviceImplementation="com.github.bobi.aemgroovyconsoleplugin.services.PersistentStateService"/>
 
-        <projectService serviceImplementation="com.github.bobi.aemgroovyconsoleplugin.editor.AemGroovyConsoleService"/>
+        <projectService serviceImplementation="com.github.bobi.aemgroovyconsoleplugin.execution.AemGroovyConsoleScriptExecutor"/>
 
         <editorNotificationProvider
                 implementation="com.github.bobi.aemgroovyconsoleplugin.editor.AemConsoleEditorDecorator"/>

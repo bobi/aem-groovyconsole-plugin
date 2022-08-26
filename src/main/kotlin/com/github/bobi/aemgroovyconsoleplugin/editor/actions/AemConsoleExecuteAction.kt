@@ -1,7 +1,7 @@
 package com.github.bobi.aemgroovyconsoleplugin.editor.actions
 
-import com.github.bobi.aemgroovyconsoleplugin.editor.AemGroovyConsoleService
 import com.github.bobi.aemgroovyconsoleplugin.editor.GroovyConsoleUserData.getCurrentAemServerId
+import com.github.bobi.aemgroovyconsoleplugin.execution.AemGroovyConsoleScriptExecutor
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -22,7 +22,7 @@ class AemConsoleExecuteAction : AnAction(AllIcons.Actions.Execute) {
         val virtualFile = CommonDataKeys.VIRTUAL_FILE.getData(e.dataContext)
 
         if (project != null && editor != null && virtualFile != null) {
-            AemGroovyConsoleService.getInstance(project).execute(virtualFile)
+            AemGroovyConsoleScriptExecutor.getInstance(project).execute(virtualFile)
         }
     }
 
