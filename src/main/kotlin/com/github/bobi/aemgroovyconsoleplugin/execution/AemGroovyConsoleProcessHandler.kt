@@ -53,7 +53,6 @@ class AemGroovyConsoleProcessHandler(
                 promise.setResult(httpService.execute(config, contentFile.contentsToByteArray()))
             } catch (th: Throwable) {
                 thisLogger().info(th)
-
                 promise.setError(th)
             }
         }

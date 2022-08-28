@@ -128,19 +128,18 @@ class AemServerEditDialog(private val project: Project, private val tableItem: A
                 }
             }
 
+            val req = object {
+                val url = urlField.text
+                val user = userField.text
+                val password = String(passwordField.password)
+                val script = "print('test')".toByteArray()
+            }
+
             runModalTask("Checking AEM Server Connection", project, false) {
                 try {
-                    promise.setResult(
-                        httpService.execute(
-                            urlField.text,
-                            userField.text,
-                            String(passwordField.password),
-                            "print('test')".toByteArray()
-                        )
-                    )
+                    promise.setResult(httpService.execute(req.url, req.user, req.password, req.script))
                 } catch (th: Throwable) {
                     thisLogger().info(th)
-
                     promise.setError(th)
                 }
             }
