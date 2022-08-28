@@ -41,11 +41,9 @@ class AemGroovyConsoleProcessHandler(
         val promise = AsyncPromise<GroovyConsoleOutput>().also {
             it.onSuccess { out ->
                 runInEdt { handleOutput(out) }
-
                 notifyProcessTerminated(0)
             }.onError { ex ->
                 runInEdt { printError(ex.localizedMessage) }
-
                 notifyProcessTerminated(1)
             }
         }
