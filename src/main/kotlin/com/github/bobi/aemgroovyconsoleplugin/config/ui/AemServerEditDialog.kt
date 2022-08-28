@@ -108,18 +108,14 @@ class AemServerEditDialog(private val project: Project, private val tableItem: A
             updateTestResult("")
 
             val promise = AsyncPromise<GroovyConsoleOutput>().also {
-                it.onSuccess {
-                    runInEdt {
-                        if (it.output == "test") {
-                            updateTestResult("Test success!")
-                        } else {
-                            updateTestResult("Test fail. Output: ${it.output}", true)
-                        }
+                it.onSuccess { out ->
+                    if (out.output == "test") {
+                        runInEdt { updateTestResult("Test success!") }
+                    } else {
+                        runInEdt { updateTestResult("Test fail. Output: ${out.output}", true) }
                     }
-                }.onError {
-                    runInEdt {
-                        updateTestResult("Test fail. Error: ${it.localizedMessage}", true)
-                    }
+                }.onError { ex ->
+                    runInEdt { updateTestResult("Test fail. Error: ${ex.localizedMessage}", true) }
                 }
             }
 

@@ -39,16 +39,12 @@ class AemGroovyConsoleProcessHandler(
         print("\nRunning AEM Script [${contentFile.name}] on ${config.url}\n\n")
 
         val promise = AsyncPromise<GroovyConsoleOutput>().also {
-            it.onSuccess {
-                runInEdt {
-                    handleOutput(it)
-                }
+            it.onSuccess { out ->
+                runInEdt { handleOutput(out) }
 
                 notifyProcessTerminated(0)
-            }.onError {
-                runInEdt {
-                    printError(it.localizedMessage)
-                }
+            }.onError { ex ->
+                runInEdt { printError(ex.localizedMessage) }
 
                 notifyProcessTerminated(1)
             }
