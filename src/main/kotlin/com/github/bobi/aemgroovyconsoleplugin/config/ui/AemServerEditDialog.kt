@@ -15,7 +15,6 @@ import com.intellij.ui.layout.ValidationInfoBuilder
 import com.intellij.ui.layout.panel
 import com.intellij.ui.layout.withTextBinding
 import org.jetbrains.concurrency.AsyncPromise
-import org.jetbrains.concurrency.Promise
 import java.awt.event.ActionEvent
 import javax.swing.Action
 import javax.swing.JComponent
@@ -36,9 +35,14 @@ class AemServerEditDialog(private val project: Project, private val tableItem: A
     )
 
     private lateinit var urlField: JBTextField
+
     private lateinit var userField: JBTextField
+
     private lateinit var passwordField: JPasswordField
+
     private lateinit var testResultField: JLabel
+
+    private lateinit var testServerAction: Action
 
     init {
         title = "Aem Server"
@@ -90,14 +94,18 @@ class AemServerEditDialog(private val project: Project, private val tableItem: A
         }
     }.withPreferredWidth(500)
 
-    override fun createActions(): Array<out Action> {
-        val testServerAction: Action = object : DialogWrapperAction("Test") {
+    override fun createDefaultActions() {
+        super.createDefaultActions()
+
+        testServerAction = object : DialogWrapperAction("Test") {
             override fun doAction(e: ActionEvent) {
                 testServer()
             }
         }
+    }
 
-        return arrayOf(testServerAction, okAction, cancelAction)
+    override fun createActions(): Array<out Action> {
+        return arrayOf(testServerAction, *super.createActions())
     }
 
     private fun testServer() {
@@ -108,20 +116,33 @@ class AemServerEditDialog(private val project: Project, private val tableItem: A
         if (validationInfos.isEmpty()) {
             updateTestResult("")
 
-            runTest(urlField.text, userField.text, String(passwordField.password))
-                .onSuccess {
-                    runInEdt {
-                        if (it.output == "test") {
-                            updateTestResult("Test success!")
-                        } else {
-                            updateTestResult("Test fail. Output: ${it.output}", true)
-                        }
+            val promise = AsyncPromise<GroovyConsoleOutput>().also {
+                it.onSuccess { out ->
+                    if (out.output == "test") {
+                        runInEdt { updateTestResult("Test success!") }
+                    } else {
+                        runInEdt { updateTestResult("Test fail. Output: ${out.output}", true) }
                     }
-                }.onError {
-                    runInEdt {
-                        updateTestResult("Test fail. Error: ${it.localizedMessage}", true)
-                    }
+                }.onError { ex ->
+                    runInEdt { updateTestResult("Test fail. Error: ${ex.localizedMessage}", true) }
                 }
+            }
+
+            val req = object {
+                val url = urlField.text
+                val user = userField.text
+                val password = String(passwordField.password)
+                val script = "print('test')".toByteArray()
+            }
+
+            runModalTask("Checking AEM Server Connection", project, false) {
+                try {
+                    promise.setResult(httpService.execute(req.url, req.user, req.password, req.script))
+                } catch (th: Throwable) {
+                    thisLogger().info(th)
+                    promise.setError(th)
+                }
+            }
         }
     }
 
@@ -129,22 +150,6 @@ class AemServerEditDialog(private val project: Project, private val tableItem: A
         testResultField.foreground = if (error) ERROR_FOREGROUND_COLOR else null
         testResultField.text = text
         testResultField.isVisible = text.isNotBlank()
-    }
-
-    private fun runTest(url: String, user: String, password: String): Promise<GroovyConsoleOutput> {
-        val promise = AsyncPromise<GroovyConsoleOutput>()
-
-        runModalTask("Checking AEM Server Connection", project, false) {
-            try {
-                promise.setResult(httpService.execute(url, user, password, "print('test')".toByteArray()))
-            } catch (th: Throwable) {
-                thisLogger().info(th)
-
-                promise.setError(th)
-            }
-        }
-
-        return promise
     }
 
     private fun ValidationInfoBuilder.validateNotEmpty(value: String): ValidationInfo? {
