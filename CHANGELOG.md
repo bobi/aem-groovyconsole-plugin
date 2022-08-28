@@ -3,6 +3,8 @@
 # aem-groovyconsole-plugin Changelog
 
 ## [Unreleased]
+
+## [0.4.15]
 ### Added
 - Added ability to test connection during server configuration
 
