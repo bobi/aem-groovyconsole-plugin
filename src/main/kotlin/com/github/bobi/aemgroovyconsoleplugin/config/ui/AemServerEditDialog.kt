@@ -15,7 +15,6 @@ import com.intellij.ui.layout.ValidationInfoBuilder
 import com.intellij.ui.layout.panel
 import com.intellij.ui.layout.withTextBinding
 import org.jetbrains.concurrency.AsyncPromise
-import org.jetbrains.concurrency.Promise
 import java.awt.event.ActionEvent
 import javax.swing.Action
 import javax.swing.JComponent
@@ -108,8 +107,8 @@ class AemServerEditDialog(private val project: Project, private val tableItem: A
         if (validationInfos.isEmpty()) {
             updateTestResult("")
 
-            runTest(urlField.text, userField.text, String(passwordField.password))
-                .onSuccess {
+            val promise = AsyncPromise<GroovyConsoleOutput>().also {
+                it.onSuccess {
                     runInEdt {
                         if (it.output == "test") {
                             updateTestResult("Test success!")
@@ -122,6 +121,24 @@ class AemServerEditDialog(private val project: Project, private val tableItem: A
                         updateTestResult("Test fail. Error: ${it.localizedMessage}", true)
                     }
                 }
+            }
+
+            runModalTask("Checking AEM Server Connection", project, false) {
+                try {
+                    promise.setResult(
+                        httpService.execute(
+                            urlField.text,
+                            userField.text,
+                            String(passwordField.password),
+                            "print('test')".toByteArray()
+                        )
+                    )
+                } catch (th: Throwable) {
+                    thisLogger().info(th)
+
+                    promise.setError(th)
+                }
+            }
         }
     }
 
@@ -129,22 +146,6 @@ class AemServerEditDialog(private val project: Project, private val tableItem: A
         testResultField.foreground = if (error) ERROR_FOREGROUND_COLOR else null
         testResultField.text = text
         testResultField.isVisible = text.isNotBlank()
-    }
-
-    private fun runTest(url: String, user: String, password: String): Promise<GroovyConsoleOutput> {
-        val promise = AsyncPromise<GroovyConsoleOutput>()
-
-        runModalTask("Checking AEM Server Connection", project, false) {
-            try {
-                promise.setResult(httpService.execute(url, user, password, "print('test')".toByteArray()))
-            } catch (th: Throwable) {
-                thisLogger().info(th)
-
-                promise.setError(th)
-            }
-        }
-
-        return promise
     }
 
     private fun ValidationInfoBuilder.validateNotEmpty(value: String): ValidationInfo? {

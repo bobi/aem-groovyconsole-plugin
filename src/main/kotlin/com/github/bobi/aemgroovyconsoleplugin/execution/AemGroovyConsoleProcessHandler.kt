@@ -13,7 +13,6 @@ import com.intellij.openapi.progress.runBackgroundableTask
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.concurrency.AsyncPromise
-import org.jetbrains.concurrency.Promise
 import java.io.OutputStream
 
 /**
@@ -39,28 +38,21 @@ class AemGroovyConsoleProcessHandler(
     private fun execute() {
         print("\nRunning AEM Script [${contentFile.name}] on ${config.url}\n\n")
 
-        doExecute(contentFile, config)
-            .onSuccess {
-                if (it != null) {
-                    runInEdt {
-                        handleOutput(it)
-                    }
+        val promise = AsyncPromise<GroovyConsoleOutput>().also {
+            it.onSuccess {
+                runInEdt {
+                    handleOutput(it)
                 }
 
                 notifyProcessTerminated(0)
             }.onError {
-                if (it != null) {
-                    runInEdt {
-                        printError(it.localizedMessage)
-                    }
+                runInEdt {
+                    printError(it.localizedMessage)
                 }
 
-                notifyProcessTerminated(-1)
+                notifyProcessTerminated(1)
             }
-    }
-
-    private fun doExecute(contentFile: VirtualFile, config: AemServerConfig): Promise<GroovyConsoleOutput> {
-        val promise = AsyncPromise<GroovyConsoleOutput>()
+        }
 
         runBackgroundableTask("Running AEM Script ${contentFile.name} on ${config.url}", project, false) {
             try {
@@ -71,8 +63,6 @@ class AemGroovyConsoleProcessHandler(
                 promise.setError(th)
             }
         }
-
-        return promise
     }
 
     private fun handleOutput(output: GroovyConsoleOutput) {
