@@ -8,6 +8,7 @@ import com.intellij.openapi.progress.runModalTask
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.ValidationInfo
+import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.PropertyBinding
@@ -99,7 +100,13 @@ class AemServerEditDialog(private val project: Project, private val tableItem: A
 
         testServerAction = object : DialogWrapperAction("Test") {
             override fun doAction(e: ActionEvent) {
-                testServer()
+                testConnectionToServer()
+            }
+        }
+        
+        okAction.addPropertyChangeListener {
+            if ("enabled" == it.propertyName) {
+                testServerAction.isEnabled = it.newValue as Boolean
             }
         }
     }
@@ -108,7 +115,7 @@ class AemServerEditDialog(private val project: Project, private val tableItem: A
         return arrayOf(testServerAction, *super.createActions())
     }
 
-    private fun testServer() {
+    private fun testConnectionToServer() {
         val validationInfos = doValidateAll()
 
         updateErrorInfo(validationInfos)
@@ -142,6 +149,12 @@ class AemServerEditDialog(private val project: Project, private val tableItem: A
                     thisLogger().info(th)
                     promise.setError(th)
                 }
+            }
+        } else {
+            val firstError = validationInfos.first()
+
+            if (firstError.component?.isVisible == true) {
+                IdeFocusManager.getInstance(null).requestFocus(firstError.component!!, true)
             }
         }
     }
