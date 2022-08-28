@@ -35,9 +35,14 @@ class AemServerEditDialog(private val project: Project, private val tableItem: A
     )
 
     private lateinit var urlField: JBTextField
+
     private lateinit var userField: JBTextField
+
     private lateinit var passwordField: JPasswordField
+
     private lateinit var testResultField: JLabel
+
+    private lateinit var testServerAction: Action
 
     init {
         title = "Aem Server"
@@ -89,14 +94,18 @@ class AemServerEditDialog(private val project: Project, private val tableItem: A
         }
     }.withPreferredWidth(500)
 
-    override fun createActions(): Array<out Action> {
-        val testServerAction: Action = object : DialogWrapperAction("Test") {
+    override fun createDefaultActions() {
+        super.createDefaultActions()
+
+        testServerAction = object : DialogWrapperAction("Test") {
             override fun doAction(e: ActionEvent) {
                 testServer()
             }
         }
+    }
 
-        return arrayOf(testServerAction, okAction, cancelAction)
+    override fun createActions(): Array<out Action> {
+        return arrayOf(testServerAction, *super.createActions())
     }
 
     private fun testServer() {
