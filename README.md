@@ -16,22 +16,22 @@ Powered by [AEM Groovy Console](https://github.com/OlsonDigital/aem-groovy-conso
 ## How to use
 * Configure AEM Server Settings tab
 
-![Screenshot Settings](readme/settings.png)
+![Screenshot Settings](.readme/settings.png)
        
 * Add Groovy Framework support into your project
 * Add AEM uber-jar into project classpath
 * Create new *.aemconsole* file
 
-![Screenshot](readme/new-file.png)
+![Screenshot](.readme/new-file.png)
 
 ### Code completion support
 
-![Screenshot](readme/code-completion.png)
-![Screenshot](readme/code-completion-1.png)
+![Screenshot](.readme/code-completion.png)
+![Screenshot](.readme/code-completion-1.png)
             
 ## Usage Example
 
-https://github.com/bobi/aem-groovyconsole-plugin/readme/usage.mp4
+https://youtu.be/1iL1Qhcp_x0
 
 ## How to get?
 
