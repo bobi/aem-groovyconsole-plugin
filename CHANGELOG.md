@@ -3,6 +3,8 @@
 # aem-groovyconsole-plugin Changelog
 
 ## [Unreleased]
+### Changed
+- Updated min supported Intellij version
 
 ## [0.4.16]
 ### Added
