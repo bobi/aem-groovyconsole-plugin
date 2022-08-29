@@ -41,11 +41,11 @@ class AemConsoleEditorToolbar(project: Project, fileEditor: FileEditor) : Editor
         val actionManager = ActionManager.getInstance()
 
         val leftToolbar = actionManager.createActionToolbar("LeftAemGroovyConsoleActionGroup", leftActionGroup, true).also {
-            it.setTargetComponent(this)
+            it.targetComponent = this
         }
 
         val rightToolbar = actionManager.createActionToolbar("RightAemGroovyConsoleActionGroup", rightActionGroup, true).also {
-            it.setTargetComponent(this)
+            it.targetComponent = this
         }
 
         this.add(leftToolbar.component, BorderLayout.WEST)
