@@ -30,6 +30,7 @@ Powered by [AEM Groovy Console](https://github.com/OlsonDigital/aem-groovy-conso
 ![Screenshot](readme/code-completion-1.png)
             
 ## Usage Example
+
 https://github.com/bobi/aem-groovyconsole-plugin/readme/usage.mp4
 
 ## How to get?
