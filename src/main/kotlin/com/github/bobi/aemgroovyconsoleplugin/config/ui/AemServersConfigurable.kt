@@ -1,17 +1,18 @@
 package com.github.bobi.aemgroovyconsoleplugin.config.ui
 
+import com.github.bobi.aemgroovyconsoleplugin.config.SettingsChangedNotifier
+import com.github.bobi.aemgroovyconsoleplugin.services.PasswordsService
+import com.github.bobi.aemgroovyconsoleplugin.services.PersistentStateService
+import com.github.bobi.aemgroovyconsoleplugin.services.model.AemServerConfig
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonShortcuts
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.project.Project
 import com.intellij.ui.ToolbarDecorator
-import com.intellij.ui.layout.CCFlags
-import com.intellij.ui.layout.panel
+import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.dsl.gridLayout.HorizontalAlign
+import com.intellij.ui.dsl.gridLayout.VerticalAlign
 import com.intellij.util.PlatformIcons
-import com.github.bobi.aemgroovyconsoleplugin.config.SettingsChangedNotifier
-import com.github.bobi.aemgroovyconsoleplugin.services.PasswordsService
-import com.github.bobi.aemgroovyconsoleplugin.services.PersistentStateService
-import com.github.bobi.aemgroovyconsoleplugin.services.model.AemServerConfig
 import javax.swing.JComponent
 
 
@@ -85,8 +86,11 @@ class AemServersConfigurable(private val project: Project) : Configurable {
         }
 
         row {
-            toolbarDecorator.createPanel()(CCFlags.grow, CCFlags.push)
-        }
+            cell(toolbarDecorator.createPanel())
+                .horizontalAlign(HorizontalAlign.FILL)
+                .verticalAlign(VerticalAlign.FILL)
+                .resizableColumn()
+        }.resizableRow()
     }
 
     override fun getDisplayName(): String {

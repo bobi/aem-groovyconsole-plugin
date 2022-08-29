@@ -9,15 +9,13 @@ import com.github.bobi.aemgroovyconsoleplugin.services.model.AemServerConfig
 import com.github.bobi.aemgroovyconsoleplugin.utils.AemFileTypeUtils.isAemFile
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.ui.EditorNotificationProvider
 import com.intellij.ui.EditorNotifications
+import java.util.function.Function
 import javax.swing.JComponent
 
-class AemConsoleEditorDecorator(project: Project) : EditorNotifications.Provider<JComponent>() {
-    companion object {
-        private val myKey = Key.create<JComponent>("aem.groovy.console.toolbar")
-    }
+class AemConsoleEditorDecorator(project: Project) : EditorNotificationProvider {
 
     init {
         val notifications = project.getService(EditorNotifications::class.java)
@@ -29,20 +27,21 @@ class AemConsoleEditorDecorator(project: Project) : EditorNotifications.Provider
         })
     }
 
-    override fun getKey(): Key<JComponent> = myKey
-
-    override fun createNotificationPanel(file: VirtualFile, fileEditor: FileEditor, project: Project): JComponent? {
+    override fun collectNotificationData(
+        project: Project,
+        file: VirtualFile
+    ): Function<in FileEditor, out JComponent?> {
         if (!file.isAemFile()) {
-            return null
+            return EditorNotificationProvider.CONST_NULL
         }
 
         val configFromFile = file.getCurrentAemConfig(project)
-        val availableServers = PersistentStateService.getInstance(project).getAEMServers()
 
-        val currentServer: AemServerConfig? = configFromFile ?: availableServers.firstOrNull()
+        val currentServer: AemServerConfig? = configFromFile
+            ?: PersistentStateService.getInstance(project).getAEMServers().firstOrNull()
 
         file.setCurrentAemServerId(currentServer?.id)
 
-        return AemConsoleEditorToolbar(project, fileEditor)
+        return Function<FileEditor, JComponent?> { AemConsoleEditorToolbar(project, it) }
     }
 }

@@ -8,13 +8,16 @@ import com.intellij.openapi.progress.runModalTask
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.ValidationInfo
+import com.intellij.openapi.util.text.HtmlBuilder
+import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.openapi.wm.IdeFocusManager
-import com.intellij.ui.components.JBLabel
+import com.intellij.ui.ColorUtil
 import com.intellij.ui.components.JBTextField
-import com.intellij.ui.layout.PropertyBinding
+import com.intellij.ui.dsl.builder.*
+import com.intellij.ui.dsl.gridLayout.HorizontalAlign
+import com.intellij.ui.dsl.gridLayout.VerticalAlign
 import com.intellij.ui.layout.ValidationInfoBuilder
-import com.intellij.ui.layout.panel
-import com.intellij.ui.layout.withTextBinding
+import com.intellij.util.ui.UIUtil
 import org.jetbrains.concurrency.AsyncPromise
 import java.awt.event.ActionEvent
 import javax.swing.Action
@@ -53,46 +56,61 @@ class AemServerEditDialog(private val project: Project, private val tableItem: A
 
     override fun createCenterPanel(): JComponent = panel {
         row("Server Name: ") {
-            textField({ tableItem.name }, { tableItem.name = it })
-                .withValidationOnInput { validateNotEmpty(it.text) }
-                .withValidationOnApply { validateNotEmpty(it.text) }
+            textField()
+                .horizontalAlign(HorizontalAlign.FILL)
+                .resizableColumn()
+                .bindText({ tableItem.name }, { tableItem.name = it })
+                .validationOnInput { validateNotEmpty(it.text) }
+                .validationOnApply { validateNotEmpty(it.text) }
                 .focused()
         }
 
         row("URL: ") {
-            urlField = textField({ tableItem.url }, { tableItem.url = it })
-                .withValidationOnInput { validateUrl(it.text) }
-                .withValidationOnApply { validateUrl(it.text) }
+            urlField = textField()
+                .horizontalAlign(HorizontalAlign.FILL)
+                .resizableColumn()
+                .bindText({ tableItem.url }, { tableItem.url = it })
+                .validationOnInput { validateUrl(it.text) }
+                .validationOnApply { validateUrl(it.text) }
                 .component
         }
 
         row("Username: ") {
-            userField = textField({ tableItem.user }, { tableItem.user = it })
-                .withValidationOnInput { validateNotEmpty(it.text) }
-                .withValidationOnApply { validateNotEmpty(it.text) }
+            userField = textField()
+                .horizontalAlign(HorizontalAlign.FILL)
+                .resizableColumn()
+                .bindText({ tableItem.user }, { tableItem.user = it })
+                .validationOnInput { validateNotEmpty(it.text) }
+                .validationOnApply { validateNotEmpty(it.text) }
                 .component
         }
 
         row("Password: ") {
-            val binding = PropertyBinding({ tableItem.password }, { tableItem.password = it })
-
-            passwordField = component(JPasswordField(binding.get(), 0)).withTextBinding(binding)
-                .withValidationOnInput { validateNotEmpty(String(it.password)) }
-                .withValidationOnApply { validateNotEmpty(String(it.password)) }
+            passwordField = cell(JPasswordField())
+                .columns(COLUMNS_SHORT)
+                .horizontalAlign(HorizontalAlign.FILL)
+                .resizableColumn()
+                .bind(
+                    JPasswordField::getPassword,
+                    { field, value -> field.text = String(value) },
+                    MutableProperty({ tableItem.password.toCharArray() }, { tableItem.password = String(it) })
+                )
+                .validationOnInput { validateNotEmpty(String(it.password)) }
+                .validationOnApply { validateNotEmpty(String(it.password)) }
                 .component
         }
 
         row {
-            cell {
-                testResultField = component(JBLabel().setAllowAutoWrapping(true).setCopyable(true))
-                    .constraints(grow)
-                    .component
-                    .also {
-                        it.isFocusable = false
-                        it.isVisible = false
-                    }
-            }
-        }
+            testResultField = label("")
+                .horizontalAlign(HorizontalAlign.FILL)
+                .verticalAlign(VerticalAlign.FILL)
+                .resizableColumn()
+                .component
+                .also {
+                    it.isFocusable = false
+                    it.isVisible = false
+                }
+        }.layout(RowLayout.INDEPENDENT).resizableRow()
     }.withPreferredWidth(500)
 
     override fun createDefaultActions() {
@@ -103,7 +121,7 @@ class AemServerEditDialog(private val project: Project, private val tableItem: A
                 testConnectionToServer()
             }
         }
-        
+
         okAction.addPropertyChangeListener {
             if ("enabled" == it.propertyName) {
                 testServerAction.isEnabled = it.newValue as Boolean
@@ -160,8 +178,15 @@ class AemServerEditDialog(private val project: Project, private val tableItem: A
     }
 
     private fun updateTestResult(text: String, error: Boolean = false) {
-        testResultField.foreground = if (error) ERROR_FOREGROUND_COLOR else null
-        testResultField.text = text
+        val preferredSize = testResultField.preferredSize
+        val color = if (error) UIUtil.getErrorForeground() else UIUtil.getLabelSuccessForeground()
+        val html = HtmlBuilder()
+            .append(HtmlChunk.raw(text).wrapWith(HtmlChunk.font(ColorUtil.toHex(color))))
+            .wrapWithHtmlBody().toString()
+
+        testResultField.text = html
+
+        testResultField.preferredSize = preferredSize
         testResultField.isVisible = text.isNotBlank()
     }
 
