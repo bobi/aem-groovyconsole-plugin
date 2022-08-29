@@ -95,7 +95,7 @@ class AemGroovyConsoleScriptExecutor(private val project: Project) {
 
                 val toolbar = ActionManager.getInstance()
                     .createActionToolbar("AemGroovyConsoleExecutorToolbar", toolbarActions, false).also {
-                        it.setTargetComponent(consoleComponent)
+                        it.targetComponent = consoleComponent
                     }
 
                 panel.add(consoleComponent, BorderLayout.CENTER)
