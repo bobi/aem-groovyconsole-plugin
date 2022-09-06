@@ -7,7 +7,7 @@ import com.intellij.openapi.project.Project
 
 @State(name = "AemScriptRoots")
 class RootFoldersService : PersistentStateComponent<RootFoldersService.State> {
-    var myState: State = State()
+    private var myState: State = State()
 
     override fun getState(): State {
         return myState
