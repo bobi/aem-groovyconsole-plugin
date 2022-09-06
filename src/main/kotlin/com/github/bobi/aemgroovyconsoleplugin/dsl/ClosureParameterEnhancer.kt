@@ -11,13 +11,6 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrRefere
 import org.jetbrains.plugins.groovy.lang.psi.typeEnhancers.AbstractClosureParameterEnhancer
 import org.jetbrains.plugins.groovy.lang.psi.util.isCompileStatic
 
-private const val CLASS_AEM_PAGE = "com.day.cq.wcm.api.Page"
-private const val CLASS_JCR_NODE = "javax.jcr.Node"
-private const val CLASS_BINARY = "javax.jcr.Binary"
-
-private const val METHOD_RECURSE = "recurse"
-private const val METHOD_WITH_BINARY = "withBinary"
-
 class ClosureParameterEnhancer : AbstractClosureParameterEnhancer() {
 
     override fun getClosureParameterType(expression: GrFunctionalExpression, index: Int): PsiType? {
@@ -46,17 +39,29 @@ class ClosureParameterEnhancer : AbstractClosureParameterEnhancer() {
         val psiClass = PsiTypesUtil.getPsiClass(qualifier.type) ?: return null
 
         if (psiClass.qualifiedName == CLASS_BINARY && methodName == METHOD_WITH_BINARY) {
-            return JavaPsiFacade.getElementFactory(expression.project).createTypeFromText(psiClass.qualifiedName!!, expression)
+            return JavaPsiFacade.getElementFactory(expression.project)
+                .createTypeFromText(psiClass.qualifiedName!!, expression)
         }
 
         if (psiClass.qualifiedName == CLASS_AEM_PAGE && methodName == METHOD_RECURSE) {
-            return JavaPsiFacade.getElementFactory(expression.project).createTypeFromText(psiClass.qualifiedName!!, expression)
+            return JavaPsiFacade.getElementFactory(expression.project)
+                .createTypeFromText(psiClass.qualifiedName!!, expression)
         }
 
         if (psiClass.qualifiedName == CLASS_JCR_NODE && methodName == METHOD_RECURSE) {
-            return JavaPsiFacade.getElementFactory(expression.project).createTypeFromText(psiClass.qualifiedName!!, expression)
+            return JavaPsiFacade.getElementFactory(expression.project)
+                .createTypeFromText(psiClass.qualifiedName!!, expression)
         }
 
         return null
+    }
+
+    companion object {
+        private const val CLASS_AEM_PAGE = "com.day.cq.wcm.api.Page"
+        private const val CLASS_JCR_NODE = "javax.jcr.Node"
+        private const val CLASS_BINARY = "javax.jcr.Binary"
+
+        private const val METHOD_RECURSE = "recurse"
+        private const val METHOD_WITH_BINARY = "withBinary"
     }
 }
