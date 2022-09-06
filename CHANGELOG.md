@@ -3,8 +3,11 @@
 # aem-groovyconsole-plugin Changelog
 
 ## [Unreleased]
+
+## [0.6.0]
 ### Added
 - Added support for regular groovy files in folders marked as AEM Scripts Source Root
+
 ### Changed
 - Improved display documentation
 - Bug fixes
