@@ -9,7 +9,7 @@ contributor([gdslScriptContext]) {
 def aemContext(final Map props) {
     final Map contextProps = props ?: [:]
 
-    contextProps.filetypes = ['aemconsole', 'groovy']
+    contextProps.scriptType = 'aemconsole'
     contextProps.scope = contextProps.scope ?: scriptScope()
 
     return context(contextProps)
