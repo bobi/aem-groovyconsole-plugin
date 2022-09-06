@@ -25,8 +25,11 @@
         <projectService
                 serviceImplementation="com.github.bobi.aemgroovyconsoleplugin.services.PersistentStateService"/>
 
-        <projectService serviceImplementation="com.github.bobi.aemgroovyconsoleplugin.execution.AemGroovyConsoleScriptExecutor"/>
+        <projectService
+                serviceImplementation="com.github.bobi.aemgroovyconsoleplugin.execution.AemGroovyConsoleScriptExecutor"/>
 
+        <projectService serviceImplementation="com.github.bobi.aemgroovyconsoleplugin.services.RootFoldersService"/>
+        
         <editorNotificationProvider
                 implementation="com.github.bobi.aemgroovyconsoleplugin.editor.AemConsoleEditorDecorator"/>
 
@@ -35,7 +38,8 @@
 
         <internalFileTemplate name="AemConsole Script"/>
 
-        <dependencySupport coordinate="com.adobe.aem:aem-sdk-api" kind="java" displayName="Adobe Experience Manager SDK"/>
+        <dependencySupport coordinate="com.adobe.aem:aem-sdk-api" kind="java"
+                           displayName="Adobe Experience Manager SDK"/>
         <dependencySupport coordinate="com.adobe.aem:uber-jar" kind="java" displayName="Adobe AEM Uber JAR"/>
     </extensions>
 
@@ -44,6 +48,15 @@
                 class="com.github.bobi.aemgroovyconsoleplugin.actions.NewAemConsoleScriptAction"
                 icon="JetgroovyIcons.Groovy.GroovyFile">
             <add-to-group group-id="NewGroup" anchor="last"/>
+        </action>
+        <!--suppress PluginXmlCapitalization -->
+        <action
+                id="MarkAsAemScriptsRootAction"
+                text="AEM Scripts Source Root"
+                description="AEM Scripts Source Root"
+                class="com.github.bobi.aemgroovyconsoleplugin.actions.MarkAsAemScriptsRootAction">
+
+            <add-to-group group-id="MarkRootGroup" anchor="last"/>
         </action>
     </actions>
 </idea-plugin>

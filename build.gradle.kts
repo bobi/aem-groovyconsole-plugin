@@ -61,7 +61,7 @@ tasks {
     }
 
     prepareSandbox {
-        from("${rootDir}/standardDsls") {
+        from("${rootDir}/src/main/resources/standardDsls") {
             into("${pluginName.get()}/lib/standardDsls")
             include("*.gdsl")
         }

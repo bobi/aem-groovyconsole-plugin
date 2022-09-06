@@ -1,5 +1,6 @@
 package com.github.bobi.aemgroovyconsoleplugin.actions
 
+import com.github.bobi.aemgroovyconsoleplugin.lang.AemConsoleScriptType
 import com.intellij.ide.actions.CreateFileFromTemplateDialog
 import com.intellij.ide.actions.JavaCreateTemplateInPackageAction
 import com.intellij.openapi.actionSystem.DataContext
@@ -8,10 +9,10 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.util.IncorrectOperationException
 import icons.JetgroovyIcons
-import com.github.bobi.aemgroovyconsoleplugin.lang.AemConsoleScriptType
 import org.jetbrains.plugins.groovy.actions.GroovyTemplatesFactory
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFile
 
+@Suppress("DialogTitleCapitalization")
 class NewAemConsoleScriptAction : JavaCreateTemplateInPackageAction<GroovyFile>(
     "Aem Console Script",
     "Creates a new Aem Console Script",

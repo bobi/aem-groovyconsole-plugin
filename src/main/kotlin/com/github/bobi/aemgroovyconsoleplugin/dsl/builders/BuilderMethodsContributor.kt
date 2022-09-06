@@ -1,4 +1,4 @@
-package com.github.bobi.aemgroovyconsoleplugin.dsl
+package com.github.bobi.aemgroovyconsoleplugin.dsl.builders
 
 import com.github.bobi.aemgroovyconsoleplugin.utils.AemFileTypeUtils.isAemFile
 import com.intellij.psi.CommonClassNames.JAVA_LANG_OBJECT

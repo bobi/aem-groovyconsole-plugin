@@ -1,4 +1,4 @@
-package com.github.bobi.aemgroovyconsoleplugin.dsl
+package com.github.bobi.aemgroovyconsoleplugin.dsl.builders
 
 import com.icfolson.aem.groovy.extension.builders.PageBuilder
 

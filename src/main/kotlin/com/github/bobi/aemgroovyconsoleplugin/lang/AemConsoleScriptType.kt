@@ -1,8 +1,8 @@
 package com.github.bobi.aemgroovyconsoleplugin.lang
 
+import com.github.bobi.aemgroovyconsoleplugin.dsl.AemScriptExtensionClassFinder
 import com.intellij.psi.search.GlobalSearchScope
 import icons.JetgroovyIcons
-import com.github.bobi.aemgroovyconsoleplugin.dsl.AemScriptExtensionClassFinder
 import org.jetbrains.plugins.groovy.extensions.GroovyRunnableScriptType
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFile
 import javax.swing.Icon
@@ -19,7 +19,6 @@ class AemConsoleScriptType : GroovyRunnableScriptType(EXTENSION) {
         return baseScope.uniteWith(AemScriptExtensionClassFinder.searchScope)
             .uniteWith(GlobalSearchScope.allScope(file.project))
     }
-
 
     companion object {
         const val EXTENSION = "aemconsole"

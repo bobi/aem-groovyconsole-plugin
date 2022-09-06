@@ -31,7 +31,7 @@ class AemConsoleEditorDecorator(project: Project) : EditorNotificationProvider {
         project: Project,
         file: VirtualFile
     ): Function<in FileEditor, out JComponent?> {
-        if (!file.isAemFile()) {
+        if (!file.isAemFile(project)) {
             return EditorNotificationProvider.CONST_NULL
         }
 

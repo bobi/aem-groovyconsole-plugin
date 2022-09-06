@@ -4,6 +4,7 @@ import com.github.bobi.aemgroovyconsoleplugin.utils.AemFileTypeUtils.isAemFile
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFile
 import org.jetbrains.plugins.groovy.lang.resolve.imports.GrImportContributor
 import org.jetbrains.plugins.groovy.lang.resolve.imports.GroovyImport
+import org.jetbrains.plugins.groovy.lang.resolve.imports.RegularImport
 import org.jetbrains.plugins.groovy.lang.resolve.imports.StarImport
 
 
@@ -24,7 +25,14 @@ class AemImportContributor : GrImportContributor {
         "org.apache.sling.api.resource"
     )
 
-    private val imports: List<GroovyImport> by lazy { packageImports.map(::StarImport) }
+    private val classImports = listOf(
+        "com.icfolson.aem.groovy.extension.builders.PageBuilder",
+        "com.icfolson.aem.groovy.extension.builders.NodeBuilder"
+    )
+
+    private val imports: List<GroovyImport> by lazy {
+        packageImports.map(::StarImport) + classImports.map(::RegularImport)
+    }
 
     override fun getFileImports(file: GroovyFile): List<GroovyImport> = if (file.isAemFile()) imports else emptyList()
 }

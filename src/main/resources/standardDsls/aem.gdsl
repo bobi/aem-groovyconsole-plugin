@@ -1,0 +1,210 @@
+package standardDsls
+
+def gdslScriptContext = context(scope: scriptScope(), filetypes:['gdsl'])
+
+contributor([gdslScriptContext]) {
+    method name: "isAemFile", type: boolean
+}
+
+def aemContext(final Map props) {
+    final Map contextProps = props ?: [:]
+
+    contextProps.filetypes = ['aemconsole', 'groovy']
+    contextProps.scope = contextProps.scope ?: scriptScope()
+
+    return context(contextProps)
+}
+
+static String doc(final String doc) {
+    return "<div class='content'>${doc}</div>"
+}
+
+contributor(aemContext()) {
+    if (!isAemFile()) {
+        return
+    }
+
+    method name: 'getPage',
+            params: [path: String.name],
+            type: 'com.day.cq.wcm.api.Page',
+            doc: doc('Get the Page for the given path, or null if it does not exist')
+
+    method name: 'getNode',
+            params: [path: String.name],
+            type: 'javax.jcr.Node',
+            doc: doc('Get the Node for the given path. Throws javax.jcr.RepositoryException if it does not exist')
+
+    method name: 'getResource',
+            params: [path: String.name],
+            type: 'org.apache.sling.api.resource.Resource',
+            doc: doc('Get the Resource for the given path, or null if it does not exist')
+
+    method name: 'getService',
+            params: [className: String.name],
+            type: Object.name,
+            doc: doc('Get the OSGi service instance for the class name')
+
+    method name: 'getServices',
+            params: [className: String.name, filter: String.name],
+            type: List.name,
+            doc: doc('Get OSGi services for the given class name and filter expression')
+
+    method name: 'copy',
+            params: [sourceAbsolutePath: String.name, destinationAbsolutePath: String.name],
+            type: void,
+            doc: doc('Groovy DSL syntax for copying a node, equivalent to calling session.workspace.copy(sourceAbsolutePath, destinationAbsolutePath)')
+    method name: 'move',
+            params: [sourceAbsolutePath: String.name, destinationAbsolutePath: String.name],
+            type: void,
+            doc: doc('Groovy DSL syntax for moving a node, equivalent to calling session.move(sourceAbsolutePath, destinationAbsolutePath), <b>except that the Session is saved automatically when the move is completed</b>')
+    method name: 'rename',
+            params: [node: 'javax.jcr.Node', newName: String.name],
+            type: void,
+            doc: doc('Groovy DSL syntax for renaming a node, similar to calling session.move(sourceAbsolutePath, destinationAbsolutePath) with the new node name, <b>except that the renamed node will retain its order and the Session is saved automatically when the rename is completed.</b>')
+
+    method name: 'save',
+            type: void,
+            doc: doc('Save the current JCR session')
+
+    method name: 'activate',
+            params: [path: String.name],
+            type: void,
+            doc: doc('Activate the node at the given path')
+    method name: 'activate',
+            params: [path: String.name, options: 'com.day.cq.replication.ReplicationOptions'],
+            type: void,
+            doc: doc('Activate the node at the given path with supplied options')
+
+    method name: 'deactivate',
+            params: [path: String.name],
+            type: void,
+            doc: doc('Deactivate the node at the given path')
+    method name: 'deactivate',
+            params: [path: String.name, options: 'com.day.cq.replication.ReplicationOptions'],
+            type: void,
+            doc: doc('Deactivate the node at the given path with supplied options')
+
+    method name: 'createQuery',
+            params: [predicates: Map.name],
+            type: 'javax.jcr.query.Query',
+            doc: doc('Create a Query instance from the QueryBuilder for the current JCR session')
+
+    method name: 'table',
+            params: [closure: Closure.name],
+            type: 'org.cid15.aem.groovy.console.table.Table',
+            containingClass: 'org.cid15.aem.groovy.console.table.Table',
+            doc: doc('Build Table output. Note: to output the table script must returns it')
+}
+
+contributor(aemContext(ctype: 'javax.servlet.ServletRequest')) {
+    if (!isAemFile()) {
+        return
+    }
+
+    method name: 'getAt',
+            params: [parameterName: String.name],
+            type: Object.name,
+            doc: doc('Subscript operator to get a request parameter value.  If the value is an array, a list will be returned')
+}
+
+contributor(aemContext(ctype: 'com.day.cq.wcm.api.Page')) {
+    if (!isAemFile()) {
+        return
+    }
+
+    method name: 'iterator',
+            type: Iterator.name,
+            doc: doc('Allows usage of Groovy closure operators (<code>each</code>, <code>eachWithIndex</code>) to iterate over child pages of the current page')
+    method name: 'recurse',
+            params: [closure: Closure.name],
+            type: void,
+            doc: doc('Recursively invoke this closure on each descendant page of the current page')
+    method name: 'getNode',
+            type: 'javax.jcr.Node',
+            doc: doc('Get the <code>jcr:content</code> node of the current page, returning null if it does not exist')
+    method name: 'get',
+            params: [propertyName: String.name],
+            type: Object.name,
+            doc: doc('Get the named property value from the <code>jcr:content</code> node of the current page, with the return type determined dynamically by <code>javax.jcr.Property#getType()</code>')
+    method name: 'set',
+            params: [propertyName: String.name, value: Object.name],
+            type: void,
+            doc: doc('Set the named property value on the <code>jcr:content</code> node of the current page')
+}
+
+contributor(aemContext(ctype: 'javax.jcr.Node')) {
+    if (!isAemFile()) {
+        return
+    }
+
+    method name: 'iterator',
+            type: Iterator.name,
+            doc: doc('Allows usage of Groovy closure operators (<code>each</code>, <code>eachWithIndex</code>) to iterate over child nodes of the current node')
+    method name: 'recurse',
+            params: [closure: Closure.name],
+            type: void,
+            doc: doc('Recursively invoke this closure on each descendant node of the current node')
+    method name: 'recurse',
+            params: [primaryNodeTypeName: String.name, closure: Closure.name],
+            type: void,
+            doc: doc('Recursively invoke this closure on each descendant node of the current node that matches the given node type')
+    method name: 'recurse',
+            params: [primaryNodeTypeNames: Collection.name, closure: Closure.name],
+            type: void,
+            doc: doc('Recursively invoke this closure on each descendant node of the current node that matches any of the given node types')
+    method name: 'get',
+            params: [propertyName: String.name],
+            type: Object.name,
+            doc: doc('Get the named property value, with the return type determined dynamically by <code>javax.jcr.Property#getType()</code>')
+    method name: 'set',
+            params: [propertyName: String.name, value: Object.name],
+            type: void,
+            doc: doc('Set the named property value. An array value argument can be used to set multi-valued properties')
+    method name: 'set',
+            params: [properties: Map.name],
+            type: void,
+            doc: doc('Set properties using the key/value pairs in the map as the property names/values')
+    method name: 'getOrAddNode',
+            params: [name: String.name],
+            type: 'javax.jcr.Node',
+            doc: doc('Get the named child node if it exists; otherwise, add it')
+    method name: 'getOrAddNode',
+            params: [name: String.name, primaryNodeTypeName: String.name],
+            type: 'javax.jcr.Node',
+            doc: doc('Get the named child node if it exists; otherwise, add it with the given node type')
+    method name: 'removeNode',
+            params: [name: String.name],
+            type: boolean,
+            doc: doc('Remove the child node with the given name, returning true if the node was removed')
+    method name: 'getNextSibling',
+            type: 'javax.jcr.Node',
+            doc: doc('Get next node')
+    method name: 'getPrevSibling',
+            type: 'javax.jcr.Node',
+            doc: doc('Get previous node')
+}
+
+contributor(aemContext(ctype: 'javax.jcr.Binary')) {
+    if (!isAemFile()) {
+        return
+    }
+
+    method name: 'withBinary',
+            params: [closure: Closure.name],
+            type: Object.name,
+            doc: doc('Execute the closure and automatically dispose of the binary\'s resources when the closure completes. The closure accepts a single argument with the current binary instance')
+}
+
+contributor(aemContext(scope: closureScope(methodName: 'table', isArg: true))) {
+    if (!isAemFile()) {
+        return
+    }
+
+    def tableCall = enclosingCall("table")
+    if (tableCall) {
+        def clazz = tableCall.bind()?.containingClass
+        if ('org.cid15.aem.groovy.console.table.Table' == clazz?.qualifiedName) {
+            delegatesTo(clazz)
+        }
+    }
+}

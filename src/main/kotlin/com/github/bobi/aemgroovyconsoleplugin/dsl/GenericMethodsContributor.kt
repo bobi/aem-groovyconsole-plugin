@@ -1,6 +1,7 @@
 package com.github.bobi.aemgroovyconsoleplugin.dsl
 
 import com.github.bobi.aemgroovyconsoleplugin.utils.AemFileTypeUtils.isAemFile
+import com.intellij.lang.documentation.DocumentationMarkup
 import com.intellij.patterns.PsiJavaPatterns
 import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.*
@@ -50,7 +51,7 @@ class GenericMethodsContributor : NonCodeMembersContributor() {
                 ),
                 ParameterDescriptor(name = "filter", type = TypeDescriptor(fqn = CommonClassNames.JAVA_LANG_STRING))
             ),
-            doc = "Get an instance of a Sling Model class for the Resource at the given path"
+            doc = "Get OSGi services for the given type and filter expression"
         ),
         MethodDescriptor(
             name = "getModel",
@@ -62,7 +63,7 @@ class GenericMethodsContributor : NonCodeMembersContributor() {
                     type = TypeDescriptor(fqn = CommonClassNames.JAVA_LANG_CLASS, generic = true)
                 )
             ),
-            doc = "Get OSGi services for the given type and filter expression"
+            doc = "Get an instance of a Sling Model class for the Resource at the given path"
         )
     )
 
@@ -94,7 +95,10 @@ class GenericMethodsContributor : NonCodeMembersContributor() {
         method.addModifier(PsiModifier.PUBLIC)
 
         if (!methodDescriptor.doc.isNullOrBlank()) {
-            method.putUserData(NonCodeMembersHolder.DOCUMENTATION, methodDescriptor.doc)
+            method.putUserData(
+                NonCodeMembersHolder.DOCUMENTATION,
+                DocumentationMarkup.CONTENT_START + methodDescriptor.doc + DocumentationMarkup.CONTENT_END
+            )
         }
 
         val genericType: PsiClassType = TypesUtil.createType(method.addTypeParameter("T"), place)
@@ -124,7 +128,7 @@ class GenericMethodsContributor : NonCodeMembersContributor() {
     }
 
     companion object {
-        private const val ORIGIN_INFO = "via AemGenericMethodsBuilder"
+        private const val ORIGIN_INFO = "via AemGenericMethodsContributor"
     }
 
     data class MethodDescriptor(
