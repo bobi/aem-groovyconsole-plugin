@@ -3,6 +3,8 @@
 # aem-groovyconsole-plugin Changelog
 
 ## [Unreleased]
+
+## [0.6.1]
 ### Changed
 - Improved detection of AEM scripts
 
