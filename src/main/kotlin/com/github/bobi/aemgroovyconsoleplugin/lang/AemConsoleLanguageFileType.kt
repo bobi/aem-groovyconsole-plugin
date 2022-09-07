@@ -5,7 +5,7 @@ import icons.JetgroovyIcons
 import org.jetbrains.plugins.groovy.GroovyLanguage
 import javax.swing.Icon
 
-object AemConsoleLanguageFileType : LanguageFileType(GroovyLanguage) {
+object AemConsoleLanguageFileType : LanguageFileType(GroovyLanguage, true) {
 
     override fun getIcon(): Icon = JetgroovyIcons.Groovy.GroovyFile
     override fun getName(): String = "AemConsole"

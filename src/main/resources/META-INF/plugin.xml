@@ -11,7 +11,6 @@
     <extensions defaultExtensionNs="com.intellij">
         <fileType name="AemConsole"
                   extensions="aemconsole"
-                  language="Groovy"
                   implementationClass="com.github.bobi.aemgroovyconsoleplugin.lang.AemConsoleLanguageFileType"
                   fieldName="INSTANCE"
         />

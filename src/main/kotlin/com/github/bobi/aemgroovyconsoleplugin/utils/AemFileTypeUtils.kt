@@ -1,5 +1,6 @@
 package com.github.bobi.aemgroovyconsoleplugin.utils
 
+import com.github.bobi.aemgroovyconsoleplugin.lang.AemConsoleLanguageFileType
 import com.github.bobi.aemgroovyconsoleplugin.lang.AemConsoleScriptType
 import com.github.bobi.aemgroovyconsoleplugin.services.RootFoldersService
 import com.intellij.openapi.fileTypes.LanguageFileType
@@ -17,15 +18,21 @@ import org.jetbrains.plugins.groovy.GroovyLanguage
 @Suppress("unused")
 object AemFileTypeUtils {
 
-    private fun VirtualFile.isGroovyEnabledFileType(): Boolean {
-        val ft = fileType
+    private fun VirtualFile.isAemFileType(project: Project): Boolean {
+        val fileType = this.fileType
 
-        return ft is GroovyEnabledFileType || ft is LanguageFileType && ft.language === GroovyLanguage
+        return if (fileType is AemConsoleLanguageFileType) {
+            true
+        } else {
+            val isGroovyFileType = fileType is GroovyEnabledFileType
+                    || (fileType is LanguageFileType && fileType.language === GroovyLanguage)
+
+            isGroovyFileType && RootFoldersService.getInstance(project).isInsideAnyRoot(path)
+        }
     }
 
     fun VirtualFile.isAemFile(project: Project): Boolean {
-        return extension == AemConsoleScriptType.EXTENSION
-                || (isGroovyEnabledFileType() && RootFoldersService.getInstance(project).isInsideAnyRoot(path))
+        return extension == AemConsoleScriptType.EXTENSION || isAemFileType(project)
     }
 
     fun PsiElement.isAemFile(): Boolean {
