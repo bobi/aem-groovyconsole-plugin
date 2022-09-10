@@ -1,10 +1,39 @@
 package standardDsls
 
-def gdslScriptContext = context(scope: scriptScope(), filetypes:['gdsl'])
+import groovy.transform.Field
+
+def gdslScriptContext = context(scope: scriptScope(), filetypes: ['gdsl'])
 
 contributor([gdslScriptContext]) {
-    method name: "isAemFile", type: boolean
+    method name: 'isAemFile', type: boolean
+
+    method name: 'field',
+            params: [
+                    args: [
+                            parameter(name: 'name', type: String.name, doc: doc('Field name')),
+                            parameter(name: 'type', type: Object.name, doc: doc('Field type name')),
+                            parameter(name: 'doc', type: String.name, doc: doc('Field documentation text')),
+                    ]
+            ],
+            type: void,
+            doc: 'Describe a DSL field'
+
+    method name: "genericMethod",
+            type: "void",
+            params: [
+                    args: [
+                            parameter(name: 'name', type: String.name, doc: 'Method name'),
+                            parameter(name: 'genericTypes', type: List.name, doc: 'List of generic types'),
+                            parameter(name: 'params', type: Map.name, doc: 'A map representing method parameters'),
+                            parameter(name: 'type', type: Object.name, doc: 'Return type name of the method'),
+                            parameter(name: 'doc', type: String.name, doc: 'Method documentation text'),
+                    ]
+            ],
+            doc: 'Describe a DSL method'
+
 }
+
+@Field static final String TABLE_CLASS = 'org.cid15.aem.groovy.console.table.Table'
 
 def aemContext(final Map props) {
     final Map contextProps = props ?: [:]
@@ -20,9 +49,18 @@ static String doc(final String doc) {
 }
 
 contributor(aemContext()) {
-    if (!isAemFile()) {
-        return
-    }
+
+    field name: 'log', type: 'org.slf4j.Logger'
+    field name: 'session', type: 'javax.jcr.Session'
+    field name: 'pageManager', type: 'com.day.cq.wcm.api.PageManager'
+    field name: 'resourceResolver', type: 'org.apache.sling.api.resource.ResourceResolver'
+    field name: 'queryBuilder', type: 'com.day.cq.search.QueryBuilder'
+    field name: 'nodeBuilder', type: 'com.icfolson.aem.groovy.extension.builders.NodeBuilder'
+    field name: 'pageBuilder', type: 'com.icfolson.aem.groovy.extension.builders.PageBuilder'
+    field name: 'bundleContext', type: 'org.osgi.framework.BundleContext'
+    field name: 'out', type: 'java.io.PrintStream'
+    field name: 'slingRequest', type: 'org.apache.sling.api.SlingHttpServletRequest'
+    field name: 'slingResponse', type: 'org.apache.sling.api.SlingHttpServletResponse'
 
     method name: 'getPage',
             params: [path: String.name],
@@ -43,11 +81,27 @@ contributor(aemContext()) {
             params: [className: String.name],
             type: Object.name,
             doc: doc('Get the OSGi service instance for the class name')
+    genericMethod name: 'getService',
+            genericTypes: ['T'],
+            params: [type: 'java.lang.Class<T>'],
+            type: 'T',
+            doc: doc('Get the OSGi service instance for the given type')
 
     method name: 'getServices',
             params: [className: String.name, filter: String.name],
             type: List.name,
             doc: doc('Get OSGi services for the given class name and filter expression')
+    genericMethod name: 'getServices',
+            genericTypes: ['T'],
+            params: [type: 'java.lang.Class<T>', filter: String.name],
+            type: 'java.util.List<T>',
+            doc: doc('Get OSGi services for the given type and filter expression')
+
+    genericMethod name: 'getModel',
+            genericTypes: ['T'],
+            params: [path: String.name, type: 'java.lang.Class<T>'],
+            type: 'T',
+            doc: doc('Get an instance of a Sling Model class for the Resource at the given path')
 
     method name: 'copy',
             params: [sourceAbsolutePath: String.name, destinationAbsolutePath: String.name],
@@ -91,16 +145,12 @@ contributor(aemContext()) {
 
     method name: 'table',
             params: [closure: Closure.name],
-            type: 'org.cid15.aem.groovy.console.table.Table',
-            containingClass: 'org.cid15.aem.groovy.console.table.Table',
+            type: TABLE_CLASS,
+            containingClass: TABLE_CLASS,
             doc: doc('Build Table output. Note: to output the table script must returns it')
 }
 
 contributor(aemContext(ctype: 'javax.servlet.ServletRequest')) {
-    if (!isAemFile()) {
-        return
-    }
-
     method name: 'getAt',
             params: [parameterName: String.name],
             type: Object.name,
@@ -108,10 +158,6 @@ contributor(aemContext(ctype: 'javax.servlet.ServletRequest')) {
 }
 
 contributor(aemContext(ctype: 'com.day.cq.wcm.api.Page')) {
-    if (!isAemFile()) {
-        return
-    }
-
     method name: 'iterator',
             type: Iterator.name,
             doc: doc('Allows usage of Groovy closure operators (<code>each</code>, <code>eachWithIndex</code>) to iterate over child pages of the current page')
@@ -133,10 +179,6 @@ contributor(aemContext(ctype: 'com.day.cq.wcm.api.Page')) {
 }
 
 contributor(aemContext(ctype: 'javax.jcr.Node')) {
-    if (!isAemFile()) {
-        return
-    }
-
     method name: 'iterator',
             type: Iterator.name,
             doc: doc('Allows usage of Groovy closure operators (<code>each</code>, <code>eachWithIndex</code>) to iterate over child nodes of the current node')
@@ -185,10 +227,6 @@ contributor(aemContext(ctype: 'javax.jcr.Node')) {
 }
 
 contributor(aemContext(ctype: 'javax.jcr.Binary')) {
-    if (!isAemFile()) {
-        return
-    }
-
     method name: 'withBinary',
             params: [closure: Closure.name],
             type: Object.name,
@@ -196,14 +234,10 @@ contributor(aemContext(ctype: 'javax.jcr.Binary')) {
 }
 
 contributor(aemContext(scope: closureScope(methodName: 'table', isArg: true))) {
-    if (!isAemFile()) {
-        return
-    }
-
-    def tableCall = enclosingCall("table")
+    def tableCall = enclosingCall('table')
     if (tableCall) {
         def clazz = tableCall.bind()?.containingClass
-        if ('org.cid15.aem.groovy.console.table.Table' == clazz?.qualifiedName) {
+        if (TABLE_CLASS == clazz?.qualifiedName) {
             delegatesTo(clazz)
         }
     }

@@ -11,13 +11,15 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrRefere
 import org.jetbrains.plugins.groovy.lang.psi.typeEnhancers.AbstractClosureParameterEnhancer
 import org.jetbrains.plugins.groovy.lang.psi.util.isCompileStatic
 
-class ClosureParameterEnhancer : AbstractClosureParameterEnhancer() {
+class AemClosureParameterEnhancer : AbstractClosureParameterEnhancer() {
+
+    private val closures = listOf(
+        ClosureParameterDescriptor("com.day.cq.wcm.api.Page", "recurse"),
+        ClosureParameterDescriptor("javax.jcr.Node", "recurse"),
+        ClosureParameterDescriptor("javax.jcr.Binary", "withBinary"),
+    )
 
     override fun getClosureParameterType(expression: GrFunctionalExpression, index: Int): PsiType? {
-        if (!expression.isAemFile()) {
-            return null
-        }
-
         if (isCompileStatic(expression)) {
             return null
         }
@@ -28,9 +30,13 @@ class ClosureParameterEnhancer : AbstractClosureParameterEnhancer() {
             return null
         }
 
+        if (!expression.isAemFile()) {
+            return null
+        }
+
         val invokedExpression = parent.invokedExpression as? GrReferenceExpression ?: return null
 
-        val methodName = invokedExpression.referenceName
+        val methodName = invokedExpression.referenceName ?: return null
 
         val qualifier = invokedExpression.qualifierExpression ?: return null
 
@@ -38,30 +44,20 @@ class ClosureParameterEnhancer : AbstractClosureParameterEnhancer() {
 
         val psiClass = PsiTypesUtil.getPsiClass(qualifier.type) ?: return null
 
-        if (psiClass.qualifiedName == CLASS_BINARY && methodName == METHOD_WITH_BINARY) {
-            return JavaPsiFacade.getElementFactory(expression.project)
-                .createTypeFromText(psiClass.qualifiedName!!, expression)
-        }
+        val parameterType =
+            closures.find { it.type == psiClass.qualifiedName && it.method == methodName }?.parameterType
 
-        if (psiClass.qualifiedName == CLASS_AEM_PAGE && methodName == METHOD_RECURSE) {
+        if (parameterType != null) {
             return JavaPsiFacade.getElementFactory(expression.project)
-                .createTypeFromText(psiClass.qualifiedName!!, expression)
-        }
-
-        if (psiClass.qualifiedName == CLASS_JCR_NODE && methodName == METHOD_RECURSE) {
-            return JavaPsiFacade.getElementFactory(expression.project)
-                .createTypeFromText(psiClass.qualifiedName!!, expression)
+                .createTypeFromText(parameterType, expression)
         }
 
         return null
     }
 
-    companion object {
-        private const val CLASS_AEM_PAGE = "com.day.cq.wcm.api.Page"
-        private const val CLASS_JCR_NODE = "javax.jcr.Node"
-        private const val CLASS_BINARY = "javax.jcr.Binary"
-
-        private const val METHOD_RECURSE = "recurse"
-        private const val METHOD_WITH_BINARY = "withBinary"
-    }
+    private data class ClosureParameterDescriptor(
+        val type: String,
+        val method: String,
+        val parameterType: String = type
+    )
 }

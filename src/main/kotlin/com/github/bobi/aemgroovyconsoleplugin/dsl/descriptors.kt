@@ -1,0 +1,128 @@
+package com.github.bobi.aemgroovyconsoleplugin.dsl
+
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.psi.CommonClassNames
+import com.intellij.psi.PsiElement
+import com.intellij.util.containers.ContainerUtil.immutableCopy
+import groovy.lang.Closure
+import org.jetbrains.plugins.groovy.lang.psi.util.GroovyCommonClassNames
+
+/**
+ * User: Andrey Bardashevsky
+ * Date/Time: 09.09.2022 00:01
+ */
+
+private val LOG: Logger = Logger.getInstance("#com.github.bobi.aemgroovyconsoleplugin.dsl")
+
+sealed class Descriptor
+
+data class TypeDescriptor(
+    val fqn: String,
+    val genericType: String? = null
+) : Descriptor()
+
+data class VariableDescriptor(
+    val name: String,
+    val type: TypeDescriptor,
+    val doc: String?,
+) : Descriptor()
+
+data class GenericMethodDescriptor(
+    val name: String,
+    val genericTypes: List<String>,
+    val parameters: List<VariableDescriptor>, // doesn't include named parameters Map
+    val returnType: TypeDescriptor,
+    val throws: List<String>,
+    val containingClass: String?,
+    val isStatic: Boolean,
+    val bindsTo: PsiElement?,
+    val doc: String?,
+    val docUrl: String?,
+) : Descriptor()
+
+fun parseVariable(args: Map<*, *>): VariableDescriptor {
+    return VariableDescriptor(
+        name = args["name"].toString(),
+        type = TypeDescriptor(stringifyType(args["type"])),
+        doc = args["doc"].toString(),
+    )
+}
+
+fun parseGenericMethod(args: Map<*, *>): GenericMethodDescriptor {
+    return GenericMethodDescriptor(
+        name = args["name"].toString(),
+        genericTypes = genericTypes(args),
+        parameters = params(args),
+        returnType = parseType(args["type"]),
+        containingClass = args["containingClass"] as? String,
+        throws = throws(args),
+        isStatic = args["isStatic"] == true,
+        bindsTo = args["bindsTo"] as? PsiElement,
+        doc = args["doc"] as? String,
+        docUrl = args["docUrl"] as? String,
+    )
+}
+
+private fun params(args: Map<*, *>): List<VariableDescriptor> {
+    val params = args["params"] as? Map<*, *> ?: return emptyList()
+    val result = ArrayList<VariableDescriptor>()
+    var first = true
+    for ((key, value) in params.entries) {
+        if (!first || value !is List<*>) {
+            result.add(VariableDescriptor(name = key.toString(), type = parseType(value), doc = null))
+        }
+        first = false
+    }
+    return immutableCopy(result)
+}
+
+private fun throws(args: Map<*, *>): List<String> {
+    val throws = args["throws"]
+    return when {
+        throws is List<*> -> immutableCopy(throws.map(::stringifyType))
+        throws != null -> listOf(stringifyType(throws))
+        else -> emptyList()
+    }
+}
+
+private fun genericTypes(args: Map<*, *>): List<String> {
+    return when (val genericTypes = args["genericTypes"]) {
+        is List<*> -> immutableCopy(genericTypes.filterIsInstance<String>())
+        is String -> listOf(genericTypes)
+        else -> emptyList()
+    }
+}
+
+private fun parseType(declaredType: Any?): TypeDescriptor {
+    val stringType = stringifyType(declaredType, true)
+
+    val genericStart = stringType.indexOf('<')
+    val genericEnd = stringType.lastIndexOf('>')
+
+    if (genericStart > 0 && genericEnd > 0) {
+        val fqn = stringType.substring(0, genericStart)
+        val genericType = stringType.substring(genericStart + 1, genericEnd)
+
+        return TypeDescriptor(fqn = fqn, genericType = genericType)
+    } else {
+        return TypeDescriptor(fqn = stringType)
+    }
+}
+
+private fun stringifyType(type: Any?, allowGenerics: Boolean = false): String {
+    return when (type) {
+        null -> CommonClassNames.JAVA_LANG_OBJECT
+        is Closure<*> -> GroovyCommonClassNames.GROOVY_LANG_CLOSURE
+        is Map<*, *> -> CommonClassNames.JAVA_UTIL_MAP
+        is Class<*> -> type.name
+        else -> {
+            val s = type.toString()
+            LOG.assertTrue(!s.startsWith("? extends"), s)
+            LOG.assertTrue(!s.contains("?extends"), s)
+            LOG.assertTrue(!s.contains("<null."), s)
+            LOG.assertTrue(!s.startsWith("null."), s)
+            if (!allowGenerics) LOG.assertTrue(!(s.contains(",") && !s.contains("<")), s)
+            s
+        }
+    }
+}
