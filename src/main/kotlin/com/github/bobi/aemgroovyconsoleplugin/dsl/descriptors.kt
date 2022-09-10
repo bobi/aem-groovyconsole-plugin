@@ -99,13 +99,13 @@ private fun parseType(declaredType: Any?): TypeDescriptor {
     val genericStart = stringType.indexOf('<')
     val genericEnd = stringType.lastIndexOf('>')
 
-    if (genericStart > 0 && genericEnd > 0) {
+    return if (genericStart > 0 && genericEnd > 0) {
         val fqn = stringType.substring(0, genericStart)
         val genericType = stringType.substring(genericStart + 1, genericEnd)
 
-        return TypeDescriptor(fqn = fqn, genericType = genericType)
+        TypeDescriptor(fqn = fqn, genericType = genericType)
     } else {
-        return TypeDescriptor(fqn = stringType)
+        TypeDescriptor(fqn = stringType)
     }
 }
 
