@@ -3,6 +3,8 @@
 # aem-groovyconsole-plugin Changelog
 
 ## [Unreleased]
+### Changed
+- Improved code completion
 
 ## [0.6.1]
 ### Changed

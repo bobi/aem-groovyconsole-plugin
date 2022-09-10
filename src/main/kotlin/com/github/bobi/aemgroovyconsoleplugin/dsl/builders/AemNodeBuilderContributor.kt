@@ -12,6 +12,6 @@ class AemNodeBuilderContributor : BuilderMethodsContributor() {
     companion object {
         private val FQN = NodeBuilder::class.java.name
 
-        private const val ORIGIN_INFO: String = "via AemNodeBuilder"
+        private val ORIGIN_INFO: String = "via ${this::class.java.name}"
     }
 }
