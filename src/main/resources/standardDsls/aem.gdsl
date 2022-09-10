@@ -5,8 +5,6 @@ import groovy.transform.Field
 def gdslScriptContext = context(scope: scriptScope(), filetypes: ['gdsl'])
 
 contributor([gdslScriptContext]) {
-    method name: 'isAemFile', type: boolean
-
     method name: 'field',
             params: [
                     args: [
