@@ -3,7 +3,6 @@ package com.github.bobi.aemgroovyconsoleplugin.dsl
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.CommonClassNames
 import com.intellij.psi.PsiElement
-import com.intellij.util.containers.ContainerUtil.immutableCopy
 import groovy.lang.Closure
 import org.jetbrains.plugins.groovy.lang.psi.util.GroovyCommonClassNames
 
@@ -30,7 +29,7 @@ data class VariableDescriptor(
 data class GenericMethodDescriptor(
     val name: String,
     val genericTypes: List<String>,
-    val parameters: List<VariableDescriptor>, // doesn't include named parameters Map
+    val parameters: List<VariableDescriptor>,
     val returnType: TypeDescriptor,
     val throws: List<String>,
     val containingClass: String?,
@@ -73,13 +72,13 @@ private fun params(args: Map<*, *>): List<VariableDescriptor> {
         }
         first = false
     }
-    return immutableCopy(result)
+    return result.toList()
 }
 
 private fun throws(args: Map<*, *>): List<String> {
     val throws = args["throws"]
     return when {
-        throws is List<*> -> immutableCopy(throws.map(::stringifyType))
+        throws is List<*> -> throws.map(::stringifyType).toList()
         throws != null -> listOf(stringifyType(throws))
         else -> emptyList()
     }
@@ -87,7 +86,7 @@ private fun throws(args: Map<*, *>): List<String> {
 
 private fun genericTypes(args: Map<*, *>): List<String> {
     return when (val genericTypes = args["genericTypes"]) {
-        is List<*> -> immutableCopy(genericTypes.filterIsInstance<String>())
+        is List<*> -> genericTypes.filterIsInstance<String>().toList()
         is String -> listOf(genericTypes)
         else -> emptyList()
     }

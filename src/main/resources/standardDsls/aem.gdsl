@@ -47,7 +47,6 @@ static String doc(final String doc) {
 }
 
 contributor(aemContext()) {
-
     field name: 'log', type: 'org.slf4j.Logger'
     field name: 'session', type: 'javax.jcr.Session'
     field name: 'pageManager', type: 'com.day.cq.wcm.api.PageManager'
@@ -102,16 +101,16 @@ contributor(aemContext()) {
             doc: doc('Get an instance of a Sling Model class for the Resource at the given path')
 
     method name: 'copy',
-            params: [sourceAbsolutePath: String.name, destinationAbsolutePath: String.name],
-            type: void,
+            params: [sourceAbsolutePath: String.name],
+            type: 'specs.CopyTo',
             doc: doc('Groovy DSL syntax for copying a node, equivalent to calling session.workspace.copy(sourceAbsolutePath, destinationAbsolutePath)')
     method name: 'move',
-            params: [sourceAbsolutePath: String.name, destinationAbsolutePath: String.name],
-            type: void,
+            params: [sourceAbsolutePath: String.name],
+            type: 'specs.MoveTo',
             doc: doc('Groovy DSL syntax for moving a node, equivalent to calling session.move(sourceAbsolutePath, destinationAbsolutePath), <b>except that the Session is saved automatically when the move is completed</b>')
     method name: 'rename',
-            params: [node: 'javax.jcr.Node', newName: String.name],
-            type: void,
+            params: [node: 'javax.jcr.Node'],
+            type: 'specs.RenameTo',
             doc: doc('Groovy DSL syntax for renaming a node, similar to calling session.move(sourceAbsolutePath, destinationAbsolutePath) with the new node name, <b>except that the renamed node will retain its order and the Session is saved automatically when the rename is completed.</b>')
 
     method name: 'save',
