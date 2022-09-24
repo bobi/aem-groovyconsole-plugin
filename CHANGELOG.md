@@ -3,6 +3,8 @@
 # aem-groovyconsole-plugin Changelog
 
 ## [Unreleased]
+
+## [0.6.3]
 ### Changed
 - Improved code completion for copy, move, rename
 
