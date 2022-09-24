@@ -1,7 +1,9 @@
 package com.github.bobi.aemgroovyconsoleplugin.dsl
 
 import com.icfolson.aem.groovy.extension.builders.NodeBuilder
+import com.icfolson.aem.groovy.extension.builders.PageBuilder
 import com.intellij.openapi.application.PathManager
+import com.intellij.openapi.application.ex.ApplicationManagerEx
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.JarFileSystem
@@ -18,9 +20,7 @@ import org.cid15.aem.groovy.console.table.Table
  * Date/Time: 01.08.2022 19:24
  *
  */
-class AemScriptExtensionClassFinder(project: Project) : NonClasspathClassFinder(project) {
-
-    private val supportedPackages = classes.mapTo(HashSet<String>()) { it.`package`.name }
+class AemScriptExtensionClassFinder(project: Project) : NonClasspathClassFinder(project, "groovy") {
 
     override fun calcClassRoots(): List<VirtualFile> = roots
 
@@ -35,14 +35,30 @@ class AemScriptExtensionClassFinder(project: Project) : NonClasspathClassFinder(
     }
 
     companion object {
-        private val classes = listOf(NodeBuilder::class.java, Table::class.java)
+        private val thirdPartyClasses = listOf(
+            PageBuilder::class.java,
+            NodeBuilder::class.java,
+            Table::class.java,
+        )
+
+        private val supportedPackages = thirdPartyClasses.mapTo(HashSet<String>()) { it.`package`.name }
+            .also {
+                it.add("specs")
+            }
+
+        private val jarForClasses = listOf(
+            *thirdPartyClasses.toTypedArray(),
+            AemScriptExtensionClassFinder::class.java
+        )
 
         private val roots = buildClassesRoots()
 
         val searchScope = NonClasspathDirectoriesScope.compose(roots)
 
         private fun buildClassesRoots(): List<VirtualFile> {
-            return classes.mapNotNull { clazz ->
+            val isInternal = java.lang.Boolean.getBoolean(ApplicationManagerEx.IS_INTERNAL_PROPERTY)
+
+            return jarForClasses.mapNotNullTo(LinkedHashSet()) { clazz ->
                 val jarForClass = PathManager.getJarForClass(clazz)
 
                 var classRoot: VirtualFile? = null
@@ -55,8 +71,13 @@ class AemScriptExtensionClassFinder(project: Project) : NonClasspathClassFinder(
                     }
                 }
 
-                return@mapNotNull classRoot
-            }
+                if (isInternal) {
+                    // refresh changes during development
+                    classRoot?.refresh(true, true)
+                }
+
+                return@mapNotNullTo classRoot
+            }.toList()
         }
     }
 }
