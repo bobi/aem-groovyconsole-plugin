@@ -11,7 +11,7 @@ import org.jetbrains.plugins.groovy.lang.psi.util.GroovyCommonClassNames
  * Date/Time: 09.09.2022 00:01
  */
 
-private val LOG: Logger = Logger.getInstance("#com.github.bobi.aemgroovyconsoleplugin.dsl")
+private val log: Logger = Logger.getInstance("#com.github.bobi.aemgroovyconsoleplugin.dsl")
 
 sealed class Descriptor
 
@@ -116,11 +116,11 @@ private fun stringifyType(type: Any?, allowGenerics: Boolean = false): String {
         is Class<*> -> type.name
         else -> {
             val s = type.toString()
-            LOG.assertTrue(!s.startsWith("? extends"), s)
-            LOG.assertTrue(!s.contains("?extends"), s)
-            LOG.assertTrue(!s.contains("<null."), s)
-            LOG.assertTrue(!s.startsWith("null."), s)
-            if (!allowGenerics) LOG.assertTrue(!(s.contains(",") && !s.contains("<")), s)
+            log.assertTrue(!s.startsWith("? extends"), s)
+            log.assertTrue(!s.contains("?extends"), s)
+            log.assertTrue(!s.contains("<null."), s)
+            log.assertTrue(!s.startsWith("null."), s)
+            if (!allowGenerics) log.assertTrue(!(s.contains(",") && !s.contains("<")), s)
             s
         }
     }
