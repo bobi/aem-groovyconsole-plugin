@@ -104,14 +104,6 @@ tasks {
                 )
             }
         })
-
-        changeNotes.set(provider {
-            changelog.renderItem(
-                changelog.getOrNull(properties("pluginVersion")) ?: changelog.getLatest(),
-                Changelog.OutputType.HTML
-            )
-        })
-
     }
 
     runIdeForUiTests {
