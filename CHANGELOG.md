@@ -7,6 +7,7 @@
 ### Changed
 - Update minimum supported Intellij version
 - Update usage of some Intellij deprecated APIs
+                                               
 
 ## [0.6.3]
 
