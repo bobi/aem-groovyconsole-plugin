@@ -20,7 +20,7 @@ class AemConsoleEditorDecorator(project: Project) : EditorNotificationProvider {
     init {
         val notifications = project.getService(EditorNotifications::class.java)
 
-        project.messageBus.connect(project).subscribe(SettingsChangedNotifier.TOPIC, object : SettingsChangedNotifier {
+        project.messageBus.connect().subscribe(SettingsChangedNotifier.TOPIC, object : SettingsChangedNotifier {
             override fun settingsChanged() {
                 notifications.updateAllNotifications()
             }
@@ -30,9 +30,9 @@ class AemConsoleEditorDecorator(project: Project) : EditorNotificationProvider {
     override fun collectNotificationData(
         project: Project,
         file: VirtualFile
-    ): Function<in FileEditor, out JComponent?> {
+    ): Function<FileEditor, JComponent?>? {
         if (!file.isAemFile(project)) {
-            return EditorNotificationProvider.CONST_NULL
+            return null
         }
 
         val configFromFile = file.getCurrentAemConfig(project)
