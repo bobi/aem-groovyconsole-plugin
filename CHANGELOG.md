@@ -7,7 +7,6 @@
 ### Changed
 - Update minimum supported Intellij version
 - Update usage of some Intellij deprecated APIs
-                                               
 
 ## [0.6.3]
 
@@ -87,8 +86,7 @@
 ### Changed
 - Initial Release
 
-[Unreleased]: https://github.com/bobi/aem-groovyconsole-plugin/compare/v0.6.4...HEAD
-[0.6.4]: https://github.com/bobi/aem-groovyconsole-plugin/compare/v0.6.3...v0.6.4
+[Unreleased]: https://github.com/bobi/aem-groovyconsole-plugin/compare/v0.6.3...HEAD
 [0.6.3]: https://github.com/bobi/aem-groovyconsole-plugin/compare/v0.6.2...v0.6.3
 [0.6.2]: https://github.com/bobi/aem-groovyconsole-plugin/compare/v0.6.1...v0.6.2
 [0.6.1]: https://github.com/bobi/aem-groovyconsole-plugin/compare/v0.6.0...v0.6.1
