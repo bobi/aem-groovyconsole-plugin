@@ -4,6 +4,8 @@ import com.github.bobi.aemgroovyconsoleplugin.config.SettingsChangedNotifier
 import com.github.bobi.aemgroovyconsoleplugin.services.PasswordsService
 import com.github.bobi.aemgroovyconsoleplugin.services.PersistentStateService
 import com.github.bobi.aemgroovyconsoleplugin.services.model.AemServerConfig
+import com.intellij.openapi.actionSystem.ActionUpdateThread
+import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonShortcuts
 import com.intellij.openapi.options.Configurable
@@ -79,9 +81,13 @@ class AemServersConfigurable(private val project: Project) : Configurable {
                             table.model.addRow(model.duplicate())
                         }
                     }
+
+                    override fun getActionUpdateThread(): ActionUpdateThread {
+                        return ActionUpdateThread.EDT
+                    }
                 }.also { action ->
-                    action.shortcut = CommonShortcuts.getDuplicate()
-                }
+                    action.setShortcut(CommonShortcuts.getDuplicate())
+                } as AnAction
             )
         }
 

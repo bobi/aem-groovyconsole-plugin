@@ -5,10 +5,7 @@ import com.github.bobi.aemgroovyconsoleplugin.editor.GroovyConsoleUserData.getCu
 import com.github.bobi.aemgroovyconsoleplugin.services.PersistentStateService
 import com.intellij.icons.AllIcons
 import com.intellij.ide.DataManager
-import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.actionSystem.DefaultActionGroup
-import com.intellij.openapi.actionSystem.Presentation
+import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.actionSystem.ex.ComboBoxAction
 import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.project.Project
@@ -75,7 +72,7 @@ class AemConsoleServerChooserAction(
             val label = JLabel("Run On:").also {
                 it.font = Fonts.toolbarSmallComboBoxFont()
                 it.labelFor = comboBoxButton
-                it.border = JBUI.Borders.empty(0, 0, 0, 3)
+                it.border = JBUI.Borders.emptyRight(3)
             }
 
             panel.add(comboBoxButton, BorderLayout.CENTER)
@@ -103,7 +100,7 @@ class AemConsoleServerChooserAction(
         }
     }
 
-    override fun createPopupActionGroup(button: JComponent): DefaultActionGroup {
+    override fun createPopupActionGroup(button: JComponent, dataContext: DataContext): DefaultActionGroup {
         return DefaultActionGroup(
             persistentStateService.getAEMServers().map { AemConsoleSelectServerAction(it) }
         )
@@ -113,6 +110,10 @@ class AemConsoleServerChooserAction(
         if (project != null) {
             ShowSettingsUtil.getInstance().showSettingsDialog(project, AemServersConfigurable::class.java)
         }
+    }
+
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return ActionUpdateThread.EDT
     }
 
     companion object {
