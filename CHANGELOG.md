@@ -4,8 +4,6 @@
 
 ## [Unreleased]
 
-## [0.6.4] - 2023-01-19
-
 ### Changed
 - Update minimum supported Intellij version
 - Update usage of some Intellij deprecated APIs

@@ -99,8 +99,7 @@ tasks {
         changeNotes.set(provider {
             with(changelog) {
                 renderItem(
-                    getOrNull(properties("pluginVersion"))
-                        ?: runCatching { getLatest() }.getOrElse { getUnreleased() },
+                    runCatching { get(properties("pluginVersion")) }.getOrElse { getUnreleased() },
                     Changelog.OutputType.HTML,
                 )
             }
