@@ -99,12 +99,19 @@ tasks {
         changeNotes.set(provider {
             with(changelog) {
                 renderItem(
-                    getOrNull(properties("pluginVersion"))
-                        ?: runCatching { getLatest() }.getOrElse { getUnreleased() },
+                    runCatching { get(properties("pluginVersion")) }.getOrElse { getUnreleased() },
                     Changelog.OutputType.HTML,
                 )
             }
         })
+
+        changeNotes.set(provider {
+            changelog.renderItem(
+                changelog.getOrNull(properties("pluginVersion")) ?: changelog.getLatest(),
+                Changelog.OutputType.HTML
+            )
+        })
+
     }
 
     runIdeForUiTests {
