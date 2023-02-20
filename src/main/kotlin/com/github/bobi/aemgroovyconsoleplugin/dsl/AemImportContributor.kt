@@ -22,7 +22,8 @@ class AemImportContributor : GrImportContributor {
         "com.day.cq.wcm.api",
         "javax.jcr",
         "org.apache.sling.api",
-        "org.apache.sling.api.resource"
+        "org.apache.sling.api.resource",
+        "org.apache.sling.distribution"
     )
 
     private val classImports = listOf(
