@@ -2,14 +2,14 @@
 <!-- Plugin description -->
 Adds support to run groovy scripts on AEM server from Intellij IDEA.
 
-Powered by [AEM Groovy Console](https://github.com/OlsonDigital/aem-groovy-console).
+Powered by [AEM Groovy Console](https://github.com/orbinson/aem-groovy-console).
 
 ## Features
 
 - Execute groovy scripts on running AEM server from editor
 - Script can be executed on multiple servers
 - Console output provides a link to the script's source if exception occurred
-- Support code completion in groovy editor. **Note**: com.adobe.aem:uber-jar:x.x.x should be in project classpath to provide full code completion
+- Support code completion in groovy editor. **Note**: com.adobe.aem:uber-jar:x.x.x or com.adobe.aem:aem-sdk-api:x.x.x should be in project classpath to provide full code completion
 - [More Details](https://github.com/bobi/aem-groovyconsole-plugin)
 <!-- Plugin description end -->
 

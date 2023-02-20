@@ -43,7 +43,7 @@ def aemContext(final Map props) {
 }
 
 static String doc(final String doc) {
-    return "<div class='content'>${doc}</div>"
+    "<div class='content'>${doc}</div>"
 }
 
 contributor(aemContext()) {
@@ -135,10 +135,42 @@ contributor(aemContext()) {
             type: void,
             doc: doc('Deactivate the node at the given path with supplied options')
 
+    method name: 'delete',
+            params: [path: String.name],
+            type: void,
+            doc: doc('Delete the node at the given path')
+    method name: 'delete',
+            params: [path: String.name, options: 'com.day.cq.replication.ReplicationOptions'],
+            type: void,
+            doc: doc('Delete the node at the given path with supplied options')
+
+    method name: 'invalidate',
+            params: [path: String.name],
+            type: void,
+            doc: doc('Invalidate the node at the given path with supplied options. (Only applicable on AEMaaCS)')
+    method name: 'invalidate',
+            params: [path: String.name, agentId: String.name],
+            type: void,
+            doc: doc('Invalidate the node at the given path with supplied options. (Only applicable on AEMaaCS)')
+    method name: 'invalidate',
+            params: [path: String.name, agentId: String.name, isDeep: boolean.name],
+            type: void,
+            doc: doc('Invalidate the node at the given path with supplied options. (Only applicable on AEMaaCS)')
+
     method name: 'createQuery',
             params: [predicates: Map.name],
             type: 'javax.jcr.query.Query',
             doc: doc('Create a Query instance from the QueryBuilder for the current JCR session')
+
+    method name: 'xpathQuery',
+            params: [query: String.name],
+            type: 'javax.jcr.NodeIterator',
+            doc: doc('Execute an XPath query using the QueryManager for the current JCR session')
+
+    method name: 'sql2Query',
+            params: [query: String.name],
+            type: 'javax.jcr.NodeIterator',
+            doc: doc('Execute an SQL-2 query using the QueryManager for the current JCR session')
 
     method name: 'table',
             params: [closure: Closure.name],

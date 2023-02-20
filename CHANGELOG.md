@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Added
+- Added support for new version of AEM Groovy Console maintained by [Orbinson](https://github.com/orbinson/aem-groovy-console)  
+- Added code completion for: delete, invalidate, xpathQuery, sql2Query                                   
+
 ## [0.6.4] - 2023-01-20
 
 ### Changed
