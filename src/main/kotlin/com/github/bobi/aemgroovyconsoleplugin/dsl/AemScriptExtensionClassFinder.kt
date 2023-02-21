@@ -1,7 +1,8 @@
 package com.github.bobi.aemgroovyconsoleplugin.dsl
 
-import com.icfolson.aem.groovy.extension.builders.NodeBuilder
-import com.icfolson.aem.groovy.extension.builders.PageBuilder
+import be.orbinson.aem.groovy.console.builders.NodeBuilder
+import be.orbinson.aem.groovy.console.builders.PageBuilder
+import be.orbinson.aem.groovy.console.table.Table
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.application.ex.ApplicationManagerEx
 import com.intellij.openapi.project.Project
@@ -13,7 +14,6 @@ import com.intellij.psi.NonClasspathClassFinder
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.NonClasspathDirectoriesScope
-import org.cid15.aem.groovy.console.table.Table
 
 /**
  * User: Andrey Bardashevsky

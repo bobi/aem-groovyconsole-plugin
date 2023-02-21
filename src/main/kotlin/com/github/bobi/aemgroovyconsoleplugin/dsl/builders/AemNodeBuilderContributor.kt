@@ -1,6 +1,6 @@
 package com.github.bobi.aemgroovyconsoleplugin.dsl.builders
 
-import com.icfolson.aem.groovy.extension.builders.NodeBuilder
+import be.orbinson.aem.groovy.console.builders.NodeBuilder
 
 class AemNodeBuilderContributor : BuilderMethodsContributor() {
     override fun getParentClassName(): String = FQN

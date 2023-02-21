@@ -1,6 +1,6 @@
 package com.github.bobi.aemgroovyconsoleplugin.dsl.builders
 
-import com.icfolson.aem.groovy.extension.builders.PageBuilder
+import be.orbinson.aem.groovy.console.builders.PageBuilder
 
 class AemPageBuilderContributor : BuilderMethodsContributor() {
     override fun getParentClassName(): String = FQN

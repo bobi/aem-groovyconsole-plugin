@@ -1,5 +1,7 @@
 package com.github.bobi.aemgroovyconsoleplugin.dsl
 
+import be.orbinson.aem.groovy.console.builders.NodeBuilder
+import be.orbinson.aem.groovy.console.builders.PageBuilder
 import com.github.bobi.aemgroovyconsoleplugin.utils.AemFileTypeUtils.isAemFile
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFile
 import org.jetbrains.plugins.groovy.lang.resolve.imports.GrImportContributor
@@ -27,8 +29,8 @@ class AemImportContributor : GrImportContributor {
     )
 
     private val classImports = listOf(
-        "com.icfolson.aem.groovy.extension.builders.PageBuilder",
-        "com.icfolson.aem.groovy.extension.builders.NodeBuilder"
+        PageBuilder::class.java.name,
+        NodeBuilder::class.java.name
     )
 
     private val imports: List<GroovyImport> by lazy {

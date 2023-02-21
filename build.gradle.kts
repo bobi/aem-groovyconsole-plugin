@@ -44,11 +44,16 @@ qodana {
     showReport.set(System.getenv("QODANA_SHOW_REPORT")?.toBoolean() ?: false)
 }
 
-dependencies {
-    implementation("com.icfolson.aem.groovy.extension:aem-groovy-extension-bundle:7.0.0")
-    implementation("org.cid15.aem.groovy.console:aem-groovy-console-bundle:17.0.0") {
+configurations {
+    all {
         exclude(group = "org.osgi")
+        exclude(group = "org.apache.groovy")
     }
+}
+
+dependencies {
+    implementation("be.orbinson.aem:aem-groovy-console-api:19.0.3")
+    implementation("be.orbinson.aem:aem-groovy-console-bundle:19.0.3")
 }
 
 kover.xmlReport {
