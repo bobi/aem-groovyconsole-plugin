@@ -31,7 +31,7 @@ contributor([gdslScriptContext]) {
 
 }
 
-@Field static final String TABLE_CLASS = 'org.cid15.aem.groovy.console.table.Table'
+@Field static final String TABLE_CLASS = 'be.orbinson.aem.groovy.console.table.Table'
 
 def aemContext(final Map props) {
     final Map contextProps = props ?: [:]
@@ -52,8 +52,8 @@ contributor(aemContext()) {
     field name: 'pageManager', type: 'com.day.cq.wcm.api.PageManager'
     field name: 'resourceResolver', type: 'org.apache.sling.api.resource.ResourceResolver'
     field name: 'queryBuilder', type: 'com.day.cq.search.QueryBuilder'
-    field name: 'nodeBuilder', type: 'com.icfolson.aem.groovy.extension.builders.NodeBuilder'
-    field name: 'pageBuilder', type: 'com.icfolson.aem.groovy.extension.builders.PageBuilder'
+    field name: 'nodeBuilder', type: 'be.orbinson.aem.groovy.console.builders.NodeBuilder'
+    field name: 'pageBuilder', type: 'be.orbinson.aem.groovy.console.builders.PageBuilder'
     field name: 'bundleContext', type: 'org.osgi.framework.BundleContext'
     field name: 'out', type: 'java.io.PrintStream'
     field name: 'slingRequest', type: 'org.apache.sling.api.SlingHttpServletRequest'
