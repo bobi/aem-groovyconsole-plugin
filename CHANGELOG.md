@@ -4,9 +4,11 @@
 
 ## [Unreleased]
 
+## [0.7.0] - 2023-02-21
+
 ### Added
-- Added support for new version of AEM Groovy Console maintained by [Orbinson](https://github.com/orbinson/aem-groovy-console)  
-- Added code completion for: delete, invalidate, xpathQuery, sql2Query                                   
+- Added support for new version of AEM Groovy Console maintained by [Orbinson](https://github.com/orbinson/aem-groovy-console)
+- Added code completion for: delete, invalidate, xpathQuery, sql2Query
 
 ## [0.6.4] - 2023-01-20
 
@@ -92,7 +94,8 @@
 ### Changed
 - Initial Release
 
-[Unreleased]: https://github.com/bobi/aem-groovyconsole-plugin/compare/v0.6.4...HEAD
+[Unreleased]: https://github.com/bobi/aem-groovyconsole-plugin/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/bobi/aem-groovyconsole-plugin/compare/v0.6.4...v0.7.0
 [0.6.4]: https://github.com/bobi/aem-groovyconsole-plugin/compare/v0.6.3...v0.6.4
 [0.6.3]: https://github.com/bobi/aem-groovyconsole-plugin/compare/v0.6.2...v0.6.3
 [0.6.2]: https://github.com/bobi/aem-groovyconsole-plugin/compare/v0.6.1...v0.6.2
