@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [0.7.1] - 2023-02-22
+
 ### Changed
 - Switched to new version of AEM Groovy Console maintained by [Orbinson](https://github.com/orbinson/aem-groovy-console)
 
@@ -94,7 +96,8 @@
 ### Changed
 - Initial Release
 
-[Unreleased]: https://github.com/bobi/aem-groovyconsole-plugin/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/bobi/aem-groovyconsole-plugin/compare/v0.7.1...HEAD
+[0.7.1]: https://github.com/bobi/aem-groovyconsole-plugin/compare/v0.6.4...v0.7.1
 [0.7.0]: https://github.com/bobi/aem-groovyconsole-plugin/compare/v0.6.4...v0.7.0
 [0.6.4]: https://github.com/bobi/aem-groovyconsole-plugin/compare/v0.6.3...v0.6.4
 [0.6.3]: https://github.com/bobi/aem-groovyconsole-plugin/compare/v0.6.2...v0.6.3
