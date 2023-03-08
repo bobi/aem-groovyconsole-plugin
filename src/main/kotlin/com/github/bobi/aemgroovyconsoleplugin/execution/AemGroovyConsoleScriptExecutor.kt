@@ -15,12 +15,20 @@ import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.components.service
 import com.intellij.openapi.components.serviceIfCreated
+import com.intellij.openapi.fileChooser.FileChooserFactory
+import com.intellij.openapi.fileChooser.FileSaverDescriptor
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.guessProjectDir
+import com.intellij.openapi.util.SystemInfo
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import java.awt.BorderLayout
 import java.awt.Component
+import java.io.File
+import java.util.*
 import javax.swing.JPanel
 
 /**
@@ -28,6 +36,10 @@ import javax.swing.JPanel
  * Date/Time: 07.08.2022 18:33
  */
 class AemGroovyConsoleScriptExecutor(private val project: Project) {
+
+    private val tmpFolder: File by lazy {
+        FileUtil.createTempDirectory("aem-groovy-console", null, true)
+    }
 
     fun execute(contentFile: VirtualFile) {
         val config = contentFile.getCurrentAemConfig(project) ?: return
@@ -58,7 +70,8 @@ class AemGroovyConsoleScriptExecutor(private val project: Project) {
                 val console = oldDescriptor?.console ?: createConsole(project)
                 val consolePanel = oldDescriptor?.component ?: createConsolePanel(console)
 
-                val newDescriptor = AemConsoleRunContentDescriptor(project, contentFile, config, console, consolePanel)
+                val newDescriptor =
+                    AemConsoleRunContentDescriptor(project, contentFile, config, console, consolePanel, tmpFolder)
 
                 RunContentManager.getInstance(project).showRunContent(executor, newDescriptor, oldDescriptor)
 
@@ -90,6 +103,7 @@ class AemGroovyConsoleScriptExecutor(private val project: Project) {
                 val toolbarActions = DefaultActionGroup().also { tbActions ->
                     tbActions.add(RerunAction())
                     tbActions.addAll(*console.createConsoleActions())
+                    tbActions.add(SaveOutputAction())
                     tbActions.add(CloseAction())
                 }
 
@@ -150,6 +164,66 @@ class AemGroovyConsoleScriptExecutor(private val project: Project) {
                     getInstance(project).doExecute(descriptor, descriptor.contentFile, descriptor.config.id)
                 }
             }
+        }
+
+        override fun getActionUpdateThread(): ActionUpdateThread {
+            return ActionUpdateThread.EDT
+        }
+    }
+
+    private class SaveOutputAction : AnAction({ "Save output" }, Presentation.NULL_STRING, AllIcons.Actions.Download),
+        DumbAware {
+
+        override fun update(e: AnActionEvent) {
+            val project = e.project
+            val component = e.getData(PlatformDataKeys.CONTEXT_COMPONENT)
+
+            if (project != null && component != null) {
+                val descriptor = findDescriptor(project, component)
+
+                e.presentation.isEnabled =
+                    (descriptor != null && descriptor.processHandler != null && descriptor.processHandler!!.isProcessTerminated)
+            }
+        }
+
+        override fun actionPerformed(e: AnActionEvent) {
+            val project = e.project
+            val component = e.getData(PlatformDataKeys.CONTEXT_COMPONENT)
+
+            if (project != null && component != null) {
+
+                val aemConsoleRunContentDescriptor = findDescriptor(project, component)
+
+                if (aemConsoleRunContentDescriptor != null && aemConsoleRunContentDescriptor.processHandler != null
+                    && aemConsoleRunContentDescriptor.processHandler!!.isProcessTerminated
+                ) {
+
+                    var outputDir = project.guessProjectDir()
+                    if (outputDir == null || !outputDir.exists()) {
+                        outputDir = VfsUtil.getUserHomeDir()
+                    }
+
+                    val extension = "txt"
+                    val saveFileDialog = FileChooserFactory.getInstance().createSaveFileDialog(
+                        FileSaverDescriptor("Save AEM Groovy Console output", "", extension),
+                        project
+                    )
+
+                    val now = Calendar.getInstance()
+                    val fileNameTmpl =
+                        "groovy-console-%1\$tF-%1\$tH%1\$tM%1\$tS".let { if (SystemInfo.isMac) "$it.$extension" else it }
+
+                    val fileWrapper = saveFileDialog.save(outputDir, String.format(Locale.US, fileNameTmpl, now))
+
+                    fileWrapper?.let {
+                        aemConsoleRunContentDescriptor.tmpFile.copyTo(it.file)
+                    }
+                }
+            }
+        }
+
+        override fun getActionUpdateThread(): ActionUpdateThread {
+            return ActionUpdateThread.EDT
         }
     }
 

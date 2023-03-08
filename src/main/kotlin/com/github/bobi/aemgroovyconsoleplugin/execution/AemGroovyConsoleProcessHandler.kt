@@ -40,11 +40,15 @@ class AemGroovyConsoleProcessHandler(
 
         val promise = AsyncPromise<GroovyConsoleOutput>().also {
             it.onSuccess { out ->
-                runInEdt { handleOutput(out) }
-                notifyProcessTerminated(0)
+                runInEdt {
+                    handleOutput(out)
+                    notifyProcessTerminated(0)
+                }
             }.onError { ex ->
-                runInEdt { printError(ex.localizedMessage) }
-                notifyProcessTerminated(1)
+                runInEdt {
+                    printError(ex.localizedMessage)
+                    notifyProcessTerminated(1)
+                }
             }
         }
 
@@ -78,7 +82,7 @@ class AemGroovyConsoleProcessHandler(
         }
 
         if (output.runningTime.isNotBlank()) {
-            print("\nExecution Time:${output.runningTime}")
+            print("\nExecution Time: ${output.runningTime}")
         }
     }
 
