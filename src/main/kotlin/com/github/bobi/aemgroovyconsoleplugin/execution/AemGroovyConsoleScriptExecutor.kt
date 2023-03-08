@@ -2,6 +2,7 @@ package com.github.bobi.aemgroovyconsoleplugin.execution
 
 import com.github.bobi.aemgroovyconsoleplugin.editor.GroovyConsoleUserData.getCurrentAemConfig
 import com.github.bobi.aemgroovyconsoleplugin.services.PersistentStateService
+import com.github.bobi.aemgroovyconsoleplugin.services.http.GroovyConsoleHttpService
 import com.github.bobi.aemgroovyconsoleplugin.utils.Notifications
 import com.intellij.CommonBundle
 import com.intellij.execution.ExecutionBundle
@@ -43,18 +44,19 @@ class AemGroovyConsoleScriptExecutor(private val project: Project) {
         FileUtil.createTempDirectory("aem-groovy-console", null, true)
     }
 
-    fun execute(contentFile: VirtualFile) {
+    fun execute(contentFile: VirtualFile, action: GroovyConsoleHttpService.Action) {
         val config = contentFile.getCurrentAemConfig(project) ?: return
 
         val oldDescriptor = findDescriptor(project, contentFile, config.id)
 
-        doExecute(oldDescriptor, contentFile, config.id)
+        doExecute(oldDescriptor, contentFile, config.id, action)
     }
 
     private fun doExecute(
         oldDescriptor: AemConsoleRunContentDescriptor?,
         contentFile: VirtualFile,
-        serverId: Long
+        serverId: Long,
+        action: GroovyConsoleHttpService.Action
     ) {
         if (oldDescriptor == null || oldDescriptor.processHandler!!.isProcessTerminated) {
             oldDescriptor?.console?.clear()
@@ -73,7 +75,7 @@ class AemGroovyConsoleScriptExecutor(private val project: Project) {
                 val consolePanel = oldDescriptor?.component ?: createConsolePanel(console)
 
                 val newDescriptor =
-                    AemConsoleRunContentDescriptor(project, contentFile, config, console, consolePanel, tmpFolder)
+                    AemConsoleRunContentDescriptor(project, contentFile, config, console, action, consolePanel, tmpFolder)
 
                 RunContentManager.getInstance(project).showRunContent(executor, newDescriptor, oldDescriptor)
 
@@ -163,7 +165,7 @@ class AemGroovyConsoleScriptExecutor(private val project: Project) {
                 val descriptor = findDescriptor(project, component)
 
                 if (descriptor != null) {
-                    getInstance(project).doExecute(descriptor, descriptor.contentFile, descriptor.config.id)
+                    getInstance(project).doExecute(descriptor, descriptor.contentFile, descriptor.config.id, descriptor.action)
                 }
             }
         }

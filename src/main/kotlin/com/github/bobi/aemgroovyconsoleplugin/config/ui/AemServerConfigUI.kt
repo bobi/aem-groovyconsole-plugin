@@ -12,7 +12,8 @@ data class AemServerConfigUI(
     var name: String = "",
     var url: String = "",
     var user: String = "",
-    var password: String = ""
+    var password: String = "",
+    var distributedExecution: Boolean = false
 ) {
     fun duplicate(): AemServerConfigUI = copy(id = newId())
 
@@ -21,6 +22,7 @@ data class AemServerConfigUI(
             id = this.id,
             name = this.name,
             url = this.url,
+            distributedExecution = this.distributedExecution
         )
     }
 
@@ -34,6 +36,7 @@ data class AemServerConfigUI(
                 url = config.url,
                 user = credentials?.userName.orEmpty(),
                 password = credentials?.getPasswordAsString().orEmpty(),
+                distributedExecution = config.distributedExecution
             )
         }
     }

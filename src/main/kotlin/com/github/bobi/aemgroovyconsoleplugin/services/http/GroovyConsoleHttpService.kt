@@ -55,12 +55,12 @@ class GroovyConsoleHttpService : Disposable {
             .build()
     }
 
-    fun execute(url: String, user: String, password: String, script: ByteArray) =
-        execute(createAemHttpConfig(url, user, password), script)
+    fun execute(url: String, user: String, password: String, script: ByteArray, action: Action) =
+        execute(createAemHttpConfig(url, user, password), script, action)
 
-    fun execute(config: AemServerConfig, script: ByteArray) = execute(createAemHttpConfig(config), script)
+    fun execute(config: AemServerConfig, script: ByteArray, action: Action) = execute(createAemHttpConfig(config), script, action)
 
-    private fun execute(config: AemServerHttpConfig, script: ByteArray): GroovyConsoleOutput {
+    private fun execute(config: AemServerHttpConfig, script: ByteArray, action: Action): GroovyConsoleOutput {
         val uri = URIBuilder().also {
             val configHostUri = URI.create(config.url)
 
@@ -68,7 +68,7 @@ class GroovyConsoleHttpService : Disposable {
             it.host = configHostUri.host
             it.port = configHostUri.port
 
-            it.path = GROOVY_CONSOLE_PATH
+            it.path = action.path
         }.build()
 
         val httpHost = URIUtils.extractHost(uri)
@@ -108,10 +108,10 @@ class GroovyConsoleHttpService : Disposable {
             }
 
             return GroovyConsoleOutput(
-                output = if (output.output.isBlank() && outputTable == null && output.result != null) {
+                output = if (output.output.isNullOrBlank() && outputTable == null && output.result != null) {
                     output.result
                 } else {
-                    output.output
+                    output?.output
                 },
                 runningTime = output.runningTime,
                 exceptionStackTrace = output.exceptionStackTrace,
@@ -127,7 +127,6 @@ class GroovyConsoleHttpService : Disposable {
     }
 
     companion object {
-        private const val GROOVY_CONSOLE_PATH = "/bin/groovyconsole/post.json"
 
         fun getInstance(project: Project): GroovyConsoleHttpService = project.service()
 
@@ -153,9 +152,14 @@ class GroovyConsoleHttpService : Disposable {
         }
     }
 
-    private data class Output(val output: String, val runningTime: String, val exceptionStackTrace: String, val result: String?)
+    private data class Output(val output: String? = null, val runningTime: String? = null, val exceptionStackTrace: String? = null, val result: String? = null)
 
     private data class OutputTable(val table: GroovyConsoleTable)
 
     private class AemServerHttpConfig(val url: String, val credentials: Credentials)
+
+    enum class Action(internal val path: String) {
+        EXECUTE("/bin/groovyconsole/post.json"),
+        EXECUTE_DISTRIBUTED("/bin/groovyconsole/replicate"),
+    }
 }

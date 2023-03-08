@@ -6,5 +6,7 @@ data class AemServerConfig(
     var name: String = "",
 
     var url: String = "",
+
+    var distributedExecution: Boolean = false,
 )
 
