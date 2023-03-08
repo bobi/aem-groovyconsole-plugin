@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Added
+- Added ability to save plugin output [#114](https://github.com/bobi/aem-groovyconsole-plugin/issues/114)
+- Added support for running groovy scripts on publish for AEMaaCS [#116](https://github.com/bobi/aem-groovyconsole-plugin/issues/116)
+
 ## [0.7.1] - 2023-02-22
 
 ### Changed
