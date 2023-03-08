@@ -2,6 +2,7 @@ package com.github.bobi.aemgroovyconsoleplugin.execution
 
 import com.github.bobi.aemgroovyconsoleplugin.editor.GroovyConsoleUserData.getCurrentAemConfig
 import com.github.bobi.aemgroovyconsoleplugin.services.PersistentStateService
+import com.github.bobi.aemgroovyconsoleplugin.utils.Notifications
 import com.intellij.CommonBundle
 import com.intellij.execution.ExecutionBundle
 import com.intellij.execution.executors.DefaultRunExecutor
@@ -28,6 +29,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import java.awt.BorderLayout
 import java.awt.Component
 import java.io.File
+import java.io.IOException
 import java.util.*
 import javax.swing.JPanel
 
@@ -171,6 +173,7 @@ class AemGroovyConsoleScriptExecutor(private val project: Project) {
         }
     }
 
+    @Suppress("DialogTitleCapitalization")
     private class SaveOutputAction : AnAction({ "Save output" }, Presentation.NULL_STRING, AllIcons.Actions.Download),
         DumbAware {
 
@@ -182,7 +185,10 @@ class AemGroovyConsoleScriptExecutor(private val project: Project) {
                 val descriptor = findDescriptor(project, component)
 
                 e.presentation.isEnabled =
-                    (descriptor != null && descriptor.processHandler != null && descriptor.processHandler!!.isProcessTerminated)
+                    (descriptor != null
+                            && descriptor.processHandler != null
+                            && descriptor.processHandler!!.isProcessTerminated
+                            && descriptor.tmpFile.exists())
             }
         }
 
@@ -196,8 +202,8 @@ class AemGroovyConsoleScriptExecutor(private val project: Project) {
 
                 if (aemConsoleRunContentDescriptor != null && aemConsoleRunContentDescriptor.processHandler != null
                     && aemConsoleRunContentDescriptor.processHandler!!.isProcessTerminated
+                    && aemConsoleRunContentDescriptor.tmpFile.exists()
                 ) {
-
                     var outputDir = project.guessProjectDir()
                     if (outputDir == null || !outputDir.exists()) {
                         outputDir = VfsUtil.getUserHomeDir()
@@ -209,14 +215,21 @@ class AemGroovyConsoleScriptExecutor(private val project: Project) {
                         project
                     )
 
-                    val now = Calendar.getInstance()
-                    val fileNameTmpl =
-                        "groovy-console-%1\$tF-%1\$tH%1\$tM%1\$tS".let { if (SystemInfo.isMac) "$it.$extension" else it }
+                    val fileName =
+                        "groovy-console-%1\$tF-%1\$tH%1\$tM%1\$tS"
+                            .let { if (SystemInfo.isMac) "$it.$extension" else it }
+                            .let { String.format(Locale.US, it, Calendar.getInstance()) }
 
-                    val fileWrapper = saveFileDialog.save(outputDir, String.format(Locale.US, fileNameTmpl, now))
+                    val fileWrapper = saveFileDialog.save(outputDir, fileName)
 
                     fileWrapper?.let {
-                        aemConsoleRunContentDescriptor.tmpFile.copyTo(it.file)
+                        try {
+                            aemConsoleRunContentDescriptor.tmpFile.copyTo(it.file, true)
+                            
+                            Notifications.notifyInfo("Output saved", it.file.canonicalPath)
+                        } catch (e: IOException) {
+                            Notifications.notifyError("Save Output Error", e.localizedMessage)
+                        }
                     }
                 }
             }

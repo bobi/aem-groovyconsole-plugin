@@ -1,5 +1,8 @@
 package com.github.bobi.aemgroovyconsoleplugin.config.ui
 
+import com.github.bobi.aemgroovyconsoleplugin.services.model.AemServerConfig
+import com.intellij.credentialStore.Credentials
+
 /**
  * User: Andrey Bardashevsky
  * Date/Time: 29.07.2022 23:26
@@ -13,7 +16,25 @@ data class AemServerConfigUI(
 ) {
     fun duplicate(): AemServerConfigUI = copy(id = newId())
 
+    fun toAemServerConfig(): AemServerConfig {
+        return AemServerConfig(
+            id = this.id,
+            name = this.name,
+            url = this.url,
+        )
+    }
+
     companion object {
         private fun newId(): Long = System.currentTimeMillis()
+
+        fun fromAemServerConfig(config: AemServerConfig, credentials: Credentials?): AemServerConfigUI {
+            return AemServerConfigUI(
+                id = config.id,
+                name = config.name,
+                url = config.url,
+                user = credentials?.userName.orEmpty(),
+                password = credentials?.getPasswordAsString().orEmpty(),
+            )
+        }
     }
 }
