@@ -14,9 +14,9 @@ import com.intellij.openapi.project.DumbAware
 class AemConsoleExecuteAction : AnAction({ "Run" }, AllIcons.Actions.Execute), DumbAware {
 
     override fun actionPerformed(e: AnActionEvent) {
-        val component = e.presentation.getClientProperty(CustomComponentAction.COMPONENT_KEY) as ActionButton?
+        val component = e.presentation.getClientProperty(CustomComponentAction.COMPONENT_KEY)
 
-        if (component != null || ActionPlaces.isShortcutPlace(e.place)) {
+        if (component is ActionButton || ActionPlaces.isShortcutPlace(e.place)) {
             FileDocumentManager.getInstance().saveAllDocuments()
 
             val project = e.project
@@ -50,9 +50,9 @@ class AemConsoleExecuteAction : AnAction({ "Run" }, AllIcons.Actions.Execute), D
 class AemConsoleExecuteDistributedAction : AnAction({ "Run Distributed" }, AllIcons.Actions.RunAll), DumbAware {
 
     override fun actionPerformed(e: AnActionEvent) {
-        val component = e.presentation.getClientProperty(CustomComponentAction.COMPONENT_KEY) as ActionButton?
+        val component = e.presentation.getClientProperty(CustomComponentAction.COMPONENT_KEY)
 
-        if (component != null) {
+        if (component is ActionButton) {
             FileDocumentManager.getInstance().saveAllDocuments()
 
             val project = e.project
