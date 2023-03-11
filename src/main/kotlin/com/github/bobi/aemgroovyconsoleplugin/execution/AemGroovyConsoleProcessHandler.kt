@@ -22,7 +22,8 @@ import java.io.OutputStream
 class AemGroovyConsoleProcessHandler(
     private val project: Project,
     private val contentFile: VirtualFile,
-    private val config: AemServerConfig
+    private val config: AemServerConfig,
+    private val action: GroovyConsoleHttpService.Action,
 ) : ProcessHandler() {
 
     private val httpService = GroovyConsoleHttpService.getInstance(project)
@@ -40,17 +41,21 @@ class AemGroovyConsoleProcessHandler(
 
         val promise = AsyncPromise<GroovyConsoleOutput>().also {
             it.onSuccess { out ->
-                runInEdt { handleOutput(out) }
-                notifyProcessTerminated(0)
+                runInEdt {
+                    handleOutput(out)
+                    notifyProcessTerminated(0)
+                }
             }.onError { ex ->
-                runInEdt { printError(ex.localizedMessage) }
-                notifyProcessTerminated(1)
+                runInEdt {
+                    printError(ex.localizedMessage)
+                    notifyProcessTerminated(1)
+                }
             }
         }
 
         runBackgroundableTask("Running AEM Script ${contentFile.name} on ${config.url}", project, false) {
             try {
-                promise.setResult(httpService.execute(config, contentFile.contentsToByteArray()))
+                promise.setResult(httpService.execute(config, contentFile.contentsToByteArray(), action))
             } catch (th: Throwable) {
                 thisLogger().info(th)
                 promise.setError(th)
@@ -59,11 +64,13 @@ class AemGroovyConsoleProcessHandler(
     }
 
     private fun handleOutput(output: GroovyConsoleOutput) {
-        if (output.exceptionStackTrace.isBlank()) {
-            print(output.output)
+        if (output.exceptionStackTrace.isNullOrBlank()) {
+            if (!output.output.isNullOrBlank()) {
+                print(output.output)
+            }
 
             if (output.table != null) {
-                if (output.output.isNotBlank()) {
+                if (!output.output.isNullOrBlank()) {
                     print("\n")
                 }
 
@@ -77,8 +84,8 @@ class AemGroovyConsoleProcessHandler(
             printError(output.exceptionStackTrace.replace("Script1.groovy", contentFile.name))
         }
 
-        if (output.runningTime.isNotBlank()) {
-            print("\nExecution Time:${output.runningTime}")
+        if (!output.runningTime.isNullOrBlank()) {
+            print("\nExecution Time: ${output.runningTime}")
         }
     }
 

@@ -16,17 +16,22 @@ import java.awt.BorderLayout
 class AemConsoleEditorToolbar(project: Project, fileEditor: FileEditor) : EditorHeaderComponent() {
     init {
         val leftActionGroup = DefaultActionGroup().also { ag ->
-            ag.add(
-                AemConsoleExecuteAction().also {
-                    it.registerCustomShortcutSet(CommonShortcuts.CTRL_ENTER, fileEditor.component)
-                }
+
+            val runActions = DefaultActionGroup(
+                AemConsoleExecuteAction().also { action ->
+                    action.registerCustomShortcutSet(CommonShortcuts.CTRL_ENTER, fileEditor.component)
+                },
+                AemConsoleExecuteDistributedAction()
             )
+
+            ag.add(SplitButtonAction(runActions))
+
             ag.addSeparator()
             ag.add(AemConsoleServerChooserAction(project))
         }
 
         val rightActionGroup = DefaultActionGroup().also { ag ->
-            ag.add(object: AnAction("Open Configuration Dialog", "", AllIcons.General.Settings) {
+            ag.add(object : AnAction("Open Configuration Dialog", "", AllIcons.General.Settings) {
                 override fun actionPerformed(e: AnActionEvent) {
                     val proj = e.project
 
@@ -40,13 +45,15 @@ class AemConsoleEditorToolbar(project: Project, fileEditor: FileEditor) : Editor
 
         val actionManager = ActionManager.getInstance()
 
-        val leftToolbar = actionManager.createActionToolbar("LeftAemGroovyConsoleActionGroup", leftActionGroup, true).also {
-            it.targetComponent = this
-        }
+        val leftToolbar =
+            actionManager.createActionToolbar("LeftAemGroovyConsoleActionGroup", leftActionGroup, true).also {
+                it.targetComponent = this
+            }
 
-        val rightToolbar = actionManager.createActionToolbar("RightAemGroovyConsoleActionGroup", rightActionGroup, true).also {
-            it.targetComponent = this
-        }
+        val rightToolbar =
+            actionManager.createActionToolbar("RightAemGroovyConsoleActionGroup", rightActionGroup, true).also {
+                it.targetComponent = this
+            }
 
         this.add(leftToolbar.component, BorderLayout.WEST)
 

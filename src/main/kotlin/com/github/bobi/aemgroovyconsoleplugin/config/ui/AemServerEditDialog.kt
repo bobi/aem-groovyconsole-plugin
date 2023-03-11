@@ -12,6 +12,7 @@ import com.intellij.openapi.util.text.HtmlBuilder
 import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.ui.ColorUtil
+import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.dsl.builder.*
 import com.intellij.ui.dsl.gridLayout.HorizontalAlign
@@ -45,6 +46,8 @@ class AemServerEditDialog(private val project: Project, private val tableItem: A
     private lateinit var passwordField: JPasswordField
 
     private lateinit var testResultField: JLabel
+
+    private lateinit var distributedExecutionField: JBCheckBox
 
     private lateinit var testServerAction: Action
 
@@ -97,6 +100,15 @@ class AemServerEditDialog(private val project: Project, private val tableItem: A
                 )
                 .validationOnInput { validateNotEmpty(String(it.password)) }
                 .validationOnApply { validateNotEmpty(String(it.password)) }
+                .component
+        }
+
+        row {
+            distributedExecutionField = checkBox("Enable distributed execution")
+                .comment("OSGI 'distributedExecutionEnabled' property must be set to 'true'.", MAX_LINE_LENGTH_NO_WRAP)
+                .horizontalAlign(HorizontalAlign.FILL)
+                .resizableColumn()
+                .bindSelected({ tableItem.distributedExecution }, { tableItem.distributedExecution = it })
                 .component
         }
 
@@ -162,7 +174,15 @@ class AemServerEditDialog(private val project: Project, private val tableItem: A
 
             runModalTask("Checking AEM Server Connection", project, false) {
                 try {
-                    promise.setResult(httpService.execute(req.url, req.user, req.password, req.script))
+                    promise.setResult(
+                        httpService.execute(
+                            req.url,
+                            req.user,
+                            req.password,
+                            req.script,
+                            GroovyConsoleHttpService.Action.EXECUTE
+                        )
+                    )
                 } catch (th: Throwable) {
                     thisLogger().info(th)
                     promise.setError(th)

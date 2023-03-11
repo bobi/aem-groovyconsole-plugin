@@ -124,7 +124,7 @@ class AemServersConfigurable(private val project: Project) : Configurable {
 
         val items = table.model.items
 
-        persistentStateService.setAEMServers(items.map { AemServerConfig(it.id, it.name, it.url) })
+        persistentStateService.setAEMServers(items.map { it.toAemServerConfig() })
 
         items.forEach {
             PasswordsService.setCredentials(it.id, it.user, it.password)
@@ -149,15 +149,7 @@ class AemServersConfigurable(private val project: Project) : Configurable {
             if (aemServer.id > 0) {
                 val credentials = PasswordsService.getCredentials(aemServer.id)
 
-                result.add(
-                    AemServerConfigUI(
-                        id = aemServer.id,
-                        name = aemServer.name,
-                        url = aemServer.url,
-                        user = credentials?.userName.orEmpty(),
-                        password = credentials?.getPasswordAsString().orEmpty()
-                    )
-                )
+                result.add(AemServerConfigUI.fromAemServerConfig(aemServer, credentials))
             }
         }
 
