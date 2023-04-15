@@ -15,8 +15,6 @@ import com.intellij.ui.ColorUtil
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.dsl.builder.*
-import com.intellij.ui.dsl.gridLayout.HorizontalAlign
-import com.intellij.ui.dsl.gridLayout.VerticalAlign
 import com.intellij.ui.layout.ValidationInfoBuilder
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.concurrency.AsyncPromise
@@ -60,7 +58,7 @@ class AemServerEditDialog(private val project: Project, private val tableItem: A
     override fun createCenterPanel(): JComponent = panel {
         row("Server Name: ") {
             textField()
-                .horizontalAlign(HorizontalAlign.FILL)
+                .align(AlignX.FILL)
                 .resizableColumn()
                 .bindText({ tableItem.name }, { tableItem.name = it })
                 .validationOnInput { validateNotEmpty(it.text) }
@@ -70,7 +68,7 @@ class AemServerEditDialog(private val project: Project, private val tableItem: A
 
         row("URL: ") {
             urlField = textField()
-                .horizontalAlign(HorizontalAlign.FILL)
+                .align(AlignX.FILL)
                 .resizableColumn()
                 .bindText({ tableItem.url }, { tableItem.url = it })
                 .validationOnInput { validateUrl(it.text) }
@@ -80,7 +78,7 @@ class AemServerEditDialog(private val project: Project, private val tableItem: A
 
         row("Username: ") {
             userField = textField()
-                .horizontalAlign(HorizontalAlign.FILL)
+                .align(AlignX.FILL)
                 .resizableColumn()
                 .bindText({ tableItem.user }, { tableItem.user = it })
                 .validationOnInput { validateNotEmpty(it.text) }
@@ -91,7 +89,7 @@ class AemServerEditDialog(private val project: Project, private val tableItem: A
         row("Password: ") {
             passwordField = cell(JPasswordField())
                 .columns(COLUMNS_SHORT)
-                .horizontalAlign(HorizontalAlign.FILL)
+                .align(AlignX.FILL)
                 .resizableColumn()
                 .bind(
                     JPasswordField::getPassword,
@@ -106,7 +104,7 @@ class AemServerEditDialog(private val project: Project, private val tableItem: A
         row {
             distributedExecutionField = checkBox("Enable distributed execution")
                 .comment("OSGI 'distributedExecutionEnabled' property must be set to 'true'.", MAX_LINE_LENGTH_NO_WRAP)
-                .horizontalAlign(HorizontalAlign.FILL)
+                .align(AlignX.FILL)
                 .resizableColumn()
                 .bindSelected({ tableItem.distributedExecution }, { tableItem.distributedExecution = it })
                 .component
@@ -114,8 +112,7 @@ class AemServerEditDialog(private val project: Project, private val tableItem: A
 
         row {
             testResultField = label("")
-                .horizontalAlign(HorizontalAlign.FILL)
-                .verticalAlign(VerticalAlign.FILL)
+                .align(Align.FILL)
                 .resizableColumn()
                 .component
                 .also {

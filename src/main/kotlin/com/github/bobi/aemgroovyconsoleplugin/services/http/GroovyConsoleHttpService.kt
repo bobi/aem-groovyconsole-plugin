@@ -7,6 +7,7 @@ import com.github.bobi.aemgroovyconsoleplugin.services.model.AemServerConfig
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
@@ -36,6 +37,7 @@ import java.util.concurrent.TimeUnit
  * User: Andrey Bardashevsky
  * Date/Time: 02.08.2022 16:06
  */
+@Service(Service.Level.PROJECT)
 class GroovyConsoleHttpService : Disposable {
     private val httpClient: CloseableHttpClient = createHttpRequest()
 

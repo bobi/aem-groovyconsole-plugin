@@ -4,6 +4,13 @@
 
 ## [Unreleased]
 
+### Added
+- Added plugin icon
+
+### Changed
+- Update minimum supported Intellij version
+- Update usage of some Intellij deprecated APIs
+
 ## [0.7.2] - 2023-03-11
 
 ### Added

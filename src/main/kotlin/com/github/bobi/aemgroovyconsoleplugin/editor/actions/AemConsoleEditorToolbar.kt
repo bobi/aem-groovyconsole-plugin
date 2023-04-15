@@ -33,11 +33,7 @@ class AemConsoleEditorToolbar(project: Project, fileEditor: FileEditor) : Editor
         val rightActionGroup = DefaultActionGroup().also { ag ->
             ag.add(object : AnAction("Open Configuration Dialog", "", AllIcons.General.Settings) {
                 override fun actionPerformed(e: AnActionEvent) {
-                    val proj = e.project
-
-                    if (proj != null) {
-                        ShowSettingsUtil.getInstance().showSettingsDialog(proj, AemServersConfigurable::class.java)
-                    }
+                    ShowSettingsUtil.getInstance().showSettingsDialog(e.project, AemServersConfigurable::class.java)
                 }
             })
         }

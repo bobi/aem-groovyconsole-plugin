@@ -1,11 +1,13 @@
 package com.github.bobi.aemgroovyconsoleplugin.services
 
+import com.github.bobi.aemgroovyconsoleplugin.services.model.AemServerConfig
 import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
-import com.github.bobi.aemgroovyconsoleplugin.services.model.AemServerConfig
 
+@Service(Service.Level.PROJECT)
 @State(name = "AEMServers")
 class PersistentStateService : PersistentStateComponent<PersistentStateService.State> {
     private var myState: State = State()

@@ -11,9 +11,8 @@ import com.intellij.openapi.actionSystem.CommonShortcuts
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.project.Project
 import com.intellij.ui.ToolbarDecorator
+import com.intellij.ui.dsl.builder.Align
 import com.intellij.ui.dsl.builder.panel
-import com.intellij.ui.dsl.gridLayout.HorizontalAlign
-import com.intellij.ui.dsl.gridLayout.VerticalAlign
 import com.intellij.util.PlatformIcons
 import javax.swing.JComponent
 
@@ -93,8 +92,7 @@ class AemServersConfigurable(private val project: Project) : Configurable {
 
         row {
             cell(toolbarDecorator.createPanel())
-                .horizontalAlign(HorizontalAlign.FILL)
-                .verticalAlign(VerticalAlign.FILL)
+                .align(Align.FILL)
                 .resizableColumn()
         }.resizableRow()
     }

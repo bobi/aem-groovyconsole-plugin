@@ -42,7 +42,7 @@ jobs:
 
       # Check out current repository
       - name: Fetch Sources
-        uses: actions/checkout@v3.3.0
+        uses: actions/checkout@v3.5.0
 
       # Validate wrapper
       - name: Gradle Wrapper Validation
@@ -95,14 +95,14 @@ jobs:
 
       # Cache Plugin Verifier IDEs
       - name: Setup Plugin Verifier IDEs Cache
-        uses: actions/cache@v3.2.6
+        uses: actions/cache@v3.3.1
         with:
           path: ${{ steps.properties.outputs.pluginVerifierHomeDir }}/ides
           key: plugin-verifier-${{ hashFiles('build/listProductsReleases.txt') }}
 
       # Run Verify Plugin task and IntelliJ Plugin Verifier tool
       - name: Run Plugin Verification tasks
-        run: ./gradlew runPluginVerifier -Pplugin.verifier.home.dir=${{ steps.properties.outputs.pluginVerifierHomeDir }}
+        run: ./gradlew runPluginVerifier -Dplugin.verifier.home.dir=${{ steps.properties.outputs.pluginVerifierHomeDir }}
 
       # Collect Plugin Verifier Result
       - name: Collect Plugin Verifier Result
@@ -147,7 +147,7 @@ jobs:
 
       # Check out current repository
       - name: Fetch Sources
-        uses: actions/checkout@v3.3.0
+        uses: actions/checkout@v3.5.0
 
       # Remove old release drafts by using the curl request for the available releases with a draft flag
       - name: Remove Old Release Drafts
