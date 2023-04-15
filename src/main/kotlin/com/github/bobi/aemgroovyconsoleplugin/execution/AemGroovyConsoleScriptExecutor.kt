@@ -15,6 +15,7 @@ import com.intellij.execution.ui.RunContentManager
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.actionSystem.ex.ActionUtil
+import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.components.serviceIfCreated
 import com.intellij.openapi.fileChooser.FileChooserFactory
@@ -38,6 +39,7 @@ import javax.swing.JPanel
  * User: Andrey Bardashevsky
  * Date/Time: 07.08.2022 18:33
  */
+@Service(Service.Level.PROJECT)
 class AemGroovyConsoleScriptExecutor(private val project: Project) {
 
     private val tmpFolder: File by lazy {
@@ -227,7 +229,7 @@ class AemGroovyConsoleScriptExecutor(private val project: Project) {
                     fileWrapper?.let {
                         try {
                             aemConsoleRunContentDescriptor.tmpFile.copyTo(it.file, true)
-                            
+
                             Notifications.notifyInfo("Output saved", it.file.canonicalPath)
                         } catch (e: IOException) {
                             Notifications.notifyError("Save Output Error", e.localizedMessage)

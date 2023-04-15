@@ -41,10 +41,10 @@ jobs:
           EOM
           )"
           
-          echo 'changelog<<EOM' >> $GITHUB_OUTPUT
+          echo "changelog<<EOF" >> $GITHUB_OUTPUT
           echo "$CHANGELOG" >> $GITHUB_OUTPUT
-          echo 'EOM' >> $GITHUB_OUTPUT
-          
+          echo "EOF" >> $GITHUB_OUTPUT
+
       # Update Unreleased section with the current release note
       - name: Patch Changelog
         if: ${{ steps.properties.outputs.changelog != '' }}

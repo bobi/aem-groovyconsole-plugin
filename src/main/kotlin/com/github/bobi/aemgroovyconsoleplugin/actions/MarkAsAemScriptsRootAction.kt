@@ -3,6 +3,7 @@ package com.github.bobi.aemgroovyconsoleplugin.actions
 import com.github.bobi.aemgroovyconsoleplugin.config.SettingsChangedNotifier
 import com.github.bobi.aemgroovyconsoleplugin.services.RootFoldersService
 import com.intellij.openapi.actionSystem.ActionPlaces
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.project.DumbAwareAction
@@ -55,5 +56,9 @@ class MarkAsAemScriptsRootAction : DumbAwareAction() {
         project.messageBus.syncPublisher(SettingsChangedNotifier.TOPIC).settingsChanged()
 
         FileContentUtil.reparseOpenedFiles()
+    }
+
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return ActionUpdateThread.BGT
     }
 }

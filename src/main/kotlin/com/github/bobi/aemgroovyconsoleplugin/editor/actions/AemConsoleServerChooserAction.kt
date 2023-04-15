@@ -107,9 +107,7 @@ class AemConsoleServerChooserAction(
     }
 
     private fun openConfigurationDialog(project: Project?) {
-        if (project != null) {
-            ShowSettingsUtil.getInstance().showSettingsDialog(project, AemServersConfigurable::class.java)
-        }
+        ShowSettingsUtil.getInstance().showSettingsDialog(project, AemServersConfigurable::class.java)
     }
 
     override fun getActionUpdateThread(): ActionUpdateThread {

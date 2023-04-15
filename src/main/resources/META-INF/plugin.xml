@@ -18,17 +18,6 @@
         <projectConfigurable groupId="tools"
                              instance="com.github.bobi.aemgroovyconsoleplugin.config.ui.AemServersConfigurable"/>
 
-        <projectService
-                serviceImplementation="com.github.bobi.aemgroovyconsoleplugin.services.http.GroovyConsoleHttpService"/>
-
-        <projectService
-                serviceImplementation="com.github.bobi.aemgroovyconsoleplugin.services.PersistentStateService"/>
-
-        <projectService
-                serviceImplementation="com.github.bobi.aemgroovyconsoleplugin.execution.AemGroovyConsoleScriptExecutor"/>
-
-        <projectService serviceImplementation="com.github.bobi.aemgroovyconsoleplugin.services.RootFoldersService"/>
-
         <editorNotificationProvider
                 implementation="com.github.bobi.aemgroovyconsoleplugin.editor.AemConsoleEditorDecorator"/>
 
