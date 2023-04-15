@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [0.8.0] - 2023-04-15
+
 ### Added
 - Added plugin icon
 
@@ -109,7 +111,8 @@
 ### Changed
 - Initial Release
 
-[Unreleased]: https://github.com/bobi/aem-groovyconsole-plugin/compare/v0.7.2...HEAD
+[Unreleased]: https://github.com/bobi/aem-groovyconsole-plugin/compare/v0.8.0...HEAD
+[0.8.0]: https://github.com/bobi/aem-groovyconsole-plugin/compare/v0.7.2...v0.8.0
 [0.7.2]: https://github.com/bobi/aem-groovyconsole-plugin/compare/v0.7.1...v0.7.2
 [0.7.1]: https://github.com/bobi/aem-groovyconsole-plugin/compare/v0.6.4...v0.7.1
 [0.7.0]: https://github.com/bobi/aem-groovyconsole-plugin/compare/v0.6.4...v0.7.0
