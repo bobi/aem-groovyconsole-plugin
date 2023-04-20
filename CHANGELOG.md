@@ -4,6 +4,9 @@
 
 ## [Unreleased]
 
+### Changed
+- Updated plugin icon
+
 ## [0.8.0] - 2023-04-15
 
 ### Added
