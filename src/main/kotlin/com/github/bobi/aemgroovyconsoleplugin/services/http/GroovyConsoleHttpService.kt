@@ -3,7 +3,6 @@ package com.github.bobi.aemgroovyconsoleplugin.services.http
 import com.github.bobi.aemgroovyconsoleplugin.services.PasswordsService
 import com.github.bobi.aemgroovyconsoleplugin.services.http.model.GroovyConsoleOutput
 import com.github.bobi.aemgroovyconsoleplugin.services.http.model.GroovyConsoleTable
-import com.github.bobi.aemgroovyconsoleplugin.services.model.AemDevToken
 import com.github.bobi.aemgroovyconsoleplugin.services.model.AemServerConfig
 import com.github.bobi.aemgroovyconsoleplugin.services.model.AuthType
 import com.google.gson.Gson
@@ -40,7 +39,6 @@ import org.apache.hc.core5.http.HttpStatus
 import org.apache.hc.core5.http.message.BasicHeader
 import org.apache.hc.core5.net.URIBuilder
 import org.apache.hc.core5.util.Timeout
-import java.io.IOException
 import java.io.InputStreamReader
 import java.io.StringReader
 import java.net.URI
@@ -53,7 +51,7 @@ import kotlin.text.toByteArray
  * Date/Time: 02.08.2022 16:06
  */
 @Service(Service.Level.PROJECT)
-class GroovyConsoleHttpService(private val project: Project) : Disposable {
+class GroovyConsoleHttpService(project: Project) : Disposable {
 
     private val imsTokenProvider = AdobeIMSTokenProvider.getInstance(project)
 
