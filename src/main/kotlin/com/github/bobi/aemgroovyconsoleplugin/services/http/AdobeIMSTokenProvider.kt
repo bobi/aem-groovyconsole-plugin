@@ -84,32 +84,32 @@ class AdobeIMSTokenProvider : Disposable {
     }
 
     private fun fetchAccessToken(config: AemServerHttpConfig): AccessToken {
-        val certToken = parseCertToken(config.credentials.password)
+        val (_, _, integration) = parseCertToken(config.credentials.password)
 
         val jwtBuilder = JWT.create()
-            .withIssuer(certToken.integration.org)
-            .withSubject(certToken.integration.id)
+            .withIssuer(integration.org)
+            .withSubject(integration.id)
             .withIssuedAt(Instant.now())
             .withExpiresAt(Instant.now().plus(8, ChronoUnit.HOURS))
-            .withAudience("https://${certToken.integration.imsEndpoint}/c/${certToken.integration.technicalAccount.clientId}")
+            .withAudience("https://${integration.imsEndpoint}/c/${integration.technicalAccount.clientId}")
 
-        certToken.integration.metascopes.split(",").forEach {
-            jwtBuilder.withClaim("https://${certToken.integration.imsEndpoint}/s/${it}", true)
+        integration.metascopes.split(",").forEach {
+            jwtBuilder.withClaim("https://${integration.imsEndpoint}/s/${it}", true)
         }
 
-        val jwtToken = jwtBuilder.sign(Algorithm.RSA256(readPrivateKey(certToken.integration.privateKey)))
+        val jwtToken = jwtBuilder.sign(Algorithm.RSA256(readPrivateKey(integration.privateKey)))
 
         val uri = URIBuilder().apply {
             scheme = "https"
-            host = certToken.integration.imsEndpoint
+            host = integration.imsEndpoint
             path = "/ims/exchange/jwt"
         }.build()
 
         val request = HttpPost(uri).apply {
             entity = UrlEncodedFormEntity(
                 listOf(
-                    BasicNameValuePair("client_id", certToken.integration.technicalAccount.clientId),
-                    BasicNameValuePair("client_secret", certToken.integration.technicalAccount.clientSecret),
+                    BasicNameValuePair("client_id", integration.technicalAccount.clientId),
+                    BasicNameValuePair("client_secret", integration.technicalAccount.clientSecret),
                     BasicNameValuePair("jwt_token", jwtToken)
                 )
             )
