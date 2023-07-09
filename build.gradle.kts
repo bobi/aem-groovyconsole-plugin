@@ -26,6 +26,8 @@ dependencies {
     implementation(libs.bundles.groovyConsole) {
         exclude(group = "org.osgi")
         exclude(group = "org.apache.groovy")
+        exclude(group = "com.fasterxml.jackson.core")
+        exclude(group = "org.slf4j")
     }
 }
 
@@ -58,8 +60,13 @@ qodana {
     showReport = environment("QODANA_SHOW_REPORT").map { it.toBoolean() }.getOrElse(false)
 }
 
-kover.xmlReport {
-    onCheck = true
+// Configure Gradle Kover Plugin - read more: https://github.com/Kotlin/kotlinx-kover#configuration
+koverReport {
+    defaults {
+        xml {
+            onCheck = true
+        }
+    }
 }
 
 tasks {
@@ -127,7 +134,6 @@ tasks {
         // The pluginVersion is based on the SemVer (https://semver.org) and supports pre-release labels, like 2.1.7-alpha.3
         // Specify pre-release label to publish the plugin in a custom Release Channel automatically. Read more:
         // https://plugins.jetbrains.com/docs/intellij/deployment.html#specifying-a-release-channel
-        channels =
-            properties("pluginVersion").map { listOf(it.split('-').getOrElse(1) { "default" }.split('.').first()) }
+        channels = properties("pluginVersion").map { listOf(it.split('-').getOrElse(1) { "default" }.split('.').first()) }
     }
 }

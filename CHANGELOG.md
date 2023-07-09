@@ -3,6 +3,7 @@
 # aem-groovyconsole-plugin Changelog
 
 ## [Unreleased]
+- Added AEMaaCS authentication options
 
 ## [0.8.1] - 2023-04-21
 

@@ -20,16 +20,13 @@ jobs:
 
       # Check out current repository
       - name: Fetch Sources
-        uses: actions/checkout@v3.5.2
+        uses: actions/checkout@v3.5.3
         with:
           ref: ${{ github.event.release.tag_name }}
 
-      # Setup Java 17 environment for the next steps
-      - name: Setup Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: zulu
-          java-version: 17
+      # Setup Gradle
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
 
       # Set environment variables
       - name: Export Properties
@@ -93,5 +90,4 @@ jobs:
             --title "Changelog update - \`$VERSION\` [skip ci]" \
             --body "Current pull request contains patched \`CHANGELOG.md\` file for the \`$VERSION\` version." \
             --label "$LABEL" \
-            --base main \
             --head $BRANCH
