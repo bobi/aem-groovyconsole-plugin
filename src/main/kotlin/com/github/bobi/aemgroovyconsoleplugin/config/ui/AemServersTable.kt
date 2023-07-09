@@ -55,14 +55,20 @@ class AemServersTable(tableItems: List<AemServerConfigUI>) : TableView<AemServer
     }
 
     private fun createInjectionColumnInfos(items: List<AemServerConfigUI>): Array<ColumnInfo<AemServerConfigUI, AemServerConfigUI>> {
-        val nameCellRenderer: TableCellRenderer =
-            createCellRenderer(text = { it.name }, icon = { AllIcons.Webreferences.Server })
-        
-        val urlCellRenderer: TableCellRenderer =
-            createCellRenderer(text = { it.url }, icon = { PlatformIcons.WEB_ICON })
+        val nameCellRenderer: TableCellRenderer = createCellRenderer(
+            text = { it.name },
+            icon = { AllIcons.Webreferences.Server }
+        )
 
-        val userCellRenderer: TableCellRenderer =
-            createCellRenderer(text = { it.user }, icon = { AllIcons.General.User })
+        val urlCellRenderer: TableCellRenderer = createCellRenderer(
+            text = { it.url },
+            icon = { PlatformIcons.WEB_ICON }
+        )
+
+        val userCellRenderer: TableCellRenderer = createCellRenderer(
+            text = { it.user },
+            icon = { AllIcons.General.User }
+        )
 
         val maxName = items.map { it.name }.maxByOrNull { it.length }
         val maxUrl = items.map { it.url }.maxByOrNull { it.length }

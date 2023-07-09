@@ -1,6 +1,7 @@
 package com.github.bobi.aemgroovyconsoleplugin.config.ui
 
 import com.github.bobi.aemgroovyconsoleplugin.services.model.AemServerConfig
+import com.github.bobi.aemgroovyconsoleplugin.services.model.AuthType
 import com.intellij.credentialStore.Credentials
 
 /**
@@ -11,6 +12,7 @@ data class AemServerConfigUI(
     var id: Long = newId(),
     var name: String = "",
     var url: String = "",
+    var authType: AuthType = AuthType.BASIC,
     var user: String = "",
     var password: String = "",
     var distributedExecution: Boolean = false
@@ -21,6 +23,7 @@ data class AemServerConfigUI(
         return AemServerConfig(
             id = this.id,
             name = this.name,
+            authType = this.authType,
             url = this.url,
             distributedExecution = this.distributedExecution
         )
@@ -33,6 +36,7 @@ data class AemServerConfigUI(
             return AemServerConfigUI(
                 id = config.id,
                 name = config.name,
+                authType = config.authType,
                 url = config.url,
                 user = credentials?.userName.orEmpty(),
                 password = credentials?.getPasswordAsString().orEmpty(),

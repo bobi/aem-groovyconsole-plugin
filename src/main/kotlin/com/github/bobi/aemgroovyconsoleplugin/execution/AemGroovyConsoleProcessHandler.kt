@@ -12,6 +12,7 @@ import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.progress.runBackgroundableTask
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import org.apache.commons.lang3.exception.ExceptionUtils
 import org.jetbrains.concurrency.AsyncPromise
 import java.io.OutputStream
 
@@ -47,7 +48,9 @@ class AemGroovyConsoleProcessHandler(
                 }
             }.onError { ex ->
                 runInEdt {
-                    printError(ex.localizedMessage)
+                    val rootCause = ExceptionUtils.getRootCause(ex)
+                    val message = rootCause.localizedMessage ?: rootCause.javaClass.simpleName
+                    printError(message)
                     notifyProcessTerminated(1)
                 }
             }

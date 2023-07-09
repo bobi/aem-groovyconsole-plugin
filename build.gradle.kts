@@ -26,6 +26,8 @@ dependencies {
     implementation(libs.bundles.groovyConsole) {
         exclude(group = "org.osgi")
         exclude(group = "org.apache.groovy")
+        exclude(group = "com.fasterxml.jackson.core")
+        exclude(group = "org.slf4j")
     }
 }
 

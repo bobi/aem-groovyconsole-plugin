@@ -3,6 +3,7 @@
 # aem-groovyconsole-plugin Changelog
 
 ## [Unreleased]
+- Added AEMaaCS authentication options
 
 ### Changed
 - Updated plugin icon

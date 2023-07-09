@@ -1,7 +1,9 @@
 [versions]
 # libraries
 annotations = "24.0.1"
-groovyConsole="19.0.3"
+groovyConsole = "19.0.3"
+apacheHttpClient = "5.2.1"
+jwt="4.4.0"
 
 # plugins
 kotlin = "1.9.0"
@@ -12,11 +14,13 @@ kover = "0.7.2"
 
 [libraries]
 annotations = { group = "org.jetbrains", name = "annotations", version.ref = "annotations" }
-groovyConsoleApi = { group = "be.orbinson.aem", name = "aem-groovy-console-api", version.ref =  "groovyConsole"}
-groovyConsoleBundle = { group = "be.orbinson.aem", name = "aem-groovy-console-bundle", version.ref =  "groovyConsole"}
+groovyConsoleApi = { group = "be.orbinson.aem", name = "aem-groovy-console-api", version.ref = "groovyConsole" }
+groovyConsoleBundle = { group = "be.orbinson.aem", name = "aem-groovy-console-bundle", version.ref = "groovyConsole" }
+apacheHttpClient = { group = "org.apache.httpcomponents.client5", name = "httpclient5", version.ref = "apacheHttpClient" }
+jwt = { group = "com.auth0", name = "java-jwt", version.ref = "jwt" }
 
 [bundles]
-groovyConsole = ["groovyConsoleApi", "groovyConsoleBundle"]
+groovyConsole = ["groovyConsoleApi", "groovyConsoleBundle", "apacheHttpClient", "jwt"]
 
 [plugins]
 changelog = { id = "org.jetbrains.changelog", version.ref = "changelog" }
