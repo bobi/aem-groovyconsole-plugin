@@ -17,6 +17,7 @@ plugins {
 group = properties("pluginGroup").get()
 version = properties("pluginVersion").get()
 
+// Configure project's dependencies
 repositories {
     mavenCentral()
 }

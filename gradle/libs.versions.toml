@@ -7,7 +7,7 @@ jwt="4.4.0"
 
 # plugins
 kotlin = "1.9.0"
-changelog = "2.1.1"
+changelog = "2.1.2"
 gradleIntelliJPlugin = "1.15.0"
 qodana = "0.1.13"
 kover = "0.7.2"
