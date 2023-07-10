@@ -1,7 +1,5 @@
 package com.github.bobi.aemgroovyconsoleplugin.services.http
 
-import com.auth0.jwt.JWT
-import com.auth0.jwt.algorithms.Algorithm
 import com.github.bobi.aemgroovyconsoleplugin.services.PasswordsService
 import com.github.bobi.aemgroovyconsoleplugin.services.model.AccessToken
 import com.github.bobi.aemgroovyconsoleplugin.services.model.AemCertificateToken
@@ -13,6 +11,8 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
+import io.jsonwebtoken.Jwts
+import io.jsonwebtoken.SignatureAlgorithm
 import org.apache.hc.client5.http.classic.methods.HttpPost
 import org.apache.hc.client5.http.entity.UrlEncodedFormEntity
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient
@@ -32,6 +32,8 @@ import java.security.spec.PKCS8EncodedKeySpec
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.*
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.toJavaDuration
 
 
 /**
@@ -61,13 +63,7 @@ class AdobeIMSTokenProvider : Disposable {
             try {
                 val token = PasswordsService.getAccessToken(config.id)
                 if (token !== null) {
-                    val accessToken = gson.fromJson(token, AccessToken::class.java)
-
-                    val decodedToken = JWT.decode(accessToken.access_token)
-
-                    if (decodedToken.expiresAtAsInstant.isAfter(Instant.now())) {
-                        throw Exception("Token expired")
-                    }
+                    val accessToken = verifyAccessToken(token)
 
                     return accessToken.access_token
                 } else {
@@ -83,21 +79,41 @@ class AdobeIMSTokenProvider : Disposable {
         }
     }
 
+    private fun verifyAccessToken(token: String): AccessToken {
+        val accessToken = gson.fromJson(token, AccessToken::class.java)
+
+        val splitToken = accessToken.access_token.split(Regex("\\."))
+        val unsignedToken = splitToken[0] + "." + splitToken[1] + "."
+
+        val jwt = Jwts.parserBuilder().build().parseClaimsJwt(unsignedToken)
+
+        val createdAt = jwt.body.get("created_at", String::class.java).toLong()
+        val expiresIn = jwt.body.get("expires_in", String::class.java).toLong()
+
+        val expiresAt = Instant.ofEpochMilli(createdAt + expiresIn).minus(1.hours.toJavaDuration())
+
+        if (expiresAt.isBefore(Instant.now())) {
+            throw Exception("Expired token")
+        }
+
+        return accessToken
+    }
+
     private fun fetchAccessToken(config: AemServerHttpConfig): AccessToken {
         val (_, _, integration) = parseCertToken(config.credentials.password)
 
-        val jwtBuilder = JWT.create()
-            .withIssuer(integration.org)
-            .withSubject(integration.id)
-            .withIssuedAt(Instant.now())
-            .withExpiresAt(Instant.now().plus(8, ChronoUnit.HOURS))
-            .withAudience("https://${integration.imsEndpoint}/c/${integration.technicalAccount.clientId}")
+        val jwtBuilder = Jwts.builder()
+            .setIssuer(integration.org)
+            .setSubject(integration.id)
+            .setIssuedAt(Date.from(Instant.now()))
+            .setExpiration(Date.from(Instant.now().plus(8, ChronoUnit.HOURS)))
+            .setAudience("https://${integration.imsEndpoint}/c/${integration.technicalAccount.clientId}")
 
         integration.metascopes.split(",").forEach {
-            jwtBuilder.withClaim("https://${integration.imsEndpoint}/s/${it}", true)
+            jwtBuilder.claim("https://${integration.imsEndpoint}/s/${it}", true)
         }
 
-        val jwtToken = jwtBuilder.sign(Algorithm.RSA256(readPrivateKey(integration.privateKey)))
+        val jwtToken = jwtBuilder.signWith(readPrivateKey(integration.privateKey), SignatureAlgorithm.RS256).compact()
 
         val uri = URIBuilder().apply {
             scheme = "https"
@@ -153,6 +169,5 @@ class AdobeIMSTokenProvider : Disposable {
 
             return kf.generatePrivate(PKCS8EncodedKeySpec(kp.private.encoded)) as RSAPrivateKey
         }
-
     }
 }
