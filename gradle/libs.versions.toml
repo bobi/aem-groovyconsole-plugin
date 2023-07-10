@@ -3,11 +3,11 @@
 annotations = "24.0.1"
 groovyConsole = "19.0.3"
 apacheHttpClient = "5.2.1"
-jwt="4.4.0"
+jjwt="0.11.5"
 
 # plugins
 kotlin = "1.9.0"
-changelog = "2.1.1"
+changelog = "2.1.2"
 gradleIntelliJPlugin = "1.15.0"
 qodana = "0.1.13"
 kover = "0.7.2"
@@ -17,10 +17,12 @@ annotations = { group = "org.jetbrains", name = "annotations", version.ref = "an
 groovyConsoleApi = { group = "be.orbinson.aem", name = "aem-groovy-console-api", version.ref = "groovyConsole" }
 groovyConsoleBundle = { group = "be.orbinson.aem", name = "aem-groovy-console-bundle", version.ref = "groovyConsole" }
 apacheHttpClient = { group = "org.apache.httpcomponents.client5", name = "httpclient5", version.ref = "apacheHttpClient" }
-jwt = { group = "com.auth0", name = "java-jwt", version.ref = "jwt" }
+jjwtApi = { group = "io.jsonwebtoken", name = "jjwt-api", version.ref = "jjwt" }
+jjwtImpl = { group = "io.jsonwebtoken", name = "jjwt-impl", version.ref = "jjwt" }
+jjwtGson = { group = "io.jsonwebtoken", name = "jjwt-gson", version.ref = "jjwt" }
 
 [bundles]
-groovyConsole = ["groovyConsoleApi", "groovyConsoleBundle", "apacheHttpClient", "jwt"]
+groovyConsole = ["groovyConsoleApi", "groovyConsoleBundle", "apacheHttpClient", "jjwtApi", "jjwtImpl", "jjwtGson"]
 
 [plugins]
 changelog = { id = "org.jetbrains.changelog", version.ref = "changelog" }
