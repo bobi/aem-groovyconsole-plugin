@@ -12,17 +12,6 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.engine.cio.*
-import io.ktor.client.plugins.auth.*
-import io.ktor.client.plugins.auth.providers.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.request.*
-import io.ktor.client.request.forms.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
 import io.ktor.utils.io.core.*
 import org.apache.hc.client5.http.classic.methods.HttpPost
 import org.apache.hc.client5.http.config.ConnectionConfig
@@ -170,9 +159,7 @@ class GroovyConsoleHttpService(project: Project) : Disposable {
             val user = credentials?.userName.orEmpty()
             val password = credentials?.getPasswordAsString().orEmpty()
 
-            if (user.isBlank() || password.isBlank()) {
-                throw IllegalArgumentException("Credentials is not found for server: ${config.id}")
-            }
+            require(user.isNotBlank() && password.isNotBlank()) { "Credentials is not found for server: ${config.id}" }
 
             return AemServerCredentials(user, password)
         }

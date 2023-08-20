@@ -33,6 +33,8 @@ import javax.swing.*
 
 private const val TOKEN_DESCRIPTION = "Paste JSON from Adobe AEM Developer Console"
 
+private const val INVALID_JSON_MESSAGE = "Invalid json"
+
 /**
  * User: Andrey Bardashevsky
  * Date/Time: 29.07.2022 15:45
@@ -72,6 +74,7 @@ class AemServerEditDialog(private val project: Project, private val tableItem: A
         init()
     }
 
+    @Suppress("kotlin:S3776")
     override fun createCenterPanel(): JComponent = panel {
         row("Server Name: ") {
             textField()
@@ -305,10 +308,10 @@ class AemServerEditDialog(private val project: Project, private val tableItem: A
                 val (ok, statusCode, accessToken) = gson.fromJson(value, AemDevToken::class.java)
 
                 if (!ok || statusCode != 200 || accessToken.isBlank()) {
-                    return error("Invalid json")
+                    return error(INVALID_JSON_MESSAGE)
                 }
             } catch (e: Throwable) {
-                return error("Invalid json")
+                return error(INVALID_JSON_MESSAGE)
             }
         }
 
@@ -336,10 +339,10 @@ class AemServerEditDialog(private val project: Project, private val tableItem: A
                     || integration.privateKey.isBlank()
                     || integration.publicKey.isBlank()
                 ) {
-                    return error("Invalid json")
+                    return error(INVALID_JSON_MESSAGE)
                 }
             } catch (e: Throwable) {
-                return error("Invalid json")
+                return error(INVALID_JSON_MESSAGE)
             }
         }
 

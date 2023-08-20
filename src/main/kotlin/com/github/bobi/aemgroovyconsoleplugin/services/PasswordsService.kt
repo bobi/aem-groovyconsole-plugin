@@ -17,25 +17,25 @@ object PasswordsService {
 
     fun removeCredentials(id: Long) {
         val passwordSafe = PasswordSafe.instance
-        passwordSafe.set(credentialAttributes(id), null)
-        passwordSafe.set(credentialAttributes(id, AEM_ACCESS_TOKEN_SUFFIX), null)
+        passwordSafe[credentialAttributes(id)] = null
+        passwordSafe[credentialAttributes(id, AEM_ACCESS_TOKEN_SUFFIX)] = null
     }
 
     fun setCredentials(id: Long, user: String, password: String) {
         val passwordSafe = PasswordSafe.instance
 
-        passwordSafe.set(credentialAttributes(id), Credentials(user, password))
-        passwordSafe.set(credentialAttributes(id, AEM_ACCESS_TOKEN_SUFFIX), null)
+        passwordSafe[credentialAttributes(id)] = Credentials(user, password)
+        passwordSafe[credentialAttributes(id, AEM_ACCESS_TOKEN_SUFFIX)] = null
     }
 
-    fun getCredentials(id: Long): Credentials? = PasswordSafe.instance.get(credentialAttributes(id))
+    fun getCredentials(id: Long): Credentials? = PasswordSafe.instance[credentialAttributes(id)]
 
     fun setAccessToken(id: Long, token: String) {
-        PasswordSafe.instance.set(credentialAttributes(id, AEM_ACCESS_TOKEN_SUFFIX), Credentials("token", token))
+        PasswordSafe.instance[credentialAttributes(id, AEM_ACCESS_TOKEN_SUFFIX)] = Credentials("token", token)
     }
 
     fun getAccessToken(id: Long): String? =
-        PasswordSafe.instance.get(credentialAttributes(id, AEM_ACCESS_TOKEN_SUFFIX))?.getPasswordAsString()
+        PasswordSafe.instance[credentialAttributes(id, AEM_ACCESS_TOKEN_SUFFIX)]?.getPasswordAsString()
 
     private fun credentialAttributes(id: Long, suffix: String = "") = CredentialAttributes(
         generateServiceName(AEM_GROOVY_CONSOLE, id.toString() + suffix),

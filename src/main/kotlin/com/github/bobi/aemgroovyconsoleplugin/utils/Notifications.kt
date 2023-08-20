@@ -19,6 +19,7 @@ object Notifications {
         notify(title, content, NotificationType.INFORMATION)
     }
 
+    @Suppress("unused")
     fun notifyWarn(title: String = "", content: String) {
         notify(title, content, NotificationType.WARNING)
     }
