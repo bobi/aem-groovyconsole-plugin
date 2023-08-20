@@ -3,6 +3,8 @@
 # aem-groovyconsole-plugin Changelog
 
 ## [Unreleased]
+- Updated to the latest version of Groovy Console
+- Added support for "distribute" method in code completion 
 
 ## [0.8.2] - 2023-07-10
 - Added AEMaaCS authentication options
