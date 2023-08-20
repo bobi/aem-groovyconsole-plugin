@@ -1,7 +1,7 @@
 [versions]
 # libraries
 annotations = "24.0.1"
-groovyConsole = "19.0.3"
+groovyConsole = "19.0.4"
 apacheHttpClient = "5.2.1"
 jjwt="0.11.5"
 
