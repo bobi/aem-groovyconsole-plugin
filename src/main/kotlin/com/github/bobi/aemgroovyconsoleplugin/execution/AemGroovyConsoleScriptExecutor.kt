@@ -196,6 +196,7 @@ class AemGroovyConsoleScriptExecutor(private val project: Project) {
             }
         }
 
+        @Suppress("kotlin:S3776")
         override fun actionPerformed(e: AnActionEvent) {
             val project = e.project
             val component = e.getData(PlatformDataKeys.CONTEXT_COMPONENT)

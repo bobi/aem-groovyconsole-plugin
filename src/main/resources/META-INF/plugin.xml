@@ -15,8 +15,11 @@
                   fieldName="INSTANCE"
         />
 
-        <projectConfigurable groupId="tools"
-                             instance="com.github.bobi.aemgroovyconsoleplugin.config.ui.AemServersConfigurable"/>
+        <projectConfigurable id="com.github.bobi.aemgroovyconsoleplugin.config.ui.AemServersConfigurable"
+                             instance="com.github.bobi.aemgroovyconsoleplugin.config.ui.AemServersConfigurable"
+                             groupId="tools"
+                             displayName="AEM Groovy Console"
+                             nonDefaultProject="true"/>
 
         <editorNotificationProvider
                 implementation="com.github.bobi.aemgroovyconsoleplugin.editor.AemConsoleEditorDecorator"/>

@@ -58,14 +58,14 @@ class AdobeIMSTokenProvider : Disposable {
 
     private fun getImsToken(config: AemServerHttpConfig): String {
         if (config.id == null) {
-            return fetchAccessToken(config).access_token
+            return fetchAccessToken(config).accessToken
         } else {
             try {
                 val token = PasswordsService.getAccessToken(config.id)
                 if (token !== null) {
                     val accessToken = verifyAccessToken(token)
 
-                    return accessToken.access_token
+                    return accessToken.accessToken
                 } else {
                     throw Exception("Token not found")
                 }
@@ -74,7 +74,7 @@ class AdobeIMSTokenProvider : Disposable {
 
                 PasswordsService.setAccessToken(config.id, gson.toJson(accessToken))
 
-                return accessToken.access_token
+                return accessToken.accessToken
             }
         }
     }
@@ -82,13 +82,13 @@ class AdobeIMSTokenProvider : Disposable {
     private fun verifyAccessToken(token: String): AccessToken {
         val accessToken = gson.fromJson(token, AccessToken::class.java)
 
-        val splitToken = accessToken.access_token.split(Regex("\\."))
+        val splitToken = accessToken.accessToken.split(Regex("\\."))
         val unsignedToken = splitToken[0] + "." + splitToken[1] + "."
 
         val jwt = Jwts.parserBuilder().build().parseClaimsJwt(unsignedToken)
 
-        val createdAt = jwt.body.get("created_at", String::class.java).toLong()
-        val expiresIn = jwt.body.get("expires_in", String::class.java).toLong()
+        val createdAt = jwt.body["created_at", String::class.java].toLong()
+        val expiresIn = jwt.body["expires_in", String::class.java].toLong()
 
         val expiresAt = Instant.ofEpochMilli(createdAt + expiresIn).minus(1.hours.toJavaDuration())
 

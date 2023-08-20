@@ -1,5 +1,7 @@
 package com.github.bobi.aemgroovyconsoleplugin.services.model
 
+import com.google.gson.annotations.SerializedName
+
 /**
  * User: Andrey Bardashevsky
  * Date/Time: 08.07.2023 18:32
@@ -30,7 +32,10 @@ data class AemCertificateToken(
 )
 
 data class AccessToken(
-    val token_type: String,
-    val access_token: String,
-    val expires_in: Long,
+    @SerializedName("token_type")
+    val tokenType: String,
+    @SerializedName("access_token")
+    val accessToken: String,
+    @SerializedName("expires_in")
+    val expiresIn: Long,
 )

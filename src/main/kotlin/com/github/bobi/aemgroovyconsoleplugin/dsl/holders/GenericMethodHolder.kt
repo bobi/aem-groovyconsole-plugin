@@ -87,15 +87,12 @@ class GenericMethodHolder(descriptor: GenericMethodDescriptor, psiFile: PsiFile)
         place: PsiElement,
         genericTypes: Map<String, PsiClassType>
     ): PsiClassType {
-        return if (genericTypes.contains(typeDescriptor.fqn)) {
-            genericTypes[typeDescriptor.fqn]!!
-        } else {
-            if (typeDescriptor.genericType != null) {
+        return genericTypes[typeDescriptor.fqn]
+            ?: if (typeDescriptor.genericType != null) {
                 TypesUtil.createGenericType(typeDescriptor.fqn, place, genericTypes[typeDescriptor.genericType])
             } else {
                 TypesUtil.createType(typeDescriptor.fqn, place)
             }
-        }
     }
 
     companion object {

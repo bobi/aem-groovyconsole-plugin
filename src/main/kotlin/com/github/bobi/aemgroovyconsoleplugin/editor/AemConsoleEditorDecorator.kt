@@ -20,11 +20,10 @@ class AemConsoleEditorDecorator(project: Project) : EditorNotificationProvider {
     init {
         val notifications = project.getService(EditorNotifications::class.java)
 
-        project.messageBus.connect().subscribe(SettingsChangedNotifier.TOPIC, object : SettingsChangedNotifier {
-            override fun settingsChanged() {
-                notifications.updateAllNotifications()
-            }
-        })
+        project.messageBus.connect().subscribe(
+            SettingsChangedNotifier.TOPIC,
+            SettingsChangedNotifier { notifications.updateAllNotifications() }
+        )
     }
 
     override fun collectNotificationData(
