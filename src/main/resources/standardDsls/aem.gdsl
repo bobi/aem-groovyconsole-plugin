@@ -1,8 +1,10 @@
 package standardDsls
 
+
+import com.intellij.psi.PsiMember
 import groovy.transform.Field
 
-def gdslScriptContext = context(scope: scriptScope(), filetypes: ['gdsl'])
+def gdslScriptContext = context(scope: scriptScope(null), filetypes: ['gdsl'])
 
 contributor([gdslScriptContext]) {
     method name: 'field',
@@ -33,11 +35,11 @@ contributor([gdslScriptContext]) {
 
 @Field static final String TABLE_CLASS = 'be.orbinson.aem.groovy.console.table.Table'
 
-def aemContext(final Map props) {
+def aemContext(final Map props = null) {
     final Map contextProps = props ?: [:]
 
     contextProps.scriptType = 'aemconsole'
-    contextProps.scope = contextProps.scope ?: scriptScope()
+    contextProps.scope = contextProps.scope ?: scriptScope(null)
 
     return context(contextProps)
 }
@@ -157,6 +159,19 @@ contributor(aemContext()) {
             type: void,
             doc: doc('Invalidate the node at the given path with supplied options. (Only applicable on AEMaaCS)')
 
+    method name: 'distribute',
+            params: [path: String.name],
+            type: void,
+            doc: doc('Distribute the node at the given path with supplied options. (Only applicable on AEMaaCS)')
+    method name: 'distribute',
+            params: [path: String.name, agentId: String.name],
+            type: void,
+            doc: doc('Distribute the node at the given path with supplied options. (Only applicable on AEMaaCS)')
+    method name: 'distribute',
+            params: [path: String.name, agentId: String.name, isDeep: boolean.name],
+            type: void,
+            doc: doc('Distribute the node at the given path with supplied options. (Only applicable on AEMaaCS)')
+
     method name: 'createQuery',
             params: [predicates: Map.name],
             type: 'javax.jcr.query.Query',
@@ -265,7 +280,8 @@ contributor(aemContext(ctype: 'javax.jcr.Binary')) {
 contributor(aemContext(scope: closureScope(methodName: 'table', isArg: true))) {
     def tableCall = enclosingCall('table')
     if (tableCall) {
-        def clazz = tableCall.bind()?.containingClass
+        final def psiMember = tableCall.bind() as PsiMember
+        final def clazz = psiMember?.containingClass
         if (TABLE_CLASS == clazz?.qualifiedName) {
             delegatesTo(clazz)
         }
