@@ -6,7 +6,7 @@ apacheHttpClient = "5.2.1"
 jjwt="0.11.5"
 
 # plugins
-kotlin = "1.9.0"
+kotlin = "1.9.10"
 changelog = "2.1.2"
 gradleIntelliJPlugin = "1.15.0"
 qodana = "0.1.13"
