@@ -1,0 +1,7 @@
+package standardDsls
+
+def aecuCtx = context(scope: scriptScope(null), scriptType: 'aemconsole')
+
+contributor(aecuCtx) {
+    field name: 'aecu', type: 'de.valtech.aecu.api.groovy.console.bindings.AecuBinding'
+}
