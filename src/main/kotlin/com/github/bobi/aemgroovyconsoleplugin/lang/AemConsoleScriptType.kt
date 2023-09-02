@@ -16,7 +16,7 @@ class AemConsoleScriptType : GroovyRunnableScriptType(EXTENSION) {
     override fun getScriptIcon(): Icon = JetgroovyIcons.Groovy.GroovyFile
 
     override fun patchResolveScope(file: GroovyFile, baseScope: GlobalSearchScope): GlobalSearchScope {
-        return baseScope.uniteWith(AemScriptExtensionClassFinder.searchScope)
+        return baseScope.uniteWith(AemScriptExtensionClassFinder.Scope.searchScope)
             .uniteWith(GlobalSearchScope.allScope(file.project))
     }
 

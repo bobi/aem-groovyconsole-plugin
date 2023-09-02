@@ -14,6 +14,7 @@ import com.intellij.psi.NonClasspathClassFinder
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.NonClasspathDirectoriesScope
+import de.valtech.aecu.api.groovy.console.bindings.AecuBinding
 
 /**
  * User: Andrey Bardashevsky
@@ -22,36 +23,36 @@ import com.intellij.psi.search.NonClasspathDirectoriesScope
  */
 class AemScriptExtensionClassFinder(project: Project) : NonClasspathClassFinder(project, "groovy") {
 
-    override fun calcClassRoots(): List<VirtualFile> = roots
+    override fun calcClassRoots(): List<VirtualFile> = Scope.roots
 
     override fun findClass(qualifiedName: String, scope: GlobalSearchScope): PsiClass? {
         val packageName = StringUtil.getPackageName(qualifiedName)
 
-        return if (supportedPackages.contains(packageName)) {
-            super.findClass(qualifiedName, scope.uniteWith(searchScope))
+        return if (Scope.supportedPackages.contains(packageName)) {
+            super.findClass(qualifiedName, scope.uniteWith(Scope.searchScope))
         } else {
             null
         }
     }
 
-    companion object {
+    object Scope {
         private val thirdPartyClasses = listOf(
             PageBuilder::class.java,
             NodeBuilder::class.java,
             Table::class.java,
+            AecuBinding::class.java
         )
-
-        private val supportedPackages = thirdPartyClasses.mapTo(HashSet<String>()) { it.`package`.name }
-            .also {
-                it.add("specs")
-            }
 
         private val jarForClasses = listOf(
             *thirdPartyClasses.toTypedArray(),
             AemScriptExtensionClassFinder::class.java
         )
 
-        private val roots = buildClassesRoots()
+        val supportedPackages = thirdPartyClasses
+            .mapTo(HashSet<String>()) { it.`package`.name }
+            .also { it.add("specs") }
+
+        val roots = buildClassesRoots()
 
         val searchScope = NonClasspathDirectoriesScope.compose(roots)
 
@@ -80,4 +81,5 @@ class AemScriptExtensionClassFinder(project: Project) : NonClasspathClassFinder(
             }.toList()
         }
     }
+
 }

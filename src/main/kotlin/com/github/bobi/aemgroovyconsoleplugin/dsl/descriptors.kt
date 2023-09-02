@@ -43,7 +43,7 @@ fun parseVariable(args: Map<*, *>): VariableDescriptor {
     return VariableDescriptor(
         name = args["name"].toString(),
         type = TypeDescriptor(stringifyType(args["type"])),
-        doc = args["doc"].toString(),
+        doc = args["doc"] as? String,
     )
 }
 

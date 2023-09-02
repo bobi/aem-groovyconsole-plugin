@@ -29,6 +29,7 @@ dependencies {
         exclude(group = "org.apache.groovy")
         exclude(group = "org.slf4j")
         exclude(group = "com.google.code.gson")
+        exclude(group = "com.google.code.findbugs")
     }
 }
 

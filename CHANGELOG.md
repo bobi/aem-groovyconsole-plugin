@@ -3,6 +3,7 @@
 # aem-groovyconsole-plugin Changelog
 
 ## [Unreleased]
+- Added [AECU](https://github.com/valtech/aem-easy-content-upgrade) support  [#156](https://github.com/bobi/aem-groovyconsole-plugin/issues/156)
 
 ## [0.8.3] - 2023-08-20
 - Updated to the latest version of Groovy Console

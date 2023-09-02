@@ -1,6 +1,5 @@
 package standardDsls
 
-
 import com.intellij.psi.PsiMember
 import groovy.transform.Field
 
