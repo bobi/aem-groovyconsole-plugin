@@ -3,6 +3,9 @@
 # aem-groovyconsole-plugin Changelog
 
 ## [Unreleased]
+- Updated with latest build template
+- Updated dependencies
+- Updated Intellij version
 
 ## [0.9.0] - 2023-09-02
 

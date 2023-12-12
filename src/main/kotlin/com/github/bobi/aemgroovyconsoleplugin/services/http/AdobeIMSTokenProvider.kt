@@ -12,7 +12,6 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.SignatureAlgorithm
 import org.apache.hc.client5.http.classic.methods.HttpPost
 import org.apache.hc.client5.http.entity.UrlEncodedFormEntity
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient
@@ -85,10 +84,10 @@ class AdobeIMSTokenProvider : Disposable {
         val splitToken = accessToken.accessToken.split(Regex("\\."))
         val unsignedToken = splitToken[0] + "." + splitToken[1] + "."
 
-        val jwt = Jwts.parserBuilder().build().parseClaimsJwt(unsignedToken)
+        val jwt = Jwts.parser().build().parseUnsecuredClaims(unsignedToken)
 
-        val createdAt = jwt.body["created_at", String::class.java].toLong()
-        val expiresIn = jwt.body["expires_in", String::class.java].toLong()
+        val createdAt = jwt.payload["created_at", String::class.java].toLong()
+        val expiresIn = jwt.payload["expires_in", String::class.java].toLong()
 
         val expiresAt = Instant.ofEpochMilli(createdAt + expiresIn).minus(1.hours.toJavaDuration())
 
@@ -103,17 +102,18 @@ class AdobeIMSTokenProvider : Disposable {
         val (_, _, integration) = parseCertToken(config.credentials.password)
 
         val jwtBuilder = Jwts.builder()
-            .setIssuer(integration.org)
-            .setSubject(integration.id)
-            .setIssuedAt(Date.from(Instant.now()))
-            .setExpiration(Date.from(Instant.now().plus(8, ChronoUnit.HOURS)))
-            .setAudience("https://${integration.imsEndpoint}/c/${integration.technicalAccount.clientId}")
+            .issuer(integration.org)
+            .subject(integration.id)
+            .issuedAt(Date.from(Instant.now()))
+            .expiration(Date.from(Instant.now().plus(8, ChronoUnit.HOURS)))
+            .audience().add("https://${integration.imsEndpoint}/c/${integration.technicalAccount.clientId}")
+            .and()
 
         integration.metascopes.split(",").forEach {
             jwtBuilder.claim("https://${integration.imsEndpoint}/s/${it}", true)
         }
 
-        val jwtToken = jwtBuilder.signWith(readPrivateKey(integration.privateKey), SignatureAlgorithm.RS256).compact()
+        val jwtToken = jwtBuilder.signWith(readPrivateKey(integration.privateKey), Jwts.SIG.RS256).compact()
 
         val uri = URIBuilder().apply {
             scheme = "https"

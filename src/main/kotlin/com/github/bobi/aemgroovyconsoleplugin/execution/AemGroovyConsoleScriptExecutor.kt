@@ -77,7 +77,15 @@ class AemGroovyConsoleScriptExecutor(private val project: Project) {
                 val consolePanel = oldDescriptor?.component ?: createConsolePanel(console)
 
                 val newDescriptor =
-                    AemConsoleRunContentDescriptor(project, contentFile, config, console, action, consolePanel, tmpFolder)
+                    AemConsoleRunContentDescriptor(
+                        project,
+                        contentFile,
+                        config,
+                        console,
+                        action,
+                        consolePanel,
+                        tmpFolder
+                    )
 
                 RunContentManager.getInstance(project).showRunContent(executor, newDescriptor, oldDescriptor)
 
@@ -91,7 +99,9 @@ class AemGroovyConsoleScriptExecutor(private val project: Project) {
     companion object {
         private val executor = DefaultRunExecutor.getRunExecutorInstance()
 
-        private val documentManager = FileDocumentManager.getInstance()
+        private val documentManager: FileDocumentManager by lazy {
+            return@lazy FileDocumentManager.getInstance()
+        }
 
         fun getInstance(project: Project): AemGroovyConsoleScriptExecutor = project.service()
 
@@ -167,7 +177,12 @@ class AemGroovyConsoleScriptExecutor(private val project: Project) {
                 val descriptor = findDescriptor(project, component)
 
                 if (descriptor != null) {
-                    getInstance(project).doExecute(descriptor, descriptor.contentFile, descriptor.config.id, descriptor.action)
+                    getInstance(project).doExecute(
+                        descriptor,
+                        descriptor.contentFile,
+                        descriptor.config.id,
+                        descriptor.action
+                    )
                 }
             }
         }

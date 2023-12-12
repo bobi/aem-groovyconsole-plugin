@@ -97,7 +97,7 @@ class AemServerEditDialog(private val project: Project, private val tableItem: A
         }
 
         row("Authentication Type: ") {
-            authTypeField = comboBox(AuthType.values().toList())
+            authTypeField = comboBox(AuthType.entries)
                 .align(AlignX.FILL)
                 .resizableColumn()
                 .bindItem({ tableItem.authType }, { tableItem.authType = it!! })
