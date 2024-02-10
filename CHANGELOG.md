@@ -4,6 +4,9 @@
 
 ## [Unreleased]
 
+- Updated http libs
+- bug fixes
+
 ## [0.9.1] - 2023-12-12
 
 - Updated with latest build template

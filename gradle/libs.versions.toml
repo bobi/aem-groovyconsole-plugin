@@ -3,7 +3,7 @@
 annotations = "24.1.0"
 groovyConsole = "19.0.4"
 aecu = "6.5.0"
-apacheHttpClient = "5.3.1"
+okhttp = "4.12.0"
 jjwt = "0.12.5"
 
 # plugins
@@ -18,13 +18,14 @@ annotations = { group = "org.jetbrains", name = "annotations", version.ref = "an
 groovyConsoleApi = { group = "be.orbinson.aem", name = "aem-groovy-console-api", version.ref = "groovyConsole" }
 groovyConsoleBundle = { group = "be.orbinson.aem", name = "aem-groovy-console-bundle", version.ref = "groovyConsole" }
 aecuApi = { group = "de.valtech.aecu", name = "aecu.api", version.ref = "aecu" }
-apacheHttpClient = { group = "org.apache.httpcomponents.client5", name = "httpclient5", version.ref = "apacheHttpClient" }
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+okhttpLogging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
 jjwtApi = { group = "io.jsonwebtoken", name = "jjwt-api", version.ref = "jjwt" }
 jjwtImpl = { group = "io.jsonwebtoken", name = "jjwt-impl", version.ref = "jjwt" }
 jjwtGson = { group = "io.jsonwebtoken", name = "jjwt-gson", version.ref = "jjwt" }
 
 [bundles]
-groovyConsole = ["groovyConsoleApi", "groovyConsoleBundle", "aecuApi", "apacheHttpClient", "jjwtApi", "jjwtImpl", "jjwtGson"]
+groovyConsole = ["groovyConsoleApi", "groovyConsoleBundle", "aecuApi", "okhttp", "okhttpLogging", "jjwtApi", "jjwtImpl", "jjwtGson"]
 
 [plugins]
 changelog = { id = "org.jetbrains.changelog", version.ref = "changelog" }

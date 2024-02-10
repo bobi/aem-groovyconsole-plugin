@@ -28,7 +28,11 @@ Powered by [AEM Groovy Console](https://github.com/orbinson/aem-groovy-console).
 
 ![Screenshot](.readme/code-completion.png)
 ![Screenshot](.readme/code-completion-1.png)
-            
+                   
+### Groovy Scripts Support
+To run .groovy files as AEM scripts mark folder as "AEM Scripts Source Root", all groovy files in marked folder will be treated as AEM Scripts.
+![Screenshot](.readme/mark-dir.png)
+
 ## Usage Example
 
 https://youtu.be/1iL1Qhcp_x0

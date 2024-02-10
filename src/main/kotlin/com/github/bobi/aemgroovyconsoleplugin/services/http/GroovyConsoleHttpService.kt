@@ -5,65 +5,52 @@ import com.github.bobi.aemgroovyconsoleplugin.services.http.model.GroovyConsoleO
 import com.github.bobi.aemgroovyconsoleplugin.services.http.model.GroovyConsoleTable
 import com.github.bobi.aemgroovyconsoleplugin.services.model.AemServerConfig
 import com.github.bobi.aemgroovyconsoleplugin.services.model.AuthType
+import com.github.bobi.aemgroovyconsoleplugin.utils.isInternal
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import io.ktor.utils.io.core.*
-import org.apache.hc.client5.http.classic.methods.HttpPost
-import org.apache.hc.client5.http.config.ConnectionConfig
-import org.apache.hc.client5.http.config.RequestConfig
-import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder
-import org.apache.hc.client5.http.impl.classic.CloseableHttpClient
-import org.apache.hc.client5.http.impl.classic.HttpClients
-import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder
-import org.apache.hc.client5.http.utils.Base64
-import org.apache.hc.core5.http.ClassicHttpResponse
-import org.apache.hc.core5.http.Header
-import org.apache.hc.core5.http.HttpException
-import org.apache.hc.core5.http.HttpStatus
-import org.apache.hc.core5.http.message.BasicHeader
-import org.apache.hc.core5.net.URIBuilder
-import org.apache.hc.core5.util.Timeout
+import okhttp3.FormBody
+import okhttp3.HttpUrl.Companion.toHttpUrl
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import okhttp3.logging.HttpLoggingInterceptor
+import java.io.IOException
 import java.io.InputStreamReader
 import java.io.StringReader
-import java.net.URI
 import java.time.Duration
+import java.util.*
 import kotlin.io.use
 import kotlin.text.toByteArray
+
 
 /**
  * User: Andrey Bardashevsky
  * Date/Time: 02.08.2022 16:06
  */
 @Service(Service.Level.PROJECT)
-class GroovyConsoleHttpService(project: Project) : Disposable {
+class GroovyConsoleHttpService(project: Project) {
 
     private val imsTokenProvider = AdobeIMSTokenProvider.getInstance(project)
+    private val httpClient: OkHttpClient by lazy {
+        val timeout = Duration.ofMinutes(10)
 
-    private val httpClient: CloseableHttpClient by lazy {
-        val timeout = Timeout.of(Duration.ofMinutes(10))
+        val builder = OkHttpClient.Builder()
 
-        return@lazy HttpClients.custom()
-            .setConnectionManager(
-                PoolingHttpClientConnectionManagerBuilder.create()
-                    .setDefaultConnectionConfig(
-                        ConnectionConfig.custom()
-                            .setConnectTimeout(timeout)
-                            .setSocketTimeout(timeout)
-                            .build()
-                    )
-                    .build()
-            )
-            .setDefaultRequestConfig(
-                RequestConfig.custom()
-                    .setConnectionRequestTimeout(timeout)
-                    .build()
-            )
-            .build()
+        if (isInternal()) {
+            builder.addInterceptor(HttpLoggingInterceptor { println(it) }.setLevel(HttpLoggingInterceptor.Level.BODY))
+        }
+
+        builder.callTimeout(timeout)
+        builder.writeTimeout(timeout)
+        builder.connectTimeout(timeout)
+        builder.readTimeout(timeout)
+
+        return@lazy builder.build()
     }
 
     private val gson: Gson = GsonBuilder().create()
@@ -84,28 +71,30 @@ class GroovyConsoleHttpService(project: Project) : Disposable {
         )
 
     private fun execute(config: AemServerHttpConfig, script: ByteArray, action: Action): GroovyConsoleOutput {
-        val uri = URIBuilder().apply {
-            val configHostUri = URI.create(config.url)
+        val uri = config.url.toHttpUrl().newBuilder().encodedPath(action.path).build()
 
-            scheme = configHostUri.scheme
-            host = configHostUri.host
-            port = configHostUri.port
+        val authorizationHeader = getAuthorizationHeader(config)
 
-            path = action.path
-        }.build()
+        val formBody = FormBody.Builder()
+            .add("script", script.decodeToString())
+            .build()
 
-        val request = HttpPost(uri).apply {
-            addHeader(getAuthorizationHeader(config))
+        val request: Request = Request.Builder()
+            .url(uri)
+            .addHeader(authorizationHeader.first, authorizationHeader.second)
+            .post(formBody)
+            .build()
 
-            entity = MultipartEntityBuilder.create().addBinaryBody("script", script).build()
+        return httpClient.newCall(request).execute().use { response ->
+            return@use handleResponse(response)
         }
-
-        return httpClient.execute(request, ::handleResponse)
     }
 
-    private fun handleResponse(response: ClassicHttpResponse): GroovyConsoleOutput {
-        if (HttpStatus.SC_OK == response.code) {
-            val output = InputStreamReader(response.entity.content).use {
+    private fun handleResponse(response: Response): GroovyConsoleOutput {
+        val body = response.body
+
+        if (response.isSuccessful && body != null) {
+            val output = InputStreamReader(body.byteStream()).use {
                 return@use gson.fromJson(it, Output::class.java)
             }
 
@@ -132,21 +121,20 @@ class GroovyConsoleHttpService(project: Project) : Disposable {
                 table = outputTable?.table
             )
         } else {
-            throw HttpException("${response.code} ${response.reasonPhrase}")
+            throw IOException("${response.code} ${response.message}")
         }
     }
 
-    private fun getAuthorizationHeader(config: AemServerHttpConfig): Header {
+    private fun getAuthorizationHeader(config: AemServerHttpConfig): Pair<String, String> {
         val value = when (config.authType) {
-            AuthType.BASIC -> "Basic " + String(Base64.encodeBase64("${config.credentials.user}:${config.credentials.password}".toByteArray()))
+            AuthType.BASIC -> "Basic " + String(
+                Base64.getEncoder().encode("${config.credentials.user}:${config.credentials.password}".toByteArray())
+            )
+
             else -> "Bearer " + imsTokenProvider.getAccessToken(config)
         }
 
-        return BasicHeader("Authorization", value)
-    }
-
-    override fun dispose() {
-        httpClient.close()
+        return Pair("Authorization", value)
     }
 
     companion object {

@@ -5,25 +5,24 @@ import com.github.bobi.aemgroovyconsoleplugin.services.model.AccessToken
 import com.github.bobi.aemgroovyconsoleplugin.services.model.AemCertificateToken
 import com.github.bobi.aemgroovyconsoleplugin.services.model.AemDevToken
 import com.github.bobi.aemgroovyconsoleplugin.services.model.AuthType
+import com.github.bobi.aemgroovyconsoleplugin.utils.invokeAndWaitIfNeeded
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.intellij.openapi.Disposable
+import com.google.gson.reflect.TypeToken
+import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import io.jsonwebtoken.Jwts
-import org.apache.hc.client5.http.classic.methods.HttpPost
-import org.apache.hc.client5.http.entity.UrlEncodedFormEntity
-import org.apache.hc.client5.http.impl.classic.CloseableHttpClient
-import org.apache.hc.client5.http.impl.classic.HttpClients
-import org.apache.hc.core5.http.HttpException
-import org.apache.hc.core5.http.HttpStatus
-import org.apache.hc.core5.http.io.entity.EntityUtils
-import org.apache.hc.core5.http.message.BasicNameValuePair
-import org.apache.hc.core5.net.URIBuilder
+import okhttp3.FormBody
+import okhttp3.HttpUrl
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import org.bouncycastle.openssl.PEMKeyPair
 import org.bouncycastle.openssl.PEMParser
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter
+import java.io.IOException
 import java.io.StringReader
 import java.security.KeyFactory
 import java.security.interfaces.RSAPrivateKey
@@ -40,11 +39,11 @@ import kotlin.time.toJavaDuration
  * Date/Time: 09.07.2023 14:07
  */
 @Service(Service.Level.PROJECT)
-class AdobeIMSTokenProvider : Disposable {
+class AdobeIMSTokenProvider {
     private val gson: Gson = GsonBuilder().create()
 
-    private val httpClient: CloseableHttpClient by lazy {
-        return@lazy HttpClients.createDefault()
+    private val httpClient: OkHttpClient by lazy {
+        return@lazy OkHttpClient()
     }
 
     fun getAccessToken(config: AemServerHttpConfig): String {
@@ -60,7 +59,7 @@ class AdobeIMSTokenProvider : Disposable {
             return fetchAccessToken(config).accessToken
         } else {
             try {
-                val token = PasswordsService.getAccessToken(config.id)
+                val token = invokeAndWaitIfNeeded { runReadAction { PasswordsService.getAccessToken(config.id) } }
                 if (token !== null) {
                     val accessToken = verifyAccessToken(token)
 
@@ -71,7 +70,14 @@ class AdobeIMSTokenProvider : Disposable {
             } catch (e: Throwable) {
                 val accessToken = fetchAccessToken(config)
 
-                PasswordsService.setAccessToken(config.id, gson.toJson(accessToken))
+                invokeAndWaitIfNeeded {
+                    runWriteAction {
+                        PasswordsService.setAccessToken(
+                            config.id,
+                            gson.toJson(accessToken)
+                        )
+                    }
+                }
 
                 return accessToken.accessToken
             }
@@ -82,12 +88,14 @@ class AdobeIMSTokenProvider : Disposable {
         val accessToken = gson.fromJson(token, AccessToken::class.java)
 
         val splitToken = accessToken.accessToken.split(Regex("\\."))
-        val unsignedToken = splitToken[0] + "." + splitToken[1] + "."
 
-        val jwt = Jwts.parser().build().parseUnsecuredClaims(unsignedToken)
+        val payload = gson.fromJson(
+            Base64.getDecoder().decode(splitToken[1]).decodeToString(),
+            object : TypeToken<Map<String, *>>() {}
+        )
 
-        val createdAt = jwt.payload["created_at", String::class.java].toLong()
-        val expiresIn = jwt.payload["expires_in", String::class.java].toLong()
+        val createdAt = payload["created_at"]?.toString()?.toLong() ?: 0
+        val expiresIn = payload["expires_in"]?.toString()?.toLong() ?: 0
 
         val expiresAt = Instant.ofEpochMilli(createdAt + expiresIn).minus(1.hours.toJavaDuration())
 
@@ -115,29 +123,29 @@ class AdobeIMSTokenProvider : Disposable {
 
         val jwtToken = jwtBuilder.signWith(readPrivateKey(integration.privateKey), Jwts.SIG.RS256).compact()
 
-        val uri = URIBuilder().apply {
-            scheme = "https"
-            host = integration.imsEndpoint
-            path = "/ims/exchange/jwt"
-        }.build()
+        val uri = HttpUrl.Builder()
+            .scheme("https")
+            .host(integration.imsEndpoint)
+            .encodedPath("/ims/exchange/jwt")
+            .build()
 
-        val request = HttpPost(uri).apply {
-            entity = UrlEncodedFormEntity(
-                listOf(
-                    BasicNameValuePair("client_id", integration.technicalAccount.clientId),
-                    BasicNameValuePair("client_secret", integration.technicalAccount.clientSecret),
-                    BasicNameValuePair("jwt_token", jwtToken)
-                )
-            )
-        }
+        val formBody = FormBody.Builder()
+            .add("client_id", integration.technicalAccount.clientId)
+            .add("client_secret", integration.technicalAccount.clientSecret)
+            .add("jwt_token", jwtToken)
+            .build()
 
-        val token = httpClient.execute(request) { response ->
-            if (HttpStatus.SC_OK == response.code) {
-                val token = EntityUtils.toString(response.entity)
+        val request: Request = Request.Builder()
+            .url(uri)
+            .post(formBody)
+            .build()
 
-                return@execute gson.fromJson(token, AccessToken::class.java)
+        val token = httpClient.newCall(request).execute().use { response ->
+            val body = response.body
+            if (response.isSuccessful && body != null) {
+                return@use gson.fromJson(body.string(), AccessToken::class.java)
             } else {
-                throw HttpException("${response.code} ${response.reasonPhrase}")
+                throw IOException("${response.code} ${response.message}")
             }
         }
 
@@ -150,10 +158,6 @@ class AdobeIMSTokenProvider : Disposable {
 
     private fun parseCertToken(token: String): AemCertificateToken {
         return gson.fromJson(token, AemCertificateToken::class.java)
-    }
-
-    override fun dispose() {
-        httpClient.close()
     }
 
     companion object {
