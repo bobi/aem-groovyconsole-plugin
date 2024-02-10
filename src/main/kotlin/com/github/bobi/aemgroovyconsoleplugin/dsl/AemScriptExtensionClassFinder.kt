@@ -3,8 +3,8 @@ package com.github.bobi.aemgroovyconsoleplugin.dsl
 import be.orbinson.aem.groovy.console.builders.NodeBuilder
 import be.orbinson.aem.groovy.console.builders.PageBuilder
 import be.orbinson.aem.groovy.console.table.Table
+import com.github.bobi.aemgroovyconsoleplugin.utils.isInternal
 import com.intellij.openapi.application.PathManager
-import com.intellij.openapi.application.ex.ApplicationManagerEx
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.JarFileSystem
@@ -57,7 +57,7 @@ class AemScriptExtensionClassFinder(project: Project) : NonClasspathClassFinder(
         val searchScope = NonClasspathDirectoriesScope.compose(roots)
 
         private fun buildClassesRoots(): List<VirtualFile> {
-            val isInternal = java.lang.Boolean.getBoolean(ApplicationManagerEx.IS_INTERNAL_PROPERTY)
+            val isInternal = isInternal()
 
             return jarForClasses.mapNotNullTo(LinkedHashSet()) { clazz ->
                 val jarForClass = PathManager.getJarForClass(clazz)
