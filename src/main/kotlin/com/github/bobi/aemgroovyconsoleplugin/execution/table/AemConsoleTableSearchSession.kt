@@ -152,6 +152,8 @@ internal class AemConsoleTableSearchSession(
                     override fun multilineStateChanged() {
                         findModel.isMultiline = searchComponent.isMultiline
                     }
+
+                    override fun replaceFieldDocumentChanged() = Unit
                 })
             }
     }
