@@ -4,6 +4,9 @@
 
 ## [Unreleased]
 
+- Added table view as IDE table
+- Added export table into CSV
+
 ## [0.9.2] - 2024-02-10
 
 - Updated http libs
