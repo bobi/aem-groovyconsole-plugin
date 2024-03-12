@@ -72,14 +72,14 @@ class AemGroovyConsoleProcessHandler(
                 print(output.output)
             }
 
-            if (output.table != null) {
+            if (output.table != null && !output.result.isNullOrBlank()) {
+                notifyTextAvailable(output.result, AemConsoleOutputType.TABLE_OUTPUT_TYPE)
+            } else if (!output.result.isNullOrBlank()) {
                 if (!output.output.isNullOrBlank()) {
                     print("\n")
                 }
-
-                AemConsoleTableFormatter(output.table).print {
-                    print(it)
-                }
+                print(output.result)
+                print("\n")
             }
         } else {
             //This code relies on fact that AEM Groovy Console uses Script1.groovy as file name, so this code is highly dangerous

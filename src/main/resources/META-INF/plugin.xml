@@ -27,6 +27,9 @@
         <java.elementFinder
                 implementation="com.github.bobi.aemgroovyconsoleplugin.dsl.AemScriptExtensionClassFinder"/>
 
+        <consoleInputFilterProvider
+                implementation="com.github.bobi.aemgroovyconsoleplugin.execution.ConsoleInputFilterProvider"/>
+
         <notificationGroup id="AEM Groovy Console" displayType="BALLOON"/>
 
         <internalFileTemplate name="AemConsole Script"/>

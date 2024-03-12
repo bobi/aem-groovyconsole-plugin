@@ -1,17 +1,18 @@
 [versions]
 # libraries
 annotations = "24.1.0"
-groovyConsole = "19.0.4"
+groovyConsole = "19.0.5"
 aecu = "6.5.0"
 okhttp = "4.12.0"
 jjwt = "0.12.5"
+fastcsv = "3.0.0"
 
 # plugins
-kotlin = "1.9.22"
+kotlin = "1.9.23"
 changelog = "2.2.0"
-gradleIntelliJPlugin = "1.17.0"
-qodana = "0.1.13"
-kover = "0.7.5"
+gradleIntelliJPlugin = "1.17.2"
+qodana = "2023.3.1"
+kover = "0.7.6"
 
 [libraries]
 annotations = { group = "org.jetbrains", name = "annotations", version.ref = "annotations" }
@@ -23,9 +24,10 @@ okhttpLogging = { group = "com.squareup.okhttp3", name = "logging-interceptor", 
 jjwtApi = { group = "io.jsonwebtoken", name = "jjwt-api", version.ref = "jjwt" }
 jjwtImpl = { group = "io.jsonwebtoken", name = "jjwt-impl", version.ref = "jjwt" }
 jjwtGson = { group = "io.jsonwebtoken", name = "jjwt-gson", version.ref = "jjwt" }
+fastcsv = { group = "de.siegmar", name = "fastcsv", version.ref = "fastcsv" }
 
 [bundles]
-groovyConsole = ["groovyConsoleApi", "groovyConsoleBundle", "aecuApi", "okhttp", "okhttpLogging", "jjwtApi", "jjwtImpl", "jjwtGson"]
+groovyConsole = ["groovyConsoleApi", "groovyConsoleBundle", "aecuApi", "okhttp", "okhttpLogging", "jjwtApi", "jjwtImpl", "jjwtGson", "fastcsv"]
 
 [plugins]
 changelog = { id = "org.jetbrains.changelog", version.ref = "changelog" }

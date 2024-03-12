@@ -10,27 +10,28 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import java.io.File
-import javax.swing.JComponent
 
 /**
  * User: Andrey Bardashevsky
  * Date/Time: 19.08.2022 18:28
  */
 class AemConsoleRunContentDescriptor(
-    project: Project,
+    val resultPanel: AemConsoleResultPanel,
     val contentFile: VirtualFile,
     val config: AemServerConfig,
-    val console: ConsoleView,
     val action: GroovyConsoleHttpService.Action,
-    component: JComponent,
     tmpFolder: File,
 ) : RunContentDescriptor(
-    console,
-    AemGroovyConsoleProcessHandler(project, contentFile, config, action),
-    component,
+    resultPanel.console,
+    AemGroovyConsoleProcessHandler(resultPanel.project, contentFile, config, action),
+    resultPanel,
     "[${config.name}] - [${contentFile.name}]",
     AemConsoleLanguageFileType.icon
 ) {
+
+    val console: ConsoleView = resultPanel.console
+
+    val project: Project = resultPanel.project
 
     val tmpFile: File by lazy {
         FileUtil.createTempFile(tmpFolder, "output", null)
@@ -49,6 +50,6 @@ class AemConsoleRunContentDescriptor(
 
         processHandler!!.addProcessListener(ProcessLogOutputListener(tmpFile), console)
 
-        console.attachToProcess(processHandler!!)
+        resultPanel.attachToProcess(processHandler!!)
     }
 }

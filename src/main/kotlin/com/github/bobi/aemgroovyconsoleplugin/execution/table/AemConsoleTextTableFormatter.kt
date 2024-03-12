@@ -1,4 +1,4 @@
-package com.github.bobi.aemgroovyconsoleplugin.execution
+package com.github.bobi.aemgroovyconsoleplugin.execution.table
 
 import com.github.bobi.aemgroovyconsoleplugin.services.http.model.GroovyConsoleTable
 import com.intellij.util.containers.toArray
@@ -7,7 +7,7 @@ import com.intellij.util.containers.toArray
  * User: Andrey Bardashevsky
  * Date/Time: 06.08.2022 19:11
  */
-internal class AemConsoleTableFormatter(private val table: GroovyConsoleTable) {
+internal class AemConsoleTextTableFormatter(private val table: GroovyConsoleTable) {
 
     private val columnLengths = IntArray(table.columns.size) { 1 }
         .also { arr ->

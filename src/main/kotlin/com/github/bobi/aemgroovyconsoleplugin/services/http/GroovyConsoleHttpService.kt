@@ -2,7 +2,7 @@ package com.github.bobi.aemgroovyconsoleplugin.services.http
 
 import com.github.bobi.aemgroovyconsoleplugin.services.PasswordsService
 import com.github.bobi.aemgroovyconsoleplugin.services.http.model.GroovyConsoleOutput
-import com.github.bobi.aemgroovyconsoleplugin.services.http.model.GroovyConsoleTable
+import com.github.bobi.aemgroovyconsoleplugin.services.http.model.OutputTable
 import com.github.bobi.aemgroovyconsoleplugin.services.model.AemServerConfig
 import com.github.bobi.aemgroovyconsoleplugin.services.model.AuthType
 import com.github.bobi.aemgroovyconsoleplugin.utils.isInternal
@@ -111,11 +111,8 @@ class GroovyConsoleHttpService(project: Project) {
             }
 
             return GroovyConsoleOutput(
-                output = if (output.output.isNullOrBlank() && outputTable == null && output.result != null) {
-                    output.result
-                } else {
-                    output?.output
-                },
+                result = output.result,
+                output = output.output,
                 runningTime = output.runningTime,
                 exceptionStackTrace = output.exceptionStackTrace,
                 table = outputTable?.table
@@ -159,8 +156,6 @@ class GroovyConsoleHttpService(project: Project) {
         val exceptionStackTrace: String? = null,
         val result: String? = null
     )
-
-    private data class OutputTable(val table: GroovyConsoleTable)
 
     enum class Action(internal val path: String) {
         EXECUTE("/bin/groovyconsole/post.json"),
