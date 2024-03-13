@@ -10,6 +10,8 @@ import java.awt.Rectangle
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import java.util.concurrent.CopyOnWriteArrayList
+import kotlin.math.max
+import kotlin.math.min
 
 internal class AemConsoleTableSearchSession(
     private val project: Project,
@@ -42,11 +44,8 @@ internal class AemConsoleTableSearchSession(
         }
 
     init {
-        val selectedText = getSelectedText()
-        if (selectedText != null) {
-            searchComponent.searchTextComponent.text = selectedText
-            searchComponent.searchTextComponent.selectAll()
-        }
+        searchComponent.searchTextComponent.text = findModel.stringToFind
+        searchComponent.searchTextComponent.selectAll()
 
         searchComponent.searchTextComponent.addKeyListener(object : KeyAdapter() {
             override fun keyPressed(keyEvent: KeyEvent) {
@@ -66,8 +65,11 @@ internal class AemConsoleTableSearchSession(
     private fun createFindModel(): FindModel {
         return FindModel().apply {
             copyFrom(FindManager.getInstance(project).findInFileModel)
+
+            FindUtil.configureFindModel(false, this, false, getSelectedText())
+
             addObserver {
-                val stringToFind: String = findModel.stringToFind
+                val stringToFind = findModel.stringToFind
                 val incorrectRegex = findModel.isRegularExpressions && findModel.compileRegExp() == null
                 val hasMatches = hasMatches()
 
@@ -185,9 +187,7 @@ internal class AemConsoleTableSearchSession(
                 startColumn = 0
             }
 
-            val startPos = startRow * columnCount + startColumn
-
-            val range = getSearchCellsRange(startPos, rowCount, columnCount, includeStart, forward)
+            val range = getSearchCellsRange(startRow, startColumn, rowCount, columnCount, forward, includeStart)
 
             for (i in range) {
                 val row = i / columnCount
@@ -203,33 +203,42 @@ internal class AemConsoleTableSearchSession(
     }
 
     private fun getSearchCellsRange(
-        startPos: Int,
+        startRow: Int,
+        startColumn: Int,
         rowCount: Int,
         columnCount: Int,
-        includeStartPos: Boolean,
-        forward: Boolean
-    ): IntProgression {
-        val firstCell = 0
-        val lastCell = rowCount * columnCount - 1
+        forward: Boolean,
+        includeStartCell: Boolean
+    ): Sequence<Int> {
+        val tableRange = 0 until rowCount * columnCount
+
+        val startCell = min(tableRange.last, max(tableRange.first, startRow * columnCount + startColumn))
 
         val step = if (forward) 1 else -1
-        val advance = if (includeStartPos) 0 else step
+        val advance = if (includeStartCell) 0 else step
 
-        val last = if (forward) lastCell else firstCell
+        val rangeStart = startCell + advance
+        val rangeEnd = rangeStart - step
 
-        var first = startPos + advance
+        var seq = emptySequence<Int>()
 
         if (forward) {
-            if (first < firstCell) {
-                first = firstCell
+            if (rangeStart in tableRange) {
+                seq += IntProgression.fromClosedRange(rangeStart, tableRange.last, step).asSequence()
+            }
+            if (rangeEnd in tableRange) {
+                seq += IntProgression.fromClosedRange(tableRange.first, rangeEnd, step).asSequence()
             }
         } else {
-            if (first > lastCell) {
-                first = lastCell
+            if (rangeStart in tableRange) {
+                seq += IntProgression.fromClosedRange(rangeStart, tableRange.first, step).asSequence()
+            }
+            if (rangeEnd in tableRange) {
+                seq += IntProgression.fromClosedRange(tableRange.last, rangeEnd, step).asSequence()
             }
         }
 
-        return IntProgression.fromClosedRange(first, last, step)
+        return seq
     }
 
     fun isMatchText(text: String): Boolean {
