@@ -14,11 +14,7 @@ internal class RowNumberCellRenderer(private val table: AemConsoleTable) : CellR
         set(value) {
             field = value
 
-            if (value != null) {
-                isSelected = table.isRowSelected(value)
-            } else {
-                isSelected = false
-            }
+            isSelected = (value != null) && table.isRowSelected(value)
         }
 
     init {
