@@ -202,45 +202,6 @@ internal class AemConsoleTableSearchSession(
         return null
     }
 
-    private fun getSearchCellsRange(
-        startRow: Int,
-        startColumn: Int,
-        rowCount: Int,
-        columnCount: Int,
-        forward: Boolean,
-        includeStartCell: Boolean
-    ): Sequence<Int> {
-        val tableRange = 0 until rowCount * columnCount
-
-        val startCell = min(tableRange.last, max(tableRange.first, startRow * columnCount + startColumn))
-
-        val step = if (forward) 1 else -1
-        val advance = if (includeStartCell) 0 else step
-
-        val rangeStart = startCell + advance
-        val rangeEnd = rangeStart - step
-
-        var seq = emptySequence<Int>()
-
-        if (forward) {
-            if (rangeStart in tableRange) {
-                seq += IntProgression.fromClosedRange(rangeStart, tableRange.last, step).asSequence()
-            }
-            if (rangeEnd in tableRange) {
-                seq += IntProgression.fromClosedRange(tableRange.first, rangeEnd, step).asSequence()
-            }
-        } else {
-            if (rangeStart in tableRange) {
-                seq += IntProgression.fromClosedRange(rangeStart, tableRange.first, step).asSequence()
-            }
-            if (rangeEnd in tableRange) {
-                seq += IntProgression.fromClosedRange(tableRange.last, rangeEnd, step).asSequence()
-            }
-        }
-
-        return seq
-    }
-
     fun isMatchText(text: String): Boolean {
         return findManager.findString(text, 0, findModel).isStringFound
     }
@@ -259,6 +220,47 @@ internal class AemConsoleTableSearchSession(
             if (oldVal != selected) {
                 this@AemConsoleTableSearchSession.eventMulticaster.searchSessionUpdated()
             }
+        }
+    }
+
+    companion object {
+        internal fun getSearchCellsRange(
+            startRow: Int,
+            startColumn: Int,
+            rowCount: Int,
+            columnCount: Int,
+            forward: Boolean,
+            includeStartCell: Boolean
+        ): Sequence<Int> {
+            val tableRange = 0 until rowCount * columnCount
+
+            val startCell = min(tableRange.last, max(tableRange.first, startRow * columnCount + startColumn))
+
+            val step = if (forward) 1 else -1
+            val advance = if (includeStartCell) 0 else step
+
+            val rangeStart = startCell + advance
+            val rangeEnd = rangeStart - step
+
+            var seq = emptySequence<Int>()
+
+            if (forward) {
+                if (rangeStart in tableRange) {
+                    seq += IntProgression.fromClosedRange(rangeStart, tableRange.last, step).asSequence()
+                }
+                if (rangeEnd in tableRange) {
+                    seq += IntProgression.fromClosedRange(tableRange.first, rangeEnd, step).asSequence()
+                }
+            } else {
+                if (rangeStart in tableRange) {
+                    seq += IntProgression.fromClosedRange(rangeStart, tableRange.first, step).asSequence()
+                }
+                if (rangeEnd in tableRange) {
+                    seq += IntProgression.fromClosedRange(tableRange.last, rangeEnd, step).asSequence()
+                }
+            }
+
+            return seq
         }
     }
 }
