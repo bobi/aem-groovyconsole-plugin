@@ -11,7 +11,7 @@ fastcsv = "3.1.0"
 kotlin = "1.9.23"
 changelog = "2.2.0"
 gradleIntelliJPlugin = "1.17.2"
-qodana = "2023.3.1"
+qodana = "2023.3.2"
 kover = "0.7.6"
 
 [libraries]
