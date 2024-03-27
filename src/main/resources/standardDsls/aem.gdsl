@@ -52,7 +52,6 @@ contributor(aemContext()) {
     field name: 'session', type: 'javax.jcr.Session'
     field name: 'pageManager', type: 'com.day.cq.wcm.api.PageManager'
     field name: 'resourceResolver', type: 'org.apache.sling.api.resource.ResourceResolver'
-    field name: 'queryBuilder', type: 'com.day.cq.search.QueryBuilder'
     field name: 'nodeBuilder', type: 'be.orbinson.aem.groovy.console.builders.NodeBuilder'
     field name: 'pageBuilder', type: 'be.orbinson.aem.groovy.console.builders.PageBuilder'
     field name: 'bundleContext', type: 'org.osgi.framework.BundleContext'
