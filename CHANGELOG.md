@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+- Removed queryBuilder from code completion                       
+
 ## [0.10.0] - 2024-03-13
 
 - Added table view as IDE table
