@@ -74,7 +74,7 @@ internal class SaveOutputAction : AnAction({ "Save output" }, Presentation.NULL_
             val aemConsoleRunContentDescriptor = AemGroovyConsoleScriptExecutor.findDescriptor(project, component)
 
             if (aemConsoleRunContentDescriptor != null && aemConsoleRunContentDescriptor.processHandler != null && aemConsoleRunContentDescriptor.processHandler!!.isProcessTerminated && aemConsoleRunContentDescriptor.tmpFile.exists()) {
-                val fileWrapper = openSaveFileDialog(project, "txt", "Export Table to CSV")
+                val fileWrapper = openSaveFileDialog(project, "txt", "Save AEM Groovy Console output")
 
                 fileWrapper?.let {
                     try {
