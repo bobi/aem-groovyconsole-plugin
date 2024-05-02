@@ -4,6 +4,9 @@
 
 ## [Unreleased]
 
+- Update minimum IDE version
+- Remove deprecated code usage
+
 ## [0.10.1] - 2024-03-27
 
 - Removed queryBuilder from code completion

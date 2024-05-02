@@ -9,6 +9,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonShortcuts
 import com.intellij.openapi.options.Configurable
+import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.ui.ToolbarDecorator
 import com.intellij.ui.dsl.builder.Align
@@ -71,7 +72,7 @@ class AemServersConfigurable(private val project: Project) : Configurable {
             }
 
             toolbar.addExtraAction(
-                object : ToolbarDecorator.ElementActionButton("Duplicate", "Duplicate", PlatformIcons.COPY_ICON) {
+                object : DumbAwareAction("Duplicate", "Duplicate", PlatformIcons.COPY_ICON) {
                     override fun actionPerformed(e: AnActionEvent) {
                         val selectedRow = table.selectedRow
                         if (selectedRow >= 0) {
@@ -85,7 +86,7 @@ class AemServersConfigurable(private val project: Project) : Configurable {
                         return ActionUpdateThread.EDT
                     }
                 }.also { action ->
-                    action.setShortcut(CommonShortcuts.getDuplicate())
+                    action.registerCustomShortcutSet(CommonShortcuts.getDuplicate(), table.component)
                 } as AnAction
             )
         }
