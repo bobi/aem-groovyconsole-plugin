@@ -8,7 +8,7 @@ jjwt = "0.12.5"
 fastcsv = "3.1.0"
 
 # plugins
-kotlin = "1.9.23"
+kotlin = "1.9.24"
 changelog = "2.2.0"
 gradleIntelliJPlugin = "1.17.3"
 qodana = "2024.1.4"
