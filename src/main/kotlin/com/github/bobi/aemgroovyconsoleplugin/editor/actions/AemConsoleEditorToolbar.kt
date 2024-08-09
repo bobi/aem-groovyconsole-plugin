@@ -19,7 +19,7 @@ class AemConsoleEditorToolbar(project: Project, fileEditor: FileEditor) : Editor
 
             val runActions = DefaultActionGroup(
                 AemConsoleExecuteAction().also { action ->
-                    action.registerCustomShortcutSet(CommonShortcuts.CTRL_ENTER, fileEditor.component)
+                    action.registerCustomShortcutSet(CommonShortcuts.getCtrlEnter(), fileEditor.component)
                 },
                 AemConsoleExecuteDistributedAction()
             )
@@ -43,12 +43,12 @@ class AemConsoleEditorToolbar(project: Project, fileEditor: FileEditor) : Editor
 
         val leftToolbar =
             actionManager.createActionToolbar("LeftAemGroovyConsoleActionGroup", leftActionGroup, true).also {
-                it.targetComponent = this
+                it.targetComponent = fileEditor.component
             }
 
         val rightToolbar =
             actionManager.createActionToolbar("RightAemGroovyConsoleActionGroup", rightActionGroup, true).also {
-                it.targetComponent = this
+                it.targetComponent = fileEditor.component
             }
 
         this.add(leftToolbar.component, BorderLayout.WEST)

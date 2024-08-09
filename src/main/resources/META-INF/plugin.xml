@@ -47,7 +47,7 @@
         </action>
         <!--suppress PluginXmlCapitalization -->
         <action
-                id="MarkAsAemScriptsRootAction"
+                id="AemConsole.MarkAsAemScriptsRootAction"
                 text="AEM Scripts Source Root"
                 description="AEM Scripts Source Root"
                 class="com.github.bobi.aemgroovyconsoleplugin.actions.MarkAsAemScriptsRootAction">
