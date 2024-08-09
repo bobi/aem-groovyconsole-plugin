@@ -22,6 +22,7 @@ import com.intellij.util.ui.components.BorderLayoutPanel
  * Date/Time: 2024-03-03 19:35
  */
 
+@Suppress("UnstableApiUsage")
 class AemConsoleResultPanel(val project: Project, val console: ConsoleView) : JBTabsImpl(project, console) {
 
     private val tablePanel = AemConsoleTablePanel(project)
@@ -46,8 +47,8 @@ class AemConsoleResultPanel(val project: Project, val console: ConsoleView) : JB
     }
 
     private val tableTab = TabInfo(tableTabPanel).also {
-        it.text = "Table"
-        it.icon = AllIcons.Nodes.DataTables
+        it.setText("Table")
+        it.setIcon(AllIcons.Nodes.DataTables)
     }
 
     private val consoleTabPanel = BorderLayoutPanel().also { panel ->
@@ -70,8 +71,8 @@ class AemConsoleResultPanel(val project: Project, val console: ConsoleView) : JB
     }
 
     private val consoleTab = TabInfo(consoleTabPanel).also {
-        it.text = "Console"
-        it.icon = AllIcons.Nodes.Console
+        it.setText("Console")
+        it.setIcon(AllIcons.Nodes.Console)
     }
 
     init {
@@ -103,7 +104,6 @@ class AemConsoleResultPanel(val project: Project, val console: ConsoleView) : JB
                 }
             }
         })
-
     }
 }
 

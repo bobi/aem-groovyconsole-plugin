@@ -3,6 +3,7 @@
 # aem-groovyconsole-plugin Changelog
 
 ## [Unreleased]
+- Update supported IDE version
 
 ## [0.10.2] - 2024-05-02
 
