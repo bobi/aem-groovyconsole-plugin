@@ -1,7 +1,7 @@
 [versions]
 # libraries
 junit4 = "4.13.2"
-junit5 = "5.11.3"
+junit5 = "5.11.4"
 opentest4j = "1.3.0"
 annotations = "26.0.1"
 groovyConsole = "19.0.8"
