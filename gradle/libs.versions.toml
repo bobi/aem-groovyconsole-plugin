@@ -14,7 +14,7 @@ fastcsv = "3.4.0"
 changelog = "2.2.1"
 intelliJPlatform = "2.2.0"
 kotlin = "2.1.0"
-kover = "0.8.3"
+kover = "0.9.0"
 qodana = "2024.3.2"
 
 [libraries]
