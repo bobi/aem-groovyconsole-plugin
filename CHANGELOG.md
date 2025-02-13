@@ -4,8 +4,9 @@
 
 ## [Unreleased]
 
-- Update dependencies
+- Update supported IDE version 
 - Remove deprecated code usage
+- Update dependencies
 
 ## [0.10.3] - 2024-08-09
 
