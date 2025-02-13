@@ -5,12 +5,10 @@ import com.github.bobi.aemgroovyconsoleplugin.services.model.AccessToken
 import com.github.bobi.aemgroovyconsoleplugin.services.model.AemCertificateToken
 import com.github.bobi.aemgroovyconsoleplugin.services.model.AemDevToken
 import com.github.bobi.aemgroovyconsoleplugin.services.model.AuthType
-import com.github.bobi.aemgroovyconsoleplugin.utils.invokeAndWaitIfNeeded
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import com.intellij.openapi.application.runReadAction
-import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
@@ -59,7 +57,8 @@ class AdobeIMSTokenProvider {
             return fetchAccessToken(config).accessToken
         } else {
             try {
-                val token = invokeAndWaitIfNeeded { runReadAction { PasswordsService.getAccessToken(config.id) } }
+                val token = PasswordsService.getAccessToken(config.id)
+
                 if (token !== null) {
                     val accessToken = verifyAccessToken(token)
 
@@ -70,13 +69,12 @@ class AdobeIMSTokenProvider {
             } catch (e: Throwable) {
                 val accessToken = fetchAccessToken(config)
 
-                invokeAndWaitIfNeeded {
-                    runWriteAction {
-                        PasswordsService.setAccessToken(
-                            config.id,
-                            gson.toJson(accessToken)
-                        )
-                    }
+
+                WriteAction.runAndWait<RuntimeException> {
+                    PasswordsService.setAccessToken(
+                        config.id,
+                        gson.toJson(accessToken)
+                    )
                 }
 
                 return accessToken.accessToken

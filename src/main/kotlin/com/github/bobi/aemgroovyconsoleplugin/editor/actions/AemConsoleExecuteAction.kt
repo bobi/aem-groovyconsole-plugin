@@ -5,18 +5,22 @@ import com.github.bobi.aemgroovyconsoleplugin.editor.GroovyConsoleUserData.getCu
 import com.github.bobi.aemgroovyconsoleplugin.execution.AemGroovyConsoleScriptExecutor
 import com.github.bobi.aemgroovyconsoleplugin.services.http.GroovyConsoleHttpService
 import com.intellij.icons.AllIcons
-import com.intellij.openapi.actionSystem.*
+import com.intellij.openapi.actionSystem.ActionUpdateThread
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.ex.CustomComponentAction
 import com.intellij.openapi.actionSystem.impl.ActionButton
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.DumbAware
+import java.awt.event.KeyEvent
 
 class AemConsoleExecuteAction : AnAction({ "Run" }, AllIcons.Actions.Execute), DumbAware {
 
     override fun actionPerformed(e: AnActionEvent) {
         val component = e.presentation.getClientProperty(CustomComponentAction.COMPONENT_KEY)
 
-        if (component is ActionButton || ActionPlaces.isShortcutPlace(e.place)) {
+        if (component is ActionButton || e.inputEvent is KeyEvent) {
             FileDocumentManager.getInstance().saveAllDocuments()
 
             val project = e.project

@@ -131,7 +131,7 @@ internal class AemConsoleTableSearchSession(
 
     private fun createSearchComponent(): SearchReplaceComponent {
         return SearchReplaceComponent
-            .buildFor(project, table)
+            .buildFor(project, table, this)
             .addPrimarySearchActions(PrevOccurrenceAction(), NextOccurrenceAction())
             .addExtraSearchActions(
                 ToggleMatchCase(),
@@ -141,7 +141,6 @@ internal class AemConsoleTableSearchSession(
                 StatusTextAction()
             )
             .withCloseAction { close() }
-            .withDataProvider(this)
             .build().also {
                 it.addListener(object : SearchReplaceComponent.Listener {
                     override fun searchFieldDocumentChanged() {

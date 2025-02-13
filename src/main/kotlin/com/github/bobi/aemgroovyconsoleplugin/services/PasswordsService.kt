@@ -38,6 +38,6 @@ object PasswordsService {
         PasswordSafe.instance[credentialAttributes(id, AEM_ACCESS_TOKEN_SUFFIX)]?.getPasswordAsString()
 
     private fun credentialAttributes(id: Long, suffix: String = "") = CredentialAttributes(
-        generateServiceName(AEM_GROOVY_CONSOLE, id.toString() + suffix),
+        generateServiceName(AEM_GROOVY_CONSOLE, id.toString() + suffix)
     )
 }
