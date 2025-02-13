@@ -4,6 +4,7 @@
 
 ## [Unreleased]
 
+- Update dependencies
 - Remove deprecated code usage
 
 ## [0.10.3] - 2024-08-09
