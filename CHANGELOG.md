@@ -3,6 +3,9 @@
 # aem-groovyconsole-plugin Changelog
 
 ## [Unreleased]
+
+## [0.10.5] - 2025-05-03
+
 - Update supported IDE version
 - Update dependencies
 
@@ -189,7 +192,8 @@
 
 - Initial Release
 
-[Unreleased]: https://github.com/bobi/aem-groovyconsole-plugin/compare/v0.10.4...HEAD
+[Unreleased]: https://github.com/bobi/aem-groovyconsole-plugin/compare/v0.10.5...HEAD
+[0.10.5]: https://github.com/bobi/aem-groovyconsole-plugin/compare/v0.10.4...v0.10.5
 [0.10.4]: https://github.com/bobi/aem-groovyconsole-plugin/compare/v0.10.3...v0.10.4
 [0.10.3]: https://github.com/bobi/aem-groovyconsole-plugin/compare/v0.10.2...v0.10.3
 [0.10.2]: https://github.com/bobi/aem-groovyconsole-plugin/compare/v0.10.1...v0.10.2
