@@ -12,7 +12,6 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
-import io.ktor.utils.io.core.*
 import okhttp3.FormBody
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
@@ -24,8 +23,6 @@ import java.io.InputStreamReader
 import java.io.StringReader
 import java.time.Duration
 import java.util.*
-import kotlin.io.use
-import kotlin.text.toByteArray
 
 
 /**
@@ -124,9 +121,10 @@ class GroovyConsoleHttpService(project: Project) {
 
     private fun getAuthorizationHeader(config: AemServerHttpConfig): Pair<String, String> {
         val value = when (config.authType) {
-            AuthType.BASIC -> "Basic " + String(
-                Base64.getEncoder().encode("${config.credentials.user}:${config.credentials.password}".toByteArray())
-            )
+            AuthType.BASIC -> "Basic " +
+                    Base64.getEncoder()
+                        .encode("${config.credentials.user}:${config.credentials.password}".toByteArray())
+                        .decodeToString()
 
             else -> "Bearer " + imsTokenProvider.getAccessToken(config)
         }

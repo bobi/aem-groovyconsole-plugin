@@ -1,4 +1,4 @@
-<idea-plugin>
+<idea-plugin require-restart="true">
     <id>com.github.bobi.aemgroovyconsoleplugin.aem-groovyconsole-plugin</id>
     <name>AEM Groovy Console</name>
     <vendor url="https://github.com/bobi/aem-groovyconsole-plugin">Andrey Bardashevsky</vendor>
