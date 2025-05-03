@@ -46,6 +46,7 @@ class AemConsoleTablePanel(internal val project: Project) : BorderLayoutPanel() 
                     findComponent = null
                     table.searchSessionUpdated()
                     table.requestFocus()
+                    validate()
                 }
             }
 
