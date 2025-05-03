@@ -3,6 +3,8 @@
 # aem-groovyconsole-plugin Changelog
 
 ## [Unreleased]
+- Update supported IDE version
+- Update dependencies
 
 ## [0.10.4] - 2025-02-13
 

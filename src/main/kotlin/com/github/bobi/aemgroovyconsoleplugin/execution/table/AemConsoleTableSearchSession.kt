@@ -18,9 +18,9 @@ internal class AemConsoleTableSearchSession(
     private val table: AemConsoleTable
 ) : SearchSession, DataProvider {
 
-    private val searchComponent = createSearchComponent()
-
     private val findModel = createFindModel()
+
+    private val searchComponent = createSearchComponent()
 
     private val findManager = FindManager.getInstance(project)
 
