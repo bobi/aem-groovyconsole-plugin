@@ -13,7 +13,7 @@ fastcsv = "4.2.0"
 # plugins
 changelog = "2.5.0"
 intelliJPlatform = "2.15.0"
-kotlin = "2.3.20"
+kotlin = "2.3.21"
 kover = "0.9.8"
 qodana = "2025.3.2"
 
