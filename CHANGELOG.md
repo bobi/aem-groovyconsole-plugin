@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [0.10.7] - 2026-07-14
+
 - Update supported IDE version
 - Update dependencies
 
@@ -195,7 +197,8 @@
 
 - Initial Release
 
-[Unreleased]: https://github.com/bobi/aem-groovyconsole-plugin/compare/v0.10.5...HEAD
+[Unreleased]: https://github.com/bobi/aem-groovyconsole-plugin/compare/v0.10.7...HEAD
+[0.10.7]: https://github.com/bobi/aem-groovyconsole-plugin/compare/v0.10.5...v0.10.7
 [0.10.5]: https://github.com/bobi/aem-groovyconsole-plugin/compare/v0.10.4...v0.10.5
 [0.10.4]: https://github.com/bobi/aem-groovyconsole-plugin/compare/v0.10.3...v0.10.4
 [0.10.3]: https://github.com/bobi/aem-groovyconsole-plugin/compare/v0.10.2...v0.10.3
