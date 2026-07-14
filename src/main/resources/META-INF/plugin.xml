@@ -2,8 +2,16 @@
     <id>com.github.bobi.aemgroovyconsoleplugin.aem-groovyconsole-plugin</id>
     <name>AEM Groovy Console 2</name>
     <description><![CDATA[
-        IntelliJ IDEA plugin that provides integration with AEM Groovy Console.
-        It allows you to run Groovy scripts on your AEM instance directly from the IDE.
+        Adds support to run Groovy scripts on AEM server from IntelliJ IDEA.
+        <p>Powered by <a href="https://github.com/orbinson/aem-groovy-console">AEM Groovy Console</a>.</p>
+        <h3>Features</h3>
+        <ul>
+            <li>Execute groovy scripts on running AEM server from the editor</li>
+            <li>Script can be executed on multiple servers</li>
+            <li>Console output provides a link to the script's source if an exception occurred</li>
+            <li>Support code completion in the groovy editor. <b>Note</b>: com.adobe.aem:uber-jar:x.x.x or com.adobe.aem:aem-sdk-api:x.x.x should be in the project classpath to provide full code completion</li>
+            <li><a href="https://github.com/bobi/aem-groovyconsole-plugin">More Details</a></li>
+        </ul>
     ]]></description>
     <vendor url="https://github.com/bobi/aem-groovyconsole-plugin">Andrey Bardashevsky</vendor>
 
