@@ -90,7 +90,7 @@ class GroovyConsoleHttpService(project: Project) {
     private fun handleResponse(response: Response): GroovyConsoleOutput {
         val body = response.body
 
-        if (response.isSuccessful && body != null) {
+        if (response.isSuccessful) {
             val output = InputStreamReader(body.byteStream()).use {
                 return@use gson.fromJson(it, Output::class.java)
             }

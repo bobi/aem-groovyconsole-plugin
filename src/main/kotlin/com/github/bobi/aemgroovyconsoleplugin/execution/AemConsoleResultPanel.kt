@@ -4,9 +4,9 @@ import com.github.bobi.aemgroovyconsoleplugin.execution.table.AemConsoleTableMod
 import com.github.bobi.aemgroovyconsoleplugin.execution.table.AemConsoleTablePanel
 import com.github.bobi.aemgroovyconsoleplugin.execution.table.ExportCsvAction
 import com.github.bobi.aemgroovyconsoleplugin.execution.table.FindAction
-import com.intellij.execution.process.ProcessAdapter
 import com.intellij.execution.process.ProcessEvent
 import com.intellij.execution.process.ProcessHandler
+import com.intellij.execution.process.ProcessListener
 import com.intellij.execution.ui.ConsoleView
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.ActionManager
@@ -90,7 +90,7 @@ class AemConsoleResultPanel(val project: Project, val console: ConsoleView) : JB
 
         console.attachToProcess(processHandler)
 
-        processHandler.addProcessListener(object : ProcessAdapter() {
+        processHandler.addProcessListener(object : ProcessListener {
             override fun processTerminated(event: ProcessEvent) {
                 processHandler.removeProcessListener(this)
             }

@@ -3,9 +3,9 @@ package com.github.bobi.aemgroovyconsoleplugin.execution
 import com.github.bobi.aemgroovyconsoleplugin.services.http.GroovyConsoleHttpService
 import com.github.bobi.aemgroovyconsoleplugin.services.http.model.GroovyConsoleOutput
 import com.github.bobi.aemgroovyconsoleplugin.services.model.AemServerConfig
-import com.intellij.execution.process.ProcessAdapter
 import com.intellij.execution.process.ProcessEvent
 import com.intellij.execution.process.ProcessHandler
+import com.intellij.execution.process.ProcessListener
 import com.intellij.execution.process.ProcessOutputType
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.diagnostic.thisLogger
@@ -30,7 +30,7 @@ class AemGroovyConsoleProcessHandler(
     private val httpService = GroovyConsoleHttpService.getInstance(project)
 
     init {
-        addProcessListener(object : ProcessAdapter() {
+        addProcessListener(object : ProcessListener {
             override fun startNotified(event: ProcessEvent) {
                 execute()
             }

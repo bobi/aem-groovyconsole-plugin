@@ -1,6 +1,10 @@
 <idea-plugin require-restart="true">
     <id>com.github.bobi.aemgroovyconsoleplugin.aem-groovyconsole-plugin</id>
     <name>AEM Groovy Console</name>
+    <description><![CDATA[
+        IntelliJ IDEA plugin that provides integration with AEM Groovy Console.
+        It allows you to run Groovy scripts on your AEM instance directly from the IDE.
+    ]]></description>
     <vendor url="https://github.com/bobi/aem-groovyconsole-plugin">Andrey Bardashevsky</vendor>
 
     <depends>com.intellij.modules.platform</depends>

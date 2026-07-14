@@ -66,7 +66,7 @@ class AdobeIMSTokenProvider {
                 } else {
                     throw Exception("Token not found")
                 }
-            } catch (e: Throwable) {
+            } catch (_: Throwable) {
                 val accessToken = fetchAccessToken(config)
 
 
@@ -140,7 +140,7 @@ class AdobeIMSTokenProvider {
 
         val token = httpClient.newCall(request).execute().use { response ->
             val body = response.body
-            if (response.isSuccessful && body != null) {
+            if (response.isSuccessful) {
                 return@use gson.fromJson(body.string(), AccessToken::class.java)
             } else {
                 throw IOException("${response.code} ${response.message}")
