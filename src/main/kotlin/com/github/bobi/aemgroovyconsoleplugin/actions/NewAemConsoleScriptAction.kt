@@ -29,7 +29,7 @@ class NewAemConsoleScriptAction : JavaCreateTemplateInPackageAction<GroovyFile>(
             )
     }
 
-    override fun isAvailable(dataContext: DataContext?): Boolean {
+    override fun isAvailable(dataContext: DataContext): Boolean {
         return true
     }
 

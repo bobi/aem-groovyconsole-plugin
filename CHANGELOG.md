@@ -4,6 +4,9 @@
 
 ## [Unreleased]
 
+- Update supported IDE version
+- Update dependencies
+
 ## [0.10.5] - 2025-05-03
 
 - Update supported IDE version
