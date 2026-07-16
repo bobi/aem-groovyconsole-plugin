@@ -79,7 +79,7 @@ internal class AemConsoleTableSearchSession(
                     searchComponent.setNotFoundBackground()
                 }
 
-                searchComponent.statusText = if (incorrectRegex) FindBundle.message("find.incorrect.regexp") else ""
+                searchComponent.statusText = if (incorrectRegex) "Bad pattern" else ""
 
                 searchComponent.update(stringToFind, "", false, findModel.isMultiline)
 

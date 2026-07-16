@@ -7,6 +7,7 @@ import com.intellij.execution.ui.ConsoleView
 import com.intellij.execution.ui.RunContentDescriptor
 import com.intellij.execution.ui.RunContentDescriptorReusePolicy
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import java.io.File
@@ -38,6 +39,8 @@ class AemConsoleRunContentDescriptor(
     }
 
     init {
+        Disposer.register(this, resultPanel)
+
         reusePolicy = object : RunContentDescriptorReusePolicy() {
             override fun canBeReusedBy(newDescriptor: RunContentDescriptor): Boolean {
                 return if (newDescriptor is AemConsoleRunContentDescriptor) {

@@ -4,6 +4,9 @@
 
 ## [Unreleased]
 
+- Update supported IDE version
+- Update dependencies
+
 ## [0.10.8] - 2026-07-14
 
 - Update supported IDE version

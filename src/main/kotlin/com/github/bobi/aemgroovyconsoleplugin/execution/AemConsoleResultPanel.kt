@@ -9,12 +9,13 @@ import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.process.ProcessListener
 import com.intellij.execution.ui.ConsoleView
 import com.intellij.icons.AllIcons
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
+import com.intellij.ui.tabs.JBTabsFactory
 import com.intellij.ui.tabs.TabInfo
-import com.intellij.ui.tabs.impl.JBTabsImpl
 import com.intellij.util.ui.components.BorderLayoutPanel
 
 /**
@@ -22,8 +23,12 @@ import com.intellij.util.ui.components.BorderLayoutPanel
  * Date/Time: 2024-03-03 19:35
  */
 
-@Suppress("UnstableApiUsage")
-class AemConsoleResultPanel(val project: Project, val console: ConsoleView) : JBTabsImpl(project, console) {
+class AemConsoleResultPanel(val project: Project, val console: ConsoleView) :
+    BorderLayoutPanel(), Disposable {
+
+    private val tabs = JBTabsFactory.createTabs(project, this)
+
+    private val tabsPresentation = tabs.presentation
 
     private val tablePanel = AemConsoleTablePanel(project)
 
@@ -76,17 +81,19 @@ class AemConsoleResultPanel(val project: Project, val console: ConsoleView) : JB
     }
 
     init {
-        setTabDraggingEnabled(false)
+        tabsPresentation.setTabDraggingEnabled(false)
 
-        addTab(consoleTab)
-        addTab(tableTab)
-        isHideTabs = true
+        tabs.addTab(consoleTab)
+        tabs.addTab(tableTab)
+        tabsPresentation.isHideTabs = true
+
+        addToCenter(tabs.component)
     }
 
     fun attachToProcess(processHandler: ProcessHandler) {
-        isHideTabs = true
+        tabsPresentation.isHideTabs = true
 
-        select(consoleTab, true)
+        tabs.select(consoleTab, true)
 
         console.attachToProcess(processHandler)
 
@@ -98,12 +105,15 @@ class AemConsoleResultPanel(val project: Project, val console: ConsoleView) : JB
             override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
                 if (outputType === AemConsoleOutputType.TABLE_OUTPUT_TYPE) {
                     tablePanel.table.model = AemConsoleTableModel.fromJsonTable(event.text)
-                    isHideTabs = false
+                    tabsPresentation.isHideTabs = false
 
-                    select(tableTab, true)
+                    tabs.select(tableTab, true)
                 }
             }
         })
+    }
+
+    override fun dispose() {
     }
 }
 
