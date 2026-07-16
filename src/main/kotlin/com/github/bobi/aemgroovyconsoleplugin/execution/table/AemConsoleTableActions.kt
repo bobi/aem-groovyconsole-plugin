@@ -3,7 +3,6 @@ package com.github.bobi.aemgroovyconsoleplugin.execution.table
 import com.github.bobi.aemgroovyconsoleplugin.utils.Notifications
 import com.github.bobi.aemgroovyconsoleplugin.utils.openSaveFileDialog
 import com.intellij.icons.AllIcons
-import com.intellij.idea.ActionsBundle
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.project.DumbAware
@@ -60,7 +59,7 @@ internal class ExportCsvAction(private val table: AemConsoleTable) :
 }
 
 internal class FindAction(private val tablePanel: AemConsoleTablePanel) : AnAction(
-    ActionsBundle.messagePointer("action.Find.text"), Presentation.NULL_STRING, AllIcons.Actions.Find
+    { "_Find\u2026" }, Presentation.NULL_STRING, AllIcons.Actions.Find
 ), DumbAware {
     init {
         ActionUtil.copyFrom(this, IdeActions.ACTION_FIND)
