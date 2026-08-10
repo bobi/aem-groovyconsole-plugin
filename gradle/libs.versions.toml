@@ -8,7 +8,7 @@ groovyConsole = "19.1.0"
 aecu = "6.6.1"
 okhttp = "5.4.0"
 jjwt = "0.13.0"
-fastcsv = "4.3.1"
+fastcsv = "4.4.0"
 
 [libraries]
 annotations = { group = "org.jetbrains", name = "annotations", version.ref = "annotations" }
